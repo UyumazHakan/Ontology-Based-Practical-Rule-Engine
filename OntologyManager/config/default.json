@@ -1,0 +1,10 @@
+{
+  "logger": {
+    "dir": "./logs/",
+    "level": "silly"
+  },
+  "app":{
+	"port": 3000
+  },
+  "max_workers": "-1"
+}
