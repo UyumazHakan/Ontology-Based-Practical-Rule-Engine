@@ -9,7 +9,6 @@ notifications:
   email: false
 before_install: cd OntologyManager
 install: npm install
-before_script: cd OntologyManager
 script: npm test
 cache:
   directories:
