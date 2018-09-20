@@ -9,8 +9,7 @@ const logger  = loggers.get('main');
 class ElasticsearchSourceNode extends SourceNode {
 	constructor(args) {
 		super(args);
-		this.elasticsearch = new DatabaseConnectorProxy();
-		if (this.elasticsearch.type !== 'elasticsearch') {
+		if (DatabaseConnectorProxy.type !== 'elasticsearch') {
 			logger.error('Used database is not elasticsearch');
 			throw new TypeError();
 		}

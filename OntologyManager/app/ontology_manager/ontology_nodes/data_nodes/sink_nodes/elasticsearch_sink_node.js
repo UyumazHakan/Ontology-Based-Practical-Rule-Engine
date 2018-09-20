@@ -8,8 +8,7 @@ const logger = loggers.get('main');
 class ElasticsearchSinkNode extends SinkNode {
 	constructor(args) {
 		super(args);
-		this.elasticsearch = new DatabaseConnectorProxy();
-		if (this.elasticsearch.type !== 'elasticsearch') {
+		if (DatabaseConnectorProxy.type !== 'elasticsearch') {
 			logger.error('Used database is not elasticsearch');
 			throw new TypeError();
 		}
@@ -35,7 +34,7 @@ class ElasticsearchSinkNode extends SinkNode {
 			throw TypeError;
 			body.doc = {};
 		}
-		this.elasticsearch.update('data', '', body, args.id);
+		DatabaseConnectorProxy.update('data', '', body, args.id);
 	}
 }
 

@@ -1,12 +1,14 @@
 import DatabaseConnectorProxy
 	from './ontology_manager/database_connector/database_connector_proxy';
 
-const config = require('config');
-const logger = require('winston').loggers.get('main');
-const express = require('express');
+import config from 'config';
+import {loggers} from 'winston';
+import express from 'express';
+
+const logger = loggers.get('main');
 const app = express();
 
-const databaseConnector = new DatabaseConnectorProxy(config.database);
+const databaseConnector = new DatabaseConnectorProxy();
 
 logger.debug("Application configuration is done");
 

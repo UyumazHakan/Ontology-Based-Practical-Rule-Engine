@@ -1,4 +1,5 @@
 import {loggers} from 'winston';
+import _config from 'config';
 
 import ElasticSearchDatabaseConnector from './elastic_search_database_connector';
 
@@ -6,10 +7,8 @@ const logger = loggers.get('main');
 let instance = null;
 
 class DatabaseConnectorProxy {
-	constructor(config) {
-		if (!instance) {
-			instance = this;
-		}
+	constructor() {
+		let config = _config.database;
 		if (config === undefined) {
 			logger.error('Need to have configuration to create the instance');
 			throw new Error();
@@ -20,7 +19,6 @@ class DatabaseConnectorProxy {
 			logger.error(`Database type ${config.type} is not valid`);
 			throw new Error();
 		}
-		return instance;
 	}
 	create(...args) {
 		this.connector.create(args);
@@ -33,4 +31,11 @@ class DatabaseConnectorProxy {
 	}
 }
 
-export default DatabaseConnectorProxy;
+function getInstance() {
+	if (instance === null) {
+		instance = new DatabaseConnectorProxy();
+	}
+	return instance;
+}
+
+export default getInstance();
