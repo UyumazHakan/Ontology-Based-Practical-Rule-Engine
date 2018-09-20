@@ -1,5 +1,7 @@
 sudo: false
 langugage: node_js
+services:
+  - elasticsearch
 node_js:
   - "node"
 branches:
@@ -9,6 +11,8 @@ notifications:
   email: false
 before_install: cd OntologyManager
 install: npm install
+before_script:
+  - sleep 10
 script: npm test
 cache:
   directories:
