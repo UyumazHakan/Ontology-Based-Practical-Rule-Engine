@@ -9,7 +9,6 @@ const logger = winston.loggers.add('main', {
 		// - Write to all logs with level `info` and below to `combined.log`
 		// - Write all logs error (and below) to `error.log`.
 		//
-		new winston.transports.Console({format: winston.format.simple()}),
 		new winston.transports.File(
 			{filename: `${config.get('logger.dir')}error.log`, level: 'error'}
 		),
@@ -38,5 +37,4 @@ if (cluster.isMaster) {
 	const port = config.get('app.port');
 	app.listen(port, () =>
 		logger.info(`Worker ${process.pid} started to listening on ${port}`));
-	logger.info("Hello")
 }
