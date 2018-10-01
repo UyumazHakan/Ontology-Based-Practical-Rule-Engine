@@ -49,6 +49,7 @@ describe('DatabaseConnector', function() {
 import ElasticsearchSinkNode from '../app/ontology_manager/ontology_nodes/data_nodes/sink_nodes/elasticsearch_sink_node';
 import ElasticsearchSourceNode from '../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
 import MapNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
+import FilterNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
 import ReturnNode from '../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 
 describe('OntologyNodes', function() {
@@ -326,5 +327,157 @@ describe('OntologyNodes', function() {
 			});
 		});
 	});
+	describe('FilterNode', function() {
+		it('should filter only one default field', function() {
+			let node = new FilterNode({
+				field: 'test_field',
+				filterFunction: ((value) => value > 4),
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field: [4, 5, 1],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field: [5],
+			});
+		});
+		it('should filter only one field', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				field: 'test_field',
+				test_field: [4, 5, 1],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				field: 'test_field',
+				test_field: [5],
+			});
+		});
+		it('should not filter non-given field', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+				field: 'test_field1',
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field1: [5],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+		});
+		it('should filter two default field', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+				field: ['test_field1', 'test_field2'],
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field1: [5],
+				test_field2: [5, 6],
 
+			});
+		});
+		it('should filter two field', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				field: ['test_field1','test_field2'],
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				field: ['test_field1', 'test_field2'],
+				test_field1: [5],
+				test_field2: [5, 6],
+
+			});
+		});
+		it('should filter overwritten default field', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+				field: ['test_field1', 'test_field2'],
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				field: ['test_field1', 'test_field3'],
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				field: ['test_field1', 'test_field3'],
+				test_field1: [5],
+				test_field2: [4, 5, 6],
+				test_field3: [5, 6],
+			});
+		});
+		it('should filter overwriten default fields with new one field', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+				field: ['test_field1', 'test_field2'],
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				field: 'test_field1',
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				field: 'test_field1',
+				test_field1: [5],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+		});
+		it('should filter overwritten default field with new multiple fields', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+				field: 'test_field1',
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				field: ['test_field1', 'test_field3'],
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				field: ['test_field1', 'test_field3'],
+				test_field1: [5],
+				test_field2: [4, 5, 6],
+				test_field3: [5, 6],
+			});
+		});
+		it('should not fail for non-existing fields', function() {
+			let node = new FilterNode({
+				filterFunction: ((value) => value > 4),
+				field: 'nonExisting',
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+				test_field3: [4, 5, 6],
+			});
+		});
+	});
 });
