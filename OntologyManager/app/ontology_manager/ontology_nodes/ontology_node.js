@@ -18,10 +18,17 @@ class OntologyNode {
 		this.isSaved = args.isSaved ? args.isSaved : false;
 	}
 	addSink(sink) {
-		this.sinks.push(sink);
+		if (!this.sources.includes(sink)) {
+			this.sinks.push(source);
+			source.addSource(this);
+		}
 	}
 	addSource(source) {
-		this.sources.push(source);
+		if (!this.sources.includes(source)) {
+			this.sources.push(source);
+			source.addSink(this);
+		}
+
 	}
 	// TODO: finish update and create functions
 	save() {

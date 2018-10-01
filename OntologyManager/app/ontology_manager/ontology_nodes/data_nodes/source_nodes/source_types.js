@@ -9,6 +9,7 @@ SourceTypes.initEnum([
 	'first',
 	'firstWithField',
 	'firstWithFieldValuePair',
+	'id',
 ]);
 
 export default SourceTypes;

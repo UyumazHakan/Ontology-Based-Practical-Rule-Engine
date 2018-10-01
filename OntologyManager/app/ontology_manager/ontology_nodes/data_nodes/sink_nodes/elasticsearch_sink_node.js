@@ -43,6 +43,7 @@ class ElasticsearchSinkNode extends SinkNode {
 			this.executeWithType(body, args.id ? args.id : this.objectId)
 				.then(res => {
 					logger.debug(`Success: ${JSON.stringify(res)}`);
+					this.passToSinks(res);
 				}).catch(err => {
 				logger.debug(`Fail: ${JSON.stringify(err)}`);
 			});
