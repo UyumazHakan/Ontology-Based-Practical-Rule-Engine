@@ -1,21 +1,5 @@
 import 'chai/register-should';
 const winston = require('winston');
-const logger = winston.loggers.add('main', {
-	level: config.get('logger.level'),
-	format: winston.format.json(),
-	transports: [
-		//
-		// - Write to all logs with level `info` and below to `combined.log`
-		// - Write all logs error (and below) to `error.log`.
-		//
-		new winston.transports.File(
-			{filename: `${config.get('logger.dir')}error.log`, level: 'error'}
-		),
-		new winston.transports.File(
-			{filename: `${config.get('logger.dir')}combined.log`}
-		),
-	],
-});
 import DatabaseConnector
 	from '../app/ontology_manager/database_connector/database_connector';
 import ElasticSearchDatabaseConnector
@@ -43,19 +27,51 @@ describe('DatabaseConnector', function() {
 		});
 	});
 	describe('Connection', function() {
-		it('should be alive elastic search with default settings', function() {
-			let connector = new ElasticSearchDatabaseConnector(config.database).should.have
-				.property('isAlive');
+		it('should be alive elastic search with default settings', function(done) {
+			let connector = new ElasticSearchDatabaseConnector(config.database);
+			connector.should.have.property('isAlive');
 			setTimeout(() => {
 				connector.isAlive.should.be.equal(true);
-			}, 3000);
+				done();
+			}, 1000);
 		});
 	});
 	describe('Ping', function() {
 		it('should ping elasticsearch with default settings', function() {
 			let connector = new ElasticSearchDatabaseConnector(config.database);
 			connector.ping(function(err) {
-				err.should.not.exist();
+				if (err) throw Error();
+			});
+		});
+	});
+});
+
+import ElasticsearchSinkNode from '../app/ontology_manager/ontology_nodes/data_nodes/sink_nodes/elasticsearch_sink_node';
+
+describe('OntologyNodes', function() {
+	beforeEach(function() {
+	});
+	describe('SinkNode', function() {
+		describe('ElasticsearchSinkNode', function() {
+			it('should create new object with one field in database', function(done) {
+				this.timeout(15000);
+				let node = new ElasticsearchSinkNode({
+					sinkType: 'create',
+					objectType: 'test_type',
+					field: 'test_field',
+				});
+				node.execute({value: 'test_value'});
+				setTimeout(done, 10000);
+			});
+			it('should create new object with two fields in database', function(done) {
+				this.timeout(15000);
+				let node = new ElasticsearchSinkNode({
+					sinkType: 'create',
+					objectType: 'test_type',
+					field: ['test_field1', 'test_field2'],
+				});
+				 node.execute({value: ['test_value1', 'test_value2']});
+				setTimeout(done, 10000);
 			});
 		});
 	});

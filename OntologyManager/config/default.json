@@ -14,7 +14,7 @@
 	  "level": "error"
 	},
 	"heartbeat": {
-	  "check": true,
+	  "check": false,
 	  "interval": "3600"
 	}
   },

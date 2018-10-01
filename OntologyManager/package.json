@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node --require babel-core/register app/index.js",
     "lint": "eslint .",
-    "test": "NODE_ENV=test;nyc mocha --require babel-core/register"
+    "test": "NODE_ENV=test;mocha --require babel-core/register"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
     "elasticsearch": "^15.1.1",
     "enumify": "^1.0.4",
     "express": "^4.16.3",
+    "uuid": "^3.3.2",
     "winston": "^3.1.0"
   },
   "devDependencies": {

@@ -1,5 +1,8 @@
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
 
+import {loggers} from 'winston';
+let logger = loggers.get('main');
+
 class OntologyNode {
 	constructor(args) {
 		if (new.target === OntologyNode) {
@@ -33,11 +36,11 @@ class OntologyNode {
 
 	}
 	execute(args) {
-
+		logger.debug(`Executing ${JSON.stringify(this)} with ${JSON.stringify(args)}`);
 	}
 	passToSinks(args) {
 		this.sinks.forEach((sink) => sink.execute(args));
 	}
 }
 
-export default Node;
+export default OntologyNode;

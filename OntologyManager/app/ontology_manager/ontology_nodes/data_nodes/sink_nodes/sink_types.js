@@ -6,6 +6,7 @@ SinkType.initEnum([
 	'append',
 	'appendWithTimestamp',
 	'replace',
+	'create',
 ]);
 
 export default SinkType;

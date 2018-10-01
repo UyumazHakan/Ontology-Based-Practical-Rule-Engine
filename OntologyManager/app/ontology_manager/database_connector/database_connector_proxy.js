@@ -20,21 +20,30 @@ class DatabaseConnectorProxy {
 			throw new Error();
 		}
 	}
-	create(...args) {
-		this.connector.create(args);
+	create(args) {
+		logger.debug(`DatabaseConnectorProxy.create(${JSON.stringify(args)})`);
+		return this.connector.create(args);
 	}
-	search(...args) {
-		this.connector.search(args);
+	search(args) {
+		return this.connector.search(args);
 	}
-	update(...args) {
-		this.connector.update(args);
+	update(args) {
+		return this.connector.update(args);
+	}
+	getTypeUUID(args) {
+		return this.connector.getTypeUUID(args);
+	}
+	ping(args) {
+		return this.connector.ping(args);
 	}
 }
 
 function getInstance() {
 	if (instance === null) {
+		console.log('ADASDASD');
 		instance = new DatabaseConnectorProxy();
 	}
+	console.log('DDDD');
 	return instance;
 }
 

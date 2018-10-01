@@ -1,5 +1,5 @@
-import OntologyNode from 'app/ontology_manager/ontology_nodes/ontology_node';
-import SinkTypes from 'sink_types'
+import OntologyNode from '../../ontology_node';
+import SinkTypes from './sink_types';
 
 import {loggers} from 'winston';
 import SinkType from './sink_types';
