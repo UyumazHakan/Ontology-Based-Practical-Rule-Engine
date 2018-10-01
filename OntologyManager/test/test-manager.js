@@ -48,10 +48,13 @@ describe('DatabaseConnector', function() {
 
 import ElasticsearchSinkNode from '../app/ontology_manager/ontology_nodes/data_nodes/sink_nodes/elasticsearch_sink_node';
 import ElasticsearchSourceNode from '../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
-import MapNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node'
+import MapNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
+import ReturnNode from '../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 
 describe('OntologyNodes', function() {
+	let simpleReturnNode = new ReturnNode({});
 	beforeEach(function() {
+		simpleReturnNode.reset();
 	});
 	describe('SinkNode', function() {
 		describe('ElasticsearchSinkNode', function() {
@@ -205,8 +208,12 @@ describe('OntologyNodes', function() {
 				sourceMap: 'from',
 				sinkMap: 'to',
 			});
+			node.addSink(simpleReturnNode);
 			node.execute({
 				from: 'test_value',
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				to: 'test_value',
 			});
 		});
 		it('should map two different field', function() {
@@ -220,9 +227,14 @@ describe('OntologyNodes', function() {
 					'to2',
 				],
 			});
+			node.addSink(simpleReturnNode);
 			node.execute({
 				from1: 'test_value1',
 				from2: 'test_value2',
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				to1: 'test_value1',
+				to2: 'test_value2',
 			});
 		});
 		it('should map drop empty sinks  field', function() {
@@ -236,9 +248,13 @@ describe('OntologyNodes', function() {
 					[],
 				],
 			});
+			node.addSink(simpleReturnNode);
 			node.execute({
 				from1: 'test_value1',
 				toBeEmpty: 'test_value2',
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				to1: 'test_value1',
 			});
 		});
 		it('should map by leaving non-defined sources field', function() {
@@ -250,8 +266,13 @@ describe('OntologyNodes', function() {
 					'to1',
 				],
 			});
+			node.addSink(simpleReturnNode);
 			node.execute({
 				from1: 'test_value1',
+				nonDefined: 'test_value2',
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				to1: 'test_value1',
 				nonDefined: 'test_value2',
 			});
 		});
@@ -267,8 +288,13 @@ describe('OntologyNodes', function() {
 					],
 				],
 			});
+			node.addSink(simpleReturnNode);
 			node.execute({
 				from1: 'test_value1',
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				to1: 'test_value1',
+				to2: 'test_value1',
 			});
 		});
 		it('should map many-to-one field', function() {
@@ -285,10 +311,20 @@ describe('OntologyNodes', function() {
 					],
 				],
 			});
+			node.addSink(simpleReturnNode);
 			node.execute({
 				many1: 'test_value1',
 				many2: 'test_value2',
 			});
+			let value = simpleReturnNode.lastValue;
+
+			value.should.to.deep.equal({
+				one: [
+					'test_value1',
+					'test_value2',
+				],
+			});
 		});
 	});
+
 });

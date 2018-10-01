@@ -64,6 +64,7 @@ class MapNode extends OntologyNode {
 				passValue.append(key, args[key]);
 			}
 		});
+		delete passValue.append;
 		logger.debug(`Mapped ${JSON.stringify(args)} to ${JSON.stringify(passValue)}`)
 		this.passToSinks(passValue);
 	}
