@@ -1,5 +1,6 @@
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
 import * as util from 'util';
+import uuid from 'uuid/v1';
 
 import {loggers} from 'winston';
 let logger = loggers.get('main');
@@ -12,14 +13,19 @@ class OntologyNode {
 			logger.error(errMessage);
 			throw new TypeError(errMessage);
 		}
-		this.id = args.id;
+		this.id = args.id || uuid();
 		this.name = args.name;
 		this.sources = [];
 		this.sinks = [];
-		this.isSaved = args.isSaved ? args.isSaved : false;
+		this.isSaved = args.isSaved || false;
+		this._isUpdated = args._isUpdated || args.isUpdated || false;
+	}
+	get isUpdated() {
+		return this._isUpdated;
 	}
 	addSink(sink) {
 		logger.debug(`Adding sink ${sink} to ${JSON.stringify(util.inspect(this))}`);
+		this._isUpdated = false;
 		if (!this.sources.includes(sink)) {
 			this.sinks.push(sink);
 			sink.addSource(this);
@@ -27,6 +33,7 @@ class OntologyNode {
 	}
 	addSource(source) {
 		logger.debug(`Adding source ${source} to ${JSON.stringify(util.inspect(this))}`);
+		this._isUpdated = false;
 		if (!this.sources.includes(source)) {
 			this.sources.push(source);
 			source.addSink(this);
@@ -34,6 +41,7 @@ class OntologyNode {
 	}
 	removeSink(sink) {
 		logger.debug(`Removing sink ${sink} to ${JSON.stringify(util.inspect(this))}`);
+		this._isUpdated = false;
 		if (this.sources.includes(sink)) {
 			this.sinks.splice(this.sinks.indexOf(sink), 1);
 			sink.removeSource(this);
@@ -41,6 +49,7 @@ class OntologyNode {
 	}
 	removeSource(source) {
 		logger.debug(`Removing source ${source} to ${JSON.stringify(util.inspect(this))}`);
+		this._isUpdated = false;
 		if (!this.sources.includes(source)) {
 			this.sources.push(this.sources.indexOf(source), 1);
 			source.removeSink(this);
@@ -48,11 +57,21 @@ class OntologyNode {
 	}
 	// TODO: finish update and create functions
 	save() {
-		let saveObject = JSON.stringify(this);
-		if (this.isSaved) {
-			DatabaseConnectorProxy.update();
-		} else {
-			DatabaseConnectorProxy.create();
+		let saveObject = JSON.parse(JSON.stringify(this));
+		saveObject.sinks = this.sinks.map((node) => node.id);
+		saveObject.sources = this.sources.map((node) => node.id);
+		if (!this.isSaved) {
+			DatabaseConnectorProxy.create({
+				index: 'node',
+				type: 'nodeType',
+				body: saveObject,
+			}).then((res) => {
+				logger.debug(`Node saving is successful. ${res}`);
+				this.isSaved = true;
+				this._isUpdated = true;
+			}).catch((err) => {
+				logger.debug(`Node saving is failed. ${err}`);
+			});
 		}
 	}
 	load() {

@@ -1,5 +1,4 @@
 import 'chai/register-should';
-const winston = require('winston');
 import DatabaseConnector
 	from '../app/ontology_manager/database_connector/database_connector';
 import ElasticSearchDatabaseConnector
@@ -50,6 +49,7 @@ import ElasticsearchSinkNode from '../app/ontology_manager/ontology_nodes/data_n
 import ElasticsearchSourceNode from '../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
 import MapNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
 import FilterNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
+import ReduceNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
 import ReturnNode from '../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 
 describe('OntologyNodes', function() {
@@ -477,6 +477,53 @@ describe('OntologyNodes', function() {
 				test_field1: [4, 5, 1],
 				test_field2: [4, 5, 6],
 				test_field3: [4, 5, 6],
+			});
+		});
+
+	});
+	describe('ReduceNode', function() {
+		it('should reduce only one default field', function() {
+			let node = new ReduceNode({
+				field: 'test_field',
+				reduceFunction: ((acc, cur) => (acc + cur)),
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field: [4, 5, 1],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field: 10,
+			});
+		});
+		it('should reduce multiple default field', function() {
+			let node = new ReduceNode({
+				field: ['test_field1', 'test_field2'],
+				reduceFunction: ((acc, cur) => (acc + cur)),
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field1: 10,
+				test_field2: 15,
+			});
+		});
+		it('should reduce multiple default field with initial value', function() {
+			let node = new ReduceNode({
+				field: ['test_field1', 'test_field2'],
+				initial: 2,
+				reduceFunction: ((acc, cur) => (acc + cur)),
+			});
+			node.addSink(simpleReturnNode);
+			node.execute({
+				test_field1: [4, 5, 1],
+				test_field2: [4, 5, 6],
+			});
+			simpleReturnNode.lastValue.should.deep.equal({
+				test_field1: 12,
+				test_field2: 17,
 			});
 		});
 	});

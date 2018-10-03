@@ -5,10 +5,6 @@ const logger = winston.loggers.add('main', {
 	level: config.get('logger.level'),
 	format: winston.format.json(),
 	transports: [
-		//
-		// - Write to all logs with level `info` and below to `combined.log`
-		// - Write all logs error (and below) to `error.log`.
-		//
 		new winston.transports.File(
 			{filename: `${config.get('logger.dir')}error.log`, level: 'error'}
 		),

@@ -40,10 +40,8 @@ class DatabaseConnectorProxy {
 
 function getInstance() {
 	if (instance === null) {
-		console.log('ADASDASD');
 		instance = new DatabaseConnectorProxy();
 	}
-	console.log('DDDD');
 	return instance;
 }
 

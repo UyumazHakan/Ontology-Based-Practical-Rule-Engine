@@ -10,7 +10,7 @@ class FilterNode extends OntologyNode {
 		this.filterFunction = args.filterFunction;
 	}
 	set filterFunction(filter) {
-		if (typeof filter === 'function') {
+		if (filter && typeof filter === 'function') {
 			this.mFilterFunction = filter;
 		} else {
 			logger.error(`${filter} is not a function`);
