@@ -1,5 +1,6 @@
 import OntologyNode from '../ontology_node';
 import {loggers} from 'winston';
+import {deserialize} from '../../../utils';
 
 const logger = loggers.get('main');
 
@@ -11,7 +12,7 @@ class MapNode extends OntologyNode {
 			logger.error(err);
 			throw Error(err);
 		}
-		this.mapFunction = args.mapFunction;
+		this.fn = args.fn;
 		this.keepSource = args.keepSource || false;
 		if (
 			args.sourceMap instanceof Array &&
@@ -34,19 +35,21 @@ class MapNode extends OntologyNode {
 			throw TypeError;
 		}
 	}
-	set mapFunction(map) {
-		if (!map) {
-			this._mapFunction = (args) => args;
+	set fn(args) {
+		if (!args) {
+			this.mFn = (args) => args;
 			return;
 		}
-		if (typeof map === 'function') {
-			this._mapFunction = map;
+		if (typeof args === 'function') {
+			this.mFn = args;
+		} else if (typeof args === 'string') {
+			this.mFn = deserialize(args).fn;
 		} else {
-			logger.error(`${map} is not a function`);
+			logger.error(`${args} is not a function`);
 		}
 	}
-	get mapFunction() {
-		return this._mapFunction;
+	get fn() {
+		return this.mFn;
 	}
 	get map() {
 		let map = {};
@@ -65,8 +68,8 @@ class MapNode extends OntologyNode {
 		super.execute(args);
 		let passValue = {};
 		passValue.append = (key, value) => {
-			if (value instanceof Array) value = value.map(this.mapFunction);
-			else value = this.mapFunction(value);
+			if (value instanceof Array) value = value.map(this.fn);
+			else value = this.fn(value);
 			if (!passValue[key]) {
 				passValue[key] = value;
 			} else if (passValue[key] instanceof Array) {

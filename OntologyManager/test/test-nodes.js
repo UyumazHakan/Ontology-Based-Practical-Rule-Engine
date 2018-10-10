@@ -245,7 +245,7 @@ describe('OntologyNodes', function() {
 			let node = new MapNode({
 				sourceMap: ['from1'],
 				sinkMap: [['to1', 'to2']],
-				mapFunction: (args) => 'mapped',
+				fn: (args) => 'mapped',
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -261,7 +261,7 @@ describe('OntologyNodes', function() {
 				sourceMap: [['many1', 'many2']],
 				sinkMap: [['one']],
 
-				mapFunction: (args) => 'mapped',
+				fn: (args) => 'mapped',
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -279,7 +279,7 @@ describe('OntologyNodes', function() {
 		it('should filter only one default field', function() {
 			let node = new FilterNode({
 				field: 'test_field',
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -291,7 +291,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should filter only one field', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -305,7 +305,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should not filter non-given field', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: 'test_field1',
 			});
 			node.addSink(simpleReturnNode);
@@ -322,7 +322,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should filter two default field', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: ['test_field1', 'test_field2'],
 			});
 			node.addSink(simpleReturnNode);
@@ -337,7 +337,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should filter two field', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -353,7 +353,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should filter overwritten default field', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: ['test_field1', 'test_field2'],
 			});
 			node.addSink(simpleReturnNode);
@@ -372,7 +372,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should filter overwriten default fields with new one field', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: ['test_field1', 'test_field2'],
 			});
 			node.addSink(simpleReturnNode);
@@ -391,7 +391,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should filter overwritten default field with new multiple fields', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: 'test_field1',
 			});
 			node.addSink(simpleReturnNode);
@@ -410,7 +410,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should not fail for non-existing fields', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: 'nonExisting',
 			});
 			node.addSink(simpleReturnNode);
@@ -427,7 +427,7 @@ describe('OntologyNodes', function() {
 		});
 		it('should saveNode itself', function() {
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: 'nonExisting',
 			});
 			node.addSink(simpleReturnNode);
@@ -436,7 +436,7 @@ describe('OntologyNodes', function() {
 		it('should loadNode saved  object', function() {
 			this.timeout(3000);
 			let node = new FilterNode({
-				filter: (value) => value > 4,
+				fn: (value) => value > 4,
 				field: 'nonExisting',
 			});
 
@@ -451,7 +451,7 @@ describe('OntologyNodes', function() {
 					})
 						.then(resolve)
 						.catch(reject);
-				}, 1000);
+				}, 2000);
 			}).should.eventually.be.like({
 				id: node.id,
 				name: node.name,
@@ -463,7 +463,7 @@ describe('OntologyNodes', function() {
 		it('should reduce only one default field', function() {
 			let node = new ReduceNode({
 				field: 'test_field',
-				reduceFunction: (acc, cur) => acc + cur,
+				fn: (acc, cur) => acc + cur,
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -476,7 +476,7 @@ describe('OntologyNodes', function() {
 		it('should reduce multiple default field', function() {
 			let node = new ReduceNode({
 				field: ['test_field1', 'test_field2'],
-				reduceFunction: (acc, cur) => acc + cur,
+				fn: (acc, cur) => acc + cur,
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({
@@ -492,7 +492,7 @@ describe('OntologyNodes', function() {
 			let node = new ReduceNode({
 				field: ['test_field1', 'test_field2'],
 				initial: 2,
-				reduceFunction: (acc, cur) => acc + cur,
+				fn: (acc, cur) => acc + cur,
 			});
 			node.addSink(simpleReturnNode);
 			node.execute({

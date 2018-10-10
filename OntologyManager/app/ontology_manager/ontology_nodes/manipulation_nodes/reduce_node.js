@@ -1,5 +1,7 @@
 import OntologyNode from '../ontology_node';
 import {loggers} from 'winston';
+import {deserialize} from '../../../utils';
+import serialize from 'serialize-javascript';
 
 const logger = loggers.get('main');
 
@@ -8,17 +10,24 @@ class ReduceNode extends OntologyNode {
 		super(args);
 		this.field = args.field;
 		if (args.initial) this.initial = args.initial;
-		this.reduceFunction = args.reduceFunction;
+		this.fn = args.fn;
 	}
-	set reduceFunction(reduce) {
-		if (typeof reduce === 'function') {
-			this.mReduceFunction = reduce;
+	set fn(args) {
+		if (args && typeof args === 'function') {
+			this.mFn = args;
+		} else if (typeof args === 'string') {
+			this.mFn = deserialize(args).fn;
 		} else {
-			logger.error(`${reduce} is not a function`);
+			logger.error(`${args} is not a function`);
 		}
 	}
-	get reduceFunction() {
-		return this.mReduceFunction;
+	get fn() {
+		return this.mFn;
+	}
+	saveNode() {
+		super.saveNode({
+			fn: serialize({fn: this.mFn}),
+		});
 	}
 	execute(args) {
 		super.execute(args);
@@ -27,8 +36,8 @@ class ReduceNode extends OntologyNode {
 			if (!args[field]) return;
 			else if (args[field] instanceof Array) {
 				args[field] = this.initial ?
-					args[field].reduce(this.reduceFunction, this.initial) :
-					args[field].reduce(this.reduceFunction);
+					args[field].reduce(this.fn, this.initial) :
+					args[field].reduce(this.fn);
 			} else {
 				const err = `${args} does not have ${field} as an array`;
 				logger.error(err);

@@ -9,23 +9,23 @@ class FilterNode extends OntologyNode {
 	constructor(args) {
 		super(args);
 		this.field = args.field;
-		this.filterFunction = args.filter;
+		this.fn = args.fn;
 	}
-	set filterFunction(filter) {
-		if (filter && typeof filter === 'function') {
-			this.mFilterFunction = filter;
-		} else if (typeof filter === 'string') {
-			this.mFilterFunction = deserialize(filter).fn;
+	set fn(args) {
+		if (args && typeof args === 'function') {
+			this.mFn = args;
+		} else if (typeof args === 'string') {
+			this.mFn = deserialize(args).fn;
 		} else {
-			logger.error(`${filter} is not a function`);
+			logger.error(`${args} is not a function`);
 		}
 	}
-	get filterFunction() {
-		return this.mFilterFunction;
+	get fn() {
+		return this.mFn;
 	}
 	saveNode() {
 		super.saveNode({
-			filter: serialize({fn: this.mFilterFunction}),
+			fn: serialize({fn: this.mFn}),
 		});
 	}
 	execute(args) {
@@ -34,7 +34,7 @@ class FilterNode extends OntologyNode {
 		let executeImp = (field) => {
 			if (!args[field]) return;
 			else if (args[field] instanceof Array) {
-				args[field] = args[field].filter(this.filterFunction);
+				args[field] = args[field].filter(this.fn);
 			} else {
 				const err = `${args} does not have ${field} as an array`;
 				logger.error(err);
