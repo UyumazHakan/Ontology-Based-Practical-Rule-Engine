@@ -11,27 +11,49 @@ class MapNode extends OntologyNode {
 			logger.error(err);
 			throw Error(err);
 		}
-		if (args.sourceMap instanceof Array && args.sinkMap instanceof Array &&
-			args.sourceMap.length === args.sinkMap.length) {
+		this.mapFunction = args.mapFunction;
+		this.keepSource = args.keepSource || false;
+		if (
+			args.sourceMap instanceof Array &&
+			args.sinkMap instanceof Array &&
+			args.sourceMap.length === args.sinkMap.length
+		) {
 			this.sourceMap = args.sourceMap;
 			this.sinkMap = args.sinkMap;
-		} else if (!(args.sourceMap instanceof Array) &&
-			!(args.sinkMap instanceof Array)) {
+		} else if (
+			!(args.sourceMap instanceof Array) &&
+			!(args.sinkMap instanceof Array)
+		) {
 			this.sourceMap = [args.sourceMap];
 			this.sinkMap = [args.sinkMap];
 		} else {
 			logger.error(
 				`${args.sourceMap} has not same number of element with ${args.sinkMap}
-				`);
+				`
+			);
 			throw TypeError;
 		}
+	}
+	set mapFunction(map) {
+		if (!map) {
+			this._mapFunction = (args) => args;
+			return;
+		}
+		if (typeof map === 'function') {
+			this._mapFunction = map;
+		} else {
+			logger.error(`${map} is not a function`);
+		}
+	}
+	get mapFunction() {
+		return this._mapFunction;
 	}
 	get map() {
 		let map = {};
 		this.sourceMap.forEach((element, i) => {
 			if (element instanceof Array) {
-				element.forEach((nestedElement) =>
-					map[nestedElement] = this.sinkMap[i]
+				element.forEach(
+					(nestedElement) => (map[nestedElement] = this.sinkMap[i])
 				);
 			} else {
 				map[element] = this.sinkMap[i];
@@ -43,6 +65,8 @@ class MapNode extends OntologyNode {
 		super.execute(args);
 		let passValue = {};
 		passValue.append = (key, value) => {
+			if (value instanceof Array) value = value.map(this.mapFunction);
+			else value = this.mapFunction(value);
 			if (!passValue[key]) {
 				passValue[key] = value;
 			} else if (passValue[key] instanceof Array) {
@@ -60,12 +84,15 @@ class MapNode extends OntologyNode {
 				} else {
 					passValue.append(this.map[key], args[key]);
 				}
-			} else {
+			}
+			if (!this.map[key] || this.keepSource) {
 				passValue.append(key, args[key]);
 			}
 		});
 		delete passValue.append;
-		logger.debug(`Mapped ${JSON.stringify(args)} to ${JSON.stringify(passValue)}`)
+		logger.debug(
+			`Mapped ${JSON.stringify(args)} to ${JSON.stringify(passValue)}`
+		);
 		this.passToSinks(passValue);
 	}
 }

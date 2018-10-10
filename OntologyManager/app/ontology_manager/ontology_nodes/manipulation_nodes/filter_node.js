@@ -1,5 +1,7 @@
 import OntologyNode from '../ontology_node';
 import {loggers} from 'winston';
+import serialize from 'serialize-javascript';
+import {deserialize} from '../../../utils';
 
 const logger = loggers.get('main');
 
@@ -7,17 +9,24 @@ class FilterNode extends OntologyNode {
 	constructor(args) {
 		super(args);
 		this.field = args.field;
-		this.filterFunction = args.filterFunction;
+		this.filterFunction = args.filter;
 	}
 	set filterFunction(filter) {
 		if (filter && typeof filter === 'function') {
 			this.mFilterFunction = filter;
+		} else if (typeof filter === 'string') {
+			this.mFilterFunction = deserialize(filter).fn;
 		} else {
 			logger.error(`${filter} is not a function`);
 		}
 	}
 	get filterFunction() {
 		return this.mFilterFunction;
+	}
+	saveNode() {
+		super.saveNode({
+			filter: serialize({fn: this.mFilterFunction}),
+		});
 	}
 	execute(args) {
 		super.execute(args);
