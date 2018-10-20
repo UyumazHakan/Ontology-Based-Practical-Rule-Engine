@@ -6,13 +6,13 @@ chai.use(chaiLike);
 chai.use(chaiExclude);
 chai.use(chaiAsPromised);
 import 'chai/register-should';
-import Ontology from '../app/ontology_manager/ontology/ontology';
-import ReturnNode from '../app/ontology_manager/ontology_nodes/test_nodes/return_node';
-import MapNode from '../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
-import OntologyRule from '../app/ontology_manager/ontology/ontology_rule';
+import Ontology from '../../app/ontology_manager/ontology/ontology';
+import ReturnNode from '../../app/ontology_manager/ontology_nodes/test_nodes/return_node';
+import MapNode from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
+import OntologyRule from '../../app/ontology_manager/ontology/ontology_rule';
 import ReduceNode
-	from '../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
-import {loadOntology} from '../app/ontology_manager/ontology/ontology_load';
+	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
+import {loadOntology} from '../../app/ontology_manager/ontology/ontology_load';
 
 describe('Ontology', function() {
 	let simpleReturnNode = new ReturnNode({});

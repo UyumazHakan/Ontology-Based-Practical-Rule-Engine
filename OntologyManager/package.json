@@ -4,7 +4,9 @@
   "author": "Hakan Uyumaz",
   "main": "app/index.js",
   "scripts": {
-    "start": "node --require babel-core/register app/index.js",
+    "build": "babel ./ --out-dir dist/ --ignore ./node_modules",
+    "start": "node dist/app/index.js",
+    "dev": "NODE_ENV=development node $NODE_DEBUG_OPTION --require @babel/register app/index.js",
     "lint": "eslint .",
     "test": "NODE_ENV=test;mocha --require babel-core/register"
   },
@@ -29,10 +31,9 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "chai-exclude": "^1.0.9",

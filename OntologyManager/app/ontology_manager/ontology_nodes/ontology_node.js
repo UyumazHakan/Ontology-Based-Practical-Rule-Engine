@@ -80,9 +80,11 @@ class OntologyNode {
 					logger.debug(`Node saving is successful. ${res}`);
 					this.isSaved = true;
 					this._isUpdated = true;
+					if (args.callback) args.callback(null, res);
 				})
 				.catch((err) => {
 					logger.debug(`Node saving is failed. ${err}`);
+					if (args.callback) args.callback(err, null);
 				});
 		}
 	}

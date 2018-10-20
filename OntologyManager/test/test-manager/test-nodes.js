@@ -7,18 +7,18 @@ chai.use(chaiExclude);
 chai.use(chaiAsPromised);
 import 'chai/register-should';
 import ReturnNode
-	from '../app/ontology_manager/ontology_nodes/test_nodes/return_node';
+	from '../../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 import ElasticsearchSinkNode
-	from '../app/ontology_manager/ontology_nodes/data_nodes/sink_nodes/elasticsearch_sink_node';
+	from '../../app/ontology_manager/ontology_nodes/data_nodes/sink_nodes/elasticsearch_sink_node';
 import ElasticsearchSourceNode
-	from '../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
+	from '../../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
 import MapNode
-	from '../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
+	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
 import FilterNode
-	from '../app/ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
-import {loadNode} from '../app/ontology_manager/ontology/ontology_load';
+	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
+import {loadNode} from '../../app/ontology_manager/ontology/ontology_load';
 import ReduceNode
-	from '../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
+	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
 
 describe('OntologyNodes', function() {
 	let simpleReturnNode = new ReturnNode({});

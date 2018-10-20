@@ -23,10 +23,10 @@ class FilterNode extends OntologyNode {
 	get fn() {
 		return this.mFn;
 	}
-	saveNode() {
-		super.saveNode({
-			fn: serialize({fn: this.mFn}),
-		});
+	saveNode(args) {
+		if (!args) args = {};
+		args.fn = serialize({fn: this.mFn});
+		super.saveNode(args);
 	}
 	execute(args) {
 		super.execute(args);

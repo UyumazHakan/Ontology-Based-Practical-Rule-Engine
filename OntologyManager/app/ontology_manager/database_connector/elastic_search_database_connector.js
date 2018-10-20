@@ -28,7 +28,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 		logger.debug(`ping(callback)`);
 		logger.debug(this.client);
 		this.client.ping({
-			requestTimeout: 1000,
+			requestTimeout: 5000,
 		}, (error) => {
 			if (error) {
 				logger.error('Could not ping elasticsearch');

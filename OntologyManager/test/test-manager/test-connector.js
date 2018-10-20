@@ -7,10 +7,10 @@ chai.use(chaiExclude);
 chai.use(chaiAsPromised);
 import 'chai/register-should';
 import DatabaseConnector
-	from '../app/ontology_manager/database_connector/database_connector';
+	from '../../app/ontology_manager/database_connector/database_connector';
 import config from 'config';
 import ElasticSearchDatabaseConnector
-	from '../app/ontology_manager/database_connector/elastic_search_database_connector';
+	from '../../app/ontology_manager/database_connector/elastic_search_database_connector';
 describe('DatabaseConnector', function() {
 	describe('Creation', function() {
 		it('should throw error when creating base connector', function() {
