@@ -7,6 +7,7 @@
     "build": "babel ./ --out-dir dist/ --ignore ./node_modules",
     "start": "node dist/app/index.js",
     "dev": "NODE_ENV=development node $NODE_DEBUG_OPTION --require @babel/register app/index.js",
+	"jsdoc": "jsdoc app -d jsdoc -r",
     "lint": "eslint .",
     "test": "NODE_ENV=test;mocha --require babel-core/register"
   },
@@ -41,6 +42,7 @@
     "eslint": "^5.5.0",
     "eslint-config-google": "^0.9.1",
     "esm": "^3.0.84",
+    "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1"
   }
