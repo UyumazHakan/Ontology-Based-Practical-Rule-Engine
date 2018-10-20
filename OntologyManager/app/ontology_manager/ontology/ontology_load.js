@@ -8,9 +8,16 @@ let logger = loggers.get('main');
 let nodeCache = {};
 let ruleCache = {};
 let ontologyCache = {};
+
+/**
+ * Loads a node from database or cache
+ * @param {Object} args All arguments
+ * @param {string} args.id Id of node to be loaded
+ * @return {Promise<any>} Resolves node
+ */
 export function loadNode(args) {
-	if (!args.id) reject('ID not defined in arguments');
 	return new Promise((resolve, reject) => {
+		if (!args.id) reject('ID not defined in arguments');
 		if (nodeCache[args.id] !== undefined) {
 			logger.debug(`Node ${args.id} is found in cache`);
 			resolve(nodeCache[args.id]);
@@ -64,6 +71,12 @@ export function loadNode(args) {
 			});
 	});
 }
+/**
+ * Loads a rule and its nodes from database or cache
+ * @param {Object} args All arguments
+ * @param {string} args.id Id of rule to be loaded
+ * @return {Promise<any>} Resolves rule
+ */
 export function loadRule(args) {
 	return new Promise((resolve, reject) => {
 		if (!args.id) reject('ID not defined in arguments');
@@ -123,6 +136,12 @@ export function loadRule(args) {
 			});
 	});
 }
+/**
+ * Loads a ontology and its rules from database or cache
+ * @param {Object} args All arguments
+ * @param {string} args.id Id of ontology to be loaded
+ * @return {Promise<any>} Resolves ontology
+ */
 export function loadOntology(args) {
 	return new Promise((resolve, reject) => {
 		if (!args.id) reject('ID not defined in arguments');
@@ -161,16 +180,16 @@ export function loadOntology(args) {
 				delete ontologyInfo.rules;
 				let ontology = new Ontology(ontologyInfo);
 				ontologyCache[ontologyInfo.id] = ontology;
-				Promise.all(
-					ontologyRules.map((rule) => loadRule({id: rule}))
-				).then((rules) => {
-					rules.forEach((rule) => {
-						ontology.addRule(rule);
-					});
-					ontology._isUpdated = true;
-					resolve(ontology);
-					return;
-				});
+				Promise.all(ontologyRules.map((rule) => loadRule({id: rule}))).then(
+					(rules) => {
+						rules.forEach((rule) => {
+							ontology.addRule(rule);
+						});
+						ontology._isUpdated = true;
+						resolve(ontology);
+						return;
+					}
+				);
 			})
 			.catch((err) => {
 				logger.error(`Ontology loading is failed. ${err}`);
