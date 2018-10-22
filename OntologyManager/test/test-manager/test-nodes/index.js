@@ -7,47 +7,21 @@ chai.use(chaiExclude);
 chai.use(chaiAsPromised);
 import 'chai/register-should';
 import ReturnNode
-	from '../../app/ontology_manager/ontology_nodes/test_nodes/return_node';
-import ElasticsearchSinkNode
-	from '../../app/ontology_manager/ontology_nodes/data_nodes/sink_nodes/elasticsearch_sink_node';
+	from '../../../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 import ElasticsearchSourceNode
-	from '../../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
+	from '../../../app/ontology_manager/ontology_nodes/data_nodes/source_nodes/elasticsearch_source_node';
 import MapNode
-	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
+	from '../../../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
 import FilterNode
-	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
-import {loadNode} from '../../app/ontology_manager/ontology/ontology_load';
+	from '../../../app/ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
+import {loadNode} from '../../../app/ontology_manager/ontology/ontology_load';
 import ReduceNode
-	from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
+	from '../../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
 
 describe('OntologyNodes', function() {
 	let simpleReturnNode = new ReturnNode({});
 	beforeEach(function() {
 		simpleReturnNode.reset();
-	});
-	describe('SinkNode', function() {
-		describe('ElasticsearchSinkNode', function() {
-			it('should create new object with one field in database', function(done) {
-				this.timeout(15000);
-				let node = new ElasticsearchSinkNode({
-					sinkType: 'create',
-					objectType: 'test_type',
-					field: 'test_field',
-				});
-				node.execute({value: 'test_value'});
-				setTimeout(done, 10000);
-			});
-			it('should create new object with two fields in database', function(done) {
-				this.timeout(15000);
-				let node = new ElasticsearchSinkNode({
-					sinkType: 'create',
-					objectType: 'test_type',
-					field: ['test_field1', 'test_field2'],
-				});
-				node.execute({value: ['test_value1', 'test_value2']});
-				setTimeout(done, 10000);
-			});
-		});
 	});
 	describe('SourceNode', function() {
 		describe('ElasticsearchSourceNode', function() {

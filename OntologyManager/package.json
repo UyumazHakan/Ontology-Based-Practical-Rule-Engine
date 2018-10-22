@@ -7,7 +7,7 @@
     "build": "babel ./ --out-dir dist/ --ignore ./node_modules",
     "start": "node dist/app/index.js",
     "dev": "NODE_ENV=development node $NODE_DEBUG_OPTION --require @babel/register app/index.js",
-	"jsdoc": "jsdoc app -d jsdoc -r",
+    "jsdoc": "jsdoc app -d jsdoc -r",
     "lint": "eslint .",
     "test": "NODE_ENV=test;mocha --require babel-core/register"
   },
@@ -27,6 +27,7 @@
     "elasticsearch": "^15.1.1",
     "enumify": "^1.0.4",
     "express": "^4.16.3",
+    "mqtt": "^2.18.8",
     "serialize-javascript": "^1.5.0",
     "uuid": "^3.3.2",
     "winston": "^3.1.0"
