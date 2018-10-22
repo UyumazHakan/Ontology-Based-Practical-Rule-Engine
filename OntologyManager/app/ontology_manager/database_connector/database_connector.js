@@ -24,7 +24,7 @@ class DatabaseConnector {
 			logger.error(errMessage);
 			throw new TypeError(errMessage);
 		}
-		this.isAlive = false;
+		this.isAlive = true; // Assuming database is alive
 		this.host = config.host;
 		this.port = config.port;
 		this.logLevel = config.logger.level;

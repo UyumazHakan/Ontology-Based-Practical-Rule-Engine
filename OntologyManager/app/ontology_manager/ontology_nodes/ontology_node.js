@@ -105,6 +105,7 @@ class OntologyNode {
 		);
 	}
 	passToSinks(args) {
+		if (args.callback) args.callback(args);
 		this.sinks.forEach((sink) => sink.execute(clone(args)));
 	}
 }

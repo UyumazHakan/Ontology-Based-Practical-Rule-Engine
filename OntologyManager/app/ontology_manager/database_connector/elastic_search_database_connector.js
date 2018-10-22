@@ -14,6 +14,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 * Creates connection with Elasticsearch database
 	 */
 	connect() {
+		logger.debug('ElasticSearchDatabaseConnector()')
 		this.client = new elasticsearch.Client({
 			host: `${this.host}:${this.port}`,
 			log: this.logLevel,
@@ -28,6 +29,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	ping(callback) {
 		logger.debug(`ping(callback)`);
 		logger.debug(this.client);
+		if(!this.heartbeat) return;
 		this.client.ping(
 			{
 				requestTimeout: 5000,

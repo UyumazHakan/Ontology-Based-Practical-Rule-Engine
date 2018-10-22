@@ -14,6 +14,7 @@ class DatabaseConnectorProxy {
 	 * Creates DatabaseConnecterProxy with config file
 	 */
 	constructor() {
+		logger.debug("DatabaseConnectorProxy()")
 		let config = _config.database;
 		if (config === undefined) {
 			logger.error('Need to have configuration to create the instance');
