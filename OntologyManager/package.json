@@ -7,7 +7,7 @@
     "build": "babel ./ --out-dir dist/ --ignore ./node_modules",
     "start": "node dist/app/index.js",
     "dev": "NODE_ENV=development node $NODE_DEBUG_OPTION --require @babel/register app/index.js",
-    "jsdoc": "jsdoc app -d jsdoc -r",
+    "jsdoc": "rm -rf jsdoc && jsdoc app -d jsdoc -r",
     "lint": "eslint .",
     "test": "NODE_ENV=test;mocha --require babel-core/register"
   },
