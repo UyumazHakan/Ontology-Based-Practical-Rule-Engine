@@ -6,11 +6,9 @@ chai.use(chaiLike);
 chai.use(chaiExclude);
 chai.use(chaiAsPromised);
 import 'chai/register-should';
-import DatabaseConnector
-	from '../../app/ontology_manager/database_connector/database_connector';
+import DatabaseConnector from '../../app/ontology_manager/database_connector/database_connector';
 import config from 'config';
-import ElasticSearchDatabaseConnector
-	from '../../app/ontology_manager/database_connector/elastic_search_database_connector';
+import ElasticSearchDatabaseConnector from '../../app/ontology_manager/database_connector/elastic_search_database_connector';
 describe('DatabaseConnector', function() {
 	describe('Creation', function() {
 		it('should throw error when creating base connector', function() {
@@ -21,7 +19,7 @@ describe('DatabaseConnector', function() {
 		});
 		it(
 			'should create a elasticsearch connector object with default' +
-			' settings',
+				' settings',
 			function() {
 				let fn = function() {
 					new ElasticSearchDatabaseConnector(config.database);
@@ -48,4 +46,4 @@ describe('DatabaseConnector', function() {
 			});
 		});
 	});
-})
+});

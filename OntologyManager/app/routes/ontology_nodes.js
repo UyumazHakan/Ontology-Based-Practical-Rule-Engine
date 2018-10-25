@@ -53,7 +53,7 @@ router.get('/', function(req, res) {
 		})
 		.catch((err) => res.status(500).send(err));
 });
-router.get('/:node_id', function(req,res){
+router.get('/:node_id', function(req, res) {
 	res.json(req.node);
 });
 router.post('/:node_id/add_sink', function(req, res) {

@@ -1,5 +1,4 @@
-import DatabaseConnectorProxy
-	from './ontology_manager/database_connector/database_connector_proxy';
+import DatabaseConnectorProxy from './ontology_manager/database_connector/database_connector_proxy';
 import OntologyManagerRouter from './routes/ontology_manager';
 import config from 'config';
 import {loggers} from 'winston';
@@ -10,7 +9,6 @@ const app = express();
 
 app.use('/manager', OntologyManagerRouter);
 
-logger.debug("Application configuration is done");
-
+logger.debug('Application configuration is done');
 
 module.exports = app;

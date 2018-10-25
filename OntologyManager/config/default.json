@@ -1,22 +1,22 @@
 {
-  "logger": {
-    "dir": "./logs/",
-    "level": "silly"
-  },
-  "app":{
-	"port": 3000
-  },
-  "database":{
-	"type": "elasticsearch",
-	"host": "localhost",
-	"port": "9200",
 	"logger": {
-	  "level": "error"
+		"dir": "./logs/",
+		"level": "silly"
 	},
-	"heartbeat": {
-	  "check": false,
-	  "interval": "3600"
-	}
-  },
-  "max_workers": "-1"
+	"app": {
+		"port": 3000
+	},
+	"database": {
+		"type": "elasticsearch",
+		"host": "localhost",
+		"port": "9200",
+		"logger": {
+			"level": "error"
+		},
+		"heartbeat": {
+			"check": false,
+			"interval": "3600"
+		}
+	},
+	"max_workers": "-1"
 }

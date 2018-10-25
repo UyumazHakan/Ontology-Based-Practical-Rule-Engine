@@ -35,9 +35,9 @@ class ReduceNode extends OntologyNode {
 		let executeImp = (field) => {
 			if (!args[field]) return;
 			else if (args[field] instanceof Array) {
-				args[field] = this.initial ?
-					args[field].reduce(this.fn, this.initial) :
-					args[field].reduce(this.fn);
+				args[field] = this.initial
+					? args[field].reduce(this.fn, this.initial)
+					: args[field].reduce(this.fn);
 			} else {
 				const err = `${args} does not have ${field} as an array`;
 				logger.error(err);

@@ -62,4 +62,3 @@ export function subscribe(args, callback) {
 		callback: args.callback || callback,
 	});
 }
-

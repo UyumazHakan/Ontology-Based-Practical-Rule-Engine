@@ -1,8 +1,7 @@
 import SourceNode from './source_node';
 
 import {loggers} from 'winston';
-import DatabaseConnectorProxy
-	from '../../../database_connector/database_connector_proxy';
+import DatabaseConnectorProxy from '../../../database_connector/database_connector_proxy';
 import SourceTypes from './source_types';
 const logger = loggers.get('main');
 
@@ -35,30 +34,32 @@ class ElasticsearchSourceNode extends SourceNode {
 					],
 				},
 			};
-			this.executeWithType(args).then((resp) => {
-				logger.debug(`Success: ${JSON.stringify(resp)}`);
-				const hits = resp.hits.hits;
-				let passValue = {};
-				hits.forEach((hit, i) => {
-					let passHit = {};
-					passHit.id = hit._id;
-					passHit.type = hit._source.type;
-					delete hit._source.type;
-					Object.keys(hit._source).forEach((key) =>
-						passHit[key] = hit._source[key]
-					);
-					passValue[i] = passHit;
+			this.executeWithType(args)
+				.then((resp) => {
+					logger.debug(`Success: ${JSON.stringify(resp)}`);
+					const hits = resp.hits.hits;
+					let passValue = {};
+					hits.forEach((hit, i) => {
+						let passHit = {};
+						passHit.id = hit._id;
+						passHit.type = hit._source.type;
+						delete hit._source.type;
+						Object.keys(hit._source).forEach(
+							(key) => (passHit[key] = hit._source[key])
+						);
+						passValue[i] = passHit;
+					});
+					passValue.total = hits.total;
+					if (hits.length === 1) {
+						Object.keys(passValue[0]).forEach(
+							(key) => (passValue[key] = passValue[0][key])
+						);
+					}
+					this.passToSinks(passValue);
+				})
+				.catch((err) => {
+					logger.error(`Fail: ${JSON.stringify(err)}`);
 				});
-				passValue.total = hits.total;
-				if (hits.length === 1) {
-					Object.keys(passValue[0]).forEach((key) =>
-						passValue[key] = passValue[0][key]
-					);
-				}
-				this.passToSinks(passValue);
-			}).catch((err) => {
-				logger.error(`Fail: ${JSON.stringify(err)}`);
-			});
 		};
 		if (this.objectTypeUUID) {
 			executeImp(this);
@@ -66,13 +67,15 @@ class ElasticsearchSourceNode extends SourceNode {
 			logger.debug(`UUID search starts for ${this.objectType}`);
 			DatabaseConnectorProxy.getTypeUUID({
 				objectType: this.objectType,
-			}).then((resp) => {
-				logger.debug(`UUID Success: ${JSON.stringify(resp)}`);
-				this.objectTypeUUID = resp;
-				executeImp();
-			}).catch((err) => {
-				logger.error(`UUID Fail: ${JSON.stringify(err)}`);
-			});
+			})
+				.then((resp) => {
+					logger.debug(`UUID Success: ${JSON.stringify(resp)}`);
+					this.objectTypeUUID = resp;
+					executeImp();
+				})
+				.catch((err) => {
+					logger.error(`UUID Fail: ${JSON.stringify(err)}`);
+				});
 		}
 	}
 	executeWithType(args) {
@@ -93,18 +96,18 @@ class ElasticsearchSourceNode extends SourceNode {
 	}
 	allWithField(args) {
 		if (args.field instanceof Array) {
-			args.field.forEach((f) => args.query.bool.must.push({
-				exists:
-					{
+			args.field.forEach((f) =>
+				args.query.bool.must.push({
+					exists: {
 						field: f,
 					},
-			}));
+				})
+			);
 		} else {
 			args.query.bool.must.push({
-				exists:
-					{
-						field: args.field,
-					},
+				exists: {
+					field: args.field,
+				},
 			});
 		}
 		return DatabaseConnectorProxy.search({
@@ -114,8 +117,11 @@ class ElasticsearchSourceNode extends SourceNode {
 		});
 	}
 	allWithFieldValuePair(args) {
-		if (args.field instanceof Array && args.value instanceof Array &&
-			args.field.length === args.value.length) {
+		if (
+			args.field instanceof Array &&
+			args.value instanceof Array &&
+			args.field.length === args.value.length
+		) {
 			args.field.forEach((field, i) => {
 				let fieldValuePair = {
 					match: {},
@@ -123,8 +129,10 @@ class ElasticsearchSourceNode extends SourceNode {
 				fieldValuePair.match[field] = args.value[i];
 				args.query.bool.must.push(fieldValuePair);
 			});
-		} else if (!(args.field instanceof Array) &&
-			!(args.value instanceof Array)) {
+		} else if (
+			!(args.field instanceof Array) &&
+			!(args.value instanceof Array)
+		) {
 			let fieldValuePair = {
 				match: {},
 			};
@@ -133,7 +141,8 @@ class ElasticsearchSourceNode extends SourceNode {
 		} else {
 			logger.error(
 				`${args.field} has not same number of element with ${args.value}
-				`);
+				`
+			);
 			throw TypeError;
 		}
 		return DatabaseConnectorProxy.search({

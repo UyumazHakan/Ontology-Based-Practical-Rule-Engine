@@ -13,4 +13,3 @@ import config from 'config';
 describe('Manager', function() {
 	it('should create new ontology', function() {});
 });
-

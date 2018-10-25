@@ -1,8 +1,7 @@
-trailingComma: "es5"
+trailingComma: 'es5'
 useTabs: true
 semi: true
 singleQuote: true
-parser: babylon
 printWidth: 80
 arrowParens: always
 proseWrap: always

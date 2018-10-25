@@ -110,5 +110,4 @@ class OntologyNode {
 	}
 }
 
-
 export default OntologyNode;

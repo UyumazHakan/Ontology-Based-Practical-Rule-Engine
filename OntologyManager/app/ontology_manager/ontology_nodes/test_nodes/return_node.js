@@ -12,7 +12,7 @@ class ReturnNode extends OntologyNode {
 		this.valueArray = [];
 	}
 	get lastValue() {
-		return this.valueArray[this.valueArray.length-1];
+		return this.valueArray[this.valueArray.length - 1];
 	}
 	execute(args) {
 		super.execute(args);

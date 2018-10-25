@@ -293,7 +293,9 @@ describe('ElasticsearchSinkNode', function() {
 													{value: 'test_value3'},
 												],
 											});
-											resp.hits.hits[0]._source.test_field[2].should.has.property('timestamp');
+											resp.hits.hits[0]._source.test_field[2].should.has.property(
+												'timestamp'
+											);
 											done();
 										})
 										.catch(done),
