@@ -6,6 +6,15 @@
 	},
 	"rules": {
 		"indent": [2, "tab"],
-		"no-tabs": 0
+		"no-tabs": 0,
+		"max-len": [
+			"error",
+			{
+				"code": 80,
+				"ignoreComments": true,
+				"ignorePattern": "^\\s*import\\s.+$"
+			}
+		],
+		"curly": [2, "multi-or-nest"]
 	}
 }

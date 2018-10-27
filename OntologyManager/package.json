@@ -8,9 +8,9 @@
 		"start": "node dist/app/index.js",
 		"dev": "NODE_ENV=development node $NODE_DEBUG_OPTION --require @babel/register app/index.js",
 		"jsdoc": "rm -rf jsdoc && jsdoc app -d jsdoc -r",
-		"lint": "eslint .",
+		"lint": "eslint app/",
 		"test": "NODE_ENV=test;mocha --require @babel/register ",
-		"prettier": "prettier --write '{,!(node_modules)/**/}*.{,!(gitignore),}'"
+		"prettier": "prettier --write '{app/**/,test/**/,config/**/,}{,*}.{,!(gitignore),}'"
 	},
 	"repository": {
 		"type": "git",

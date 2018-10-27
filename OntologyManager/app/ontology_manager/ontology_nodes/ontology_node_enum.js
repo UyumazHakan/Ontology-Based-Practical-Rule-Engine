@@ -5,11 +5,13 @@ import FilterNode from './manipulation_nodes/filter_node';
 import MapNode from './manipulation_nodes/map_node';
 import ReduceNode from './manipulation_nodes/reduce_node';
 import ReturnNode from './test_nodes/return_node';
+import MqttSourceNode from './data_nodes/source_nodes/mqtt_source_node';
 
 export default {
 	ElasticsearchSinkNode: ElasticsearchSinkNode,
 	ElasticsearchSourceNode: ElasticsearchSourceNode,
 	MqttSinkNode: MqttSinkNode,
+	MqttSourceNode: MqttSourceNode,
 	FilterNode: FilterNode,
 	MapNode: MapNode,
 	ReduceNode: ReduceNode,

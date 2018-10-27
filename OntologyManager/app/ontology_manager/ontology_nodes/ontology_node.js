@@ -104,6 +104,17 @@ class OntologyNode {
 			)}`
 		);
 	}
+
+	/**
+	 * The callback function to called before passing to sinks
+	 * @callback OntologyNode~passToSinksCallback
+	 * @param {Object} args All arguments that are passed to sinks
+	 */
+	/**
+	 * Execute every sink node
+	 * @param {Object} args Arguments to be sent to sink nodes
+	 * @param {OntologyNode~passToSinksCallback} [args.callback] The callback function to be called before passing to sinks
+	 */
 	passToSinks(args) {
 		if (args.callback) args.callback(args);
 		this.sinks.forEach((sink) => sink.execute(clone(args)));

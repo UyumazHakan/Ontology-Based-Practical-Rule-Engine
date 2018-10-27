@@ -48,12 +48,12 @@ export function publish(args) {
 /**
  * Subscribe a topic
  * @param {Object} args
- * @param {StreamCommunicator~subscribeCallback} callback The callback function to called upon a message
+ * @param {StreamCommunicator~subscribeCallback} [callback] The callback function to called upon a message
  * @param {string} args.protocol Protocol of server
  * @param {string} args.host Host of the server
  * @param {number} args.port Port of the server
  * @param {string} args.topic Topic to be published to
- * @param {StreamCommunicator~subscribeCallback} args.callback The callback function to called upon a message
+ * @param {StreamCommunicator~subscribeCallback} [args.callback] The callback function to called upon a message
  */
 export function subscribe(args, callback) {
 	const communicator = getCommunicator(args);
