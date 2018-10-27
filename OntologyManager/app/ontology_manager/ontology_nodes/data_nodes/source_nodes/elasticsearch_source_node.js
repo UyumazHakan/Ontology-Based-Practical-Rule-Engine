@@ -2,7 +2,7 @@ import SourceNode from './source_node';
 
 import {loggers} from 'winston';
 import DatabaseConnectorProxy from '../../../database_connector/database_connector_proxy';
-import SourceTypes from './source_types';
+import SourceType from './source_types';
 const logger = loggers.get('main');
 
 class ElasticsearchSourceNode extends SourceNode {
@@ -79,11 +79,11 @@ class ElasticsearchSourceNode extends SourceNode {
 		}
 	}
 	executeWithType(args) {
-		if (this.sourceType === SourceTypes.all) {
+		if (this.sourceType === SourceType.all) {
 			return this.all(args);
-		} else if (this.sourceType === SourceTypes.allWithField) {
+		} else if (this.sourceType === SourceType.allWithField) {
 			return this.allWithField(args);
-		} else if (this.sourceType === SourceTypes.allWithFieldValuePair) {
+		} else if (this.sourceType === SourceType.allWithFieldValuePair) {
 			return this.allWithFieldValuePair(args);
 		}
 	}

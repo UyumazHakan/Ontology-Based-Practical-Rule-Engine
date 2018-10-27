@@ -17,10 +17,19 @@ class SinkNode extends OntologyNode {
 	 */
 	constructor(args) {
 		super(args);
+		if (args.sinkType.name) args.sinkType = args.sinkType.name;
 		this.sinkType =
 			args.sinkType instanceof SinkType
 				? args.sinkType
 				: SinkType.enumValueOf(args.sinkType);
+	}
+	/**
+	 * Saves sink node
+	 * @param {Object} [args] Arguments to be saved
+	 */
+	saveNode(args) {
+		args.sinkType = this.sinkType.name;
+		super.saveNode(args);
 	}
 }
 

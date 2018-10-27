@@ -1,5 +1,8 @@
 import mqtt from 'mqtt';
 import StreamCommunicator from './stream_communicator';
+import {loggers} from 'winston';
+import {stringify} from '../../utils';
+const logger = loggers.get('main');
 
 /**
  * Class for mqtt communication
@@ -24,7 +27,8 @@ class MqttComunicator extends StreamCommunicator {
 				const parsedMessage = JSON.parse(message);
 				subscriberFns.forEach((fn) => fn(parsedMessage, message));
 			} catch (e) {
-				subscriberFns.forEach((fn) => fn(_, message));
+				logger.error(stringify(e));
+				subscriberFns.forEach((fn) => fn(undefined, message));
 			}
 		});
 	}
@@ -36,9 +40,8 @@ class MqttComunicator extends StreamCommunicator {
 	 * @param {string | Object} args.message Message to publish
 	 */
 	publish(args) {
-		if (!(args.message instanceof string)) {
+		if (args.message instanceof Object)
 			args.message = JSON.stringify(args.message);
-		}
 		this.client.publish(args.topic, args.message);
 	}
 	/**

@@ -12,6 +12,7 @@ let instance = null;
 class DatabaseConnectorProxy {
 	/**
 	 * Creates DatabaseConnecterProxy with config file
+	 * @private
 	 */
 	constructor() {
 		logger.debug('DatabaseConnectorProxy()');
@@ -31,6 +32,7 @@ class DatabaseConnectorProxy {
 	/**
 	 * Execute create function of the selected database connector in config
 	 * @param {Object} args All arguments to be passed to create function of the configured DatabaseConnector
+	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	create(args) {
 		logger.debug(`DatabaseConnectorProxy.create(${JSON.stringify(args)})`);
@@ -39,6 +41,7 @@ class DatabaseConnectorProxy {
 	/**
 	 * Execute search function of the selected database connector in config
 	 * @param {Object} args All arguments to be passed to search function of the configured DatabaseConnector
+	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	search(args) {
 		return this.connector.search(args);
@@ -46,6 +49,7 @@ class DatabaseConnectorProxy {
 	/**
 	 * Execute update function of the selected database connector in config
 	 * @param {Object} args All arguments to be passed to update function of the configured DatabaseConnector
+	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	update(args) {
 		return this.connector.update(args);
@@ -53,6 +57,7 @@ class DatabaseConnectorProxy {
 	/**
 	 * Execute getTypeUUID function of the selected database connector in config
 	 * @param {Object} args All arguments to be passed to getTypeUUID function of the configured DatabaseConnector
+	 * @return {Promise<any>} Resolves UUID of the type
 	 */
 	getTypeUUID(args) {
 		return this.connector.getTypeUUID(args);
@@ -62,19 +67,22 @@ class DatabaseConnectorProxy {
 	 * @param {Object} args All arguments to be passed to ping function of the configured DatabaseConnector
 	 */
 	ping(args) {
-		return this.connector.ping(args);
+		this.connector.ping(args);
 	}
 }
 
 /**
  * Returns singleton DatabaseConnectorProxy instance
+ * @private
  * @return {DatabaseConnectorProxy} Singleton instance of DatabaseConnectorProxy
  */
 function getInstance() {
-	if (instance === null) {
-		instance = new DatabaseConnectorProxy();
-	}
+	if (instance === null) instance = new DatabaseConnectorProxy();
+
 	return instance;
 }
 
+/**
+ * @return {DatabaseConnectorProxy} Singleton instance of DatabaseConnectorProxy
+ */
 export default getInstance();

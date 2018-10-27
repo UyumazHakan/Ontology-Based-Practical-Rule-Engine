@@ -7,6 +7,11 @@ import ReduceNode from './manipulation_nodes/reduce_node';
 import ReturnNode from './test_nodes/return_node';
 import MqttSourceNode from './data_nodes/source_nodes/mqtt_source_node';
 
+/**
+ * Enum for OntologyNodes
+ * @readonly
+ * @enum {OntologyNode}
+ */
 export default {
 	ElasticsearchSinkNode: ElasticsearchSinkNode,
 	ElasticsearchSourceNode: ElasticsearchSourceNode,

@@ -13,7 +13,7 @@ let ontologyCache = {};
  * Loads a node from database or cache
  * @param {Object} args All arguments
  * @param {string} args.id Id of node to be loaded
- * @return {Promise<any>} Resolves node
+ * @return {Promise<OntologyNode>} Resolves node
  */
 export function loadNode(args) {
 	return new Promise((resolve, reject) => {

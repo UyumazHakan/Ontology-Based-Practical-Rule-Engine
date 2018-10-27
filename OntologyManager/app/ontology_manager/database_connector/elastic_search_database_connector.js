@@ -53,6 +53,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 * @param {string} args.index Index that the new object should be created in
 	 * @param {string} args.type Type of the new object
 	 * @param {Object} args.body The object that will be created in Elasticsearch database
+	 * @param {Object} [args.body.id] The id of the object
 	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	create(args) {
@@ -63,7 +64,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 		let type = args.type;
 		let body = args.body;
 		let onFailCallback = args.onFailCallback;
-		let id = uuid();
+		let id = args.body.id || uuid();
 		let onError = () => {
 			if (onFailCallback !== undefined) {
 				this.createBuffer.push({
@@ -197,7 +198,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 					index: index,
 					type: type,
 					id: id,
-					body: body,
+					body: {doc: body},
 				})
 				.then(
 					function(resp) {
@@ -217,7 +218,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 * Gets or creates UUID for an object type
 	 * @param {Object} args All arguments
 	 * @param {string} args.objectType Object type that is searched for UUID
-	 * @returns {Promise<any>} Resolves UUID of the type
+	 * @return {Promise<any>} Resolves UUID of the type
 	 */
 	getTypeUUID(args) {
 		logger.debug(

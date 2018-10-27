@@ -2,15 +2,15 @@ import express from 'express';
 import clone from 'clone';
 import {loggers} from 'winston';
 import {loadNode} from '../ontology_manager/ontology/ontology_load';
+import {stringify} from '../utils';
 import DatabaseConnectorProxy from '../ontology_manager/database_connector/database_connector_proxy';
-import FilterNode from '../ontology_manager/ontology_nodes/manipulation_nodes/filter_node';
 import NodeEnum from '../ontology_manager/ontology_nodes/ontology_node_enum';
 
 let router = express.Router();
 let logger = loggers.get('main');
 
 router.use((req, res, next) => {
-	logger.debug(`Ontology Nodes Router Received: ${req}`);
+	logger.debug(`Ontology Nodes Router Received: ${stringify(req)}`);
 	next();
 });
 router.param('node_id', function(req, res, next, id) {
@@ -29,7 +29,8 @@ router.param('node_id', function(req, res, next, id) {
 });
 
 router.post('/', function(req, res) {
-	let node = new NodeEnum[req.type](req.info);
+	const type = req.body.type;
+	let node = new NodeEnum[type](req.body.info);
 	let callback = (err, result) => {
 		if (err) {
 			res.status(500).send(err);
@@ -54,33 +55,49 @@ router.get('/', function(req, res) {
 		.catch((err) => res.status(500).send(err));
 });
 router.get('/:node_id', function(req, res) {
-	res.json(req.node);
+	res.json(req.node.minify());
 });
 router.post('/:node_id/add_sink', function(req, res) {
-	loadNode({id: req.sink})
+	loadNode({id: req.body.sink})
 		.then((node) => {
 			req._node.addSink(node);
-			let callback = () => {
-				let callback = () => {
-					res.json(req._node);
+			let callback = (err, sourceResult) => {
+				if (err) {
+					res.status(500).send(err);
+					return;
+				}
+				let callback = (err, sinkResult) => {
+					if (err) {
+						res.status(500).send(err);
+						return;
+					}
+					res.json({source: sourceResult.minify(), sink: sinkResult.minify()});
 				};
-				node.save({callback: callback});
+				node.saveNode({callback: callback});
 			};
-			req._node.save({callback: callback});
+			req._node.saveNode({callback: callback});
 		})
 		.catch((err) => res.status(500).send(err));
 });
 router.post('/:node_id/add_source', function(req, res) {
-	loadNode({id: req.source})
+	loadNode({id: req.body.source})
 		.then((node) => {
 			req._node.addSource(node);
-			let callback = () => {
-				let callback = () => {
-					res.json(req._node);
+			let callback = (err, sinkResult) => {
+				if (err) {
+					res.status(500).send(err);
+					return;
+				}
+				let callback = (err, sourceResult) => {
+					if (err) {
+						res.status(500).send(err);
+						return;
+					}
+					res.json({source: sourceResult.minify(), sink: sinkResult.minify()});
 				};
-				node.save({callback: callback});
+				node.saveNode({callback: callback});
 			};
-			req._node.save({callback: callback});
+			req._node.saveNode({callback: callback});
 		})
 		.catch((err) => res.status(500).send(err));
 });

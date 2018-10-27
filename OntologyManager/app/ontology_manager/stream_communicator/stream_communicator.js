@@ -16,8 +16,8 @@ class StreamCommunicator {
 			throw new TypeError(errMessage);
 		}
 		this.isAlive = true; // Assuming  alive
-		this.host = config.host;
-		this.port = config.port;
+		this.host = args.host;
+		this.port = args.port;
 		this.subscribers = {};
 		this.connect();
 	}

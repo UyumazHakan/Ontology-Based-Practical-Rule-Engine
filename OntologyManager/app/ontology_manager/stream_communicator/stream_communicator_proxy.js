@@ -4,6 +4,7 @@ const streamCommunicators = {};
 
 /**
  * Returns stream communicator from cache
+ * @private
  * @param {Object} args
  * @param {string} args.protocol Protocol of server
  * @param {string} args.host Host of the server
@@ -19,7 +20,7 @@ function getCommunicator(args) {
 	if (args.protocol === 'mqtt') {
 		if (!args.host.startsWith('mqtt://')) args.host = 'mqtt://' + args.host;
 		if (!args.port) args.port = 1883;
-		address = host + ':' + this.port;
+		address = args.host + ':' + args.port;
 		if (!streamCommunicators[args.protocol][address])
 			streamCommunicators[args.protocol][address] = new MqttComunicator({
 				host: args.host,

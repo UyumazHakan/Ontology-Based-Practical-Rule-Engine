@@ -1,6 +1,8 @@
 import SourceNode from './source_node';
 import SourceType from './source_types';
 import {subscribe} from '../../../stream_communicator/stream_communicator_proxy';
+import {loggers} from 'winston';
+let logger = loggers.get('main');
 
 /**
  * Node for data source from mqtt
@@ -10,21 +12,23 @@ class MqttSourceNode extends SourceNode {
 	/**
 	 * Creates a source node from mqtt
 	 * @param {Object} args All arguments
+	 *
 	 * @param {string} args.host Host of mqtt server
 	 * @param {number} args.port Port of mqtt server
 	 * @param {string} args.topic Topic message to be subscribed
 	 * @param {string | string[]} [args.field] Field or fields to be matched
+	 * @param {SourceType | SourceTypeEnum} args.sinkType Type of the source
 	 */
 	constructor(args) {
 		logger.debug(`MqttSourceNode(${JSON.stringify(args)})`);
 		super(args);
 		if (
-			this.sourceType !== SourceType.all ||
-			this.sourceType !== SourceType.allWithField ||
-			this.sourceType !== SourceType.allWithFieldValuePair ||
+			this.sourceType !== SourceType.all &&
+			this.sourceType !== SourceType.allWithField &&
+			this.sourceType !== SourceType.allWithFieldValuePair &&
 			this.sourceType !== SourceType.id
 		) {
-			let errMessage = `${this.sinkType} is not valid for MqttSourceNode`;
+			let errMessage = `${this.sourceType} is not valid for MqttSourceNode`;
 			logger.error(errMessage);
 			throw new TypeError(errMessage);
 		}

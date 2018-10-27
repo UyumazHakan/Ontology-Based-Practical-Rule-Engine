@@ -1,6 +1,8 @@
 import SinkNode from './sink_node';
 import SinkType from './sink_types';
 import {publish} from '../../../stream_communicator/stream_communicator_proxy';
+import {loggers} from 'winston';
+let logger = loggers.get('main');
 /**
  * Node for data sink to mqtt
  * @extends SinkNode
@@ -18,7 +20,7 @@ class MqttSinkNode extends SinkNode {
 		logger.debug(`MqttSinkNode(${JSON.stringify(args)})`);
 		super(args);
 		if (
-			this.sinkType !== SinkType.append ||
+			this.sinkType !== SinkType.append &&
 			this.sinkType !== SinkType.appendWithTimestamp
 		) {
 			let errMessage = `${this.sinkType} is not valid for MqttSinkNode`;
@@ -45,12 +47,12 @@ class MqttSinkNode extends SinkNode {
 			this.field.length === args.value.length
 		) {
 			body = this.field.reduce((acc, cur, i) => {
-				acc[cur] = args.value[i];
+				acc[cur] = args[cur];
 				return acc;
 			}, {});
-		} else if (!(this.field instanceof Array)) {
-			body[this.field] = args.value;
-		} else {
+		} else if (!(this.field instanceof Array))
+			body[this.field] = args[this.field];
+		else {
 			logger.error(
 				`${this.field} has not same number of element with ${args.value}
 				`

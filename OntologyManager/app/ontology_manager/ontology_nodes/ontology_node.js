@@ -1,5 +1,5 @@
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
-import * as util from 'util';
+import {stringify} from '../../utils';
 import uuid from 'uuid/v4';
 import clone from 'clone';
 
@@ -23,29 +23,23 @@ class OntologyNode {
 		return this._isUpdated;
 	}
 	addSink(sink) {
-		logger.debug(
-			`Adding sink ${sink} to ${JSON.stringify(util.inspect(this))}`
-		);
-		this._isUpdated = false;
 		if (!this.sinks.includes(sink)) {
+			logger.debug(`Adding sink ${sink} to ${stringify(this)}`);
+			this._isUpdated = false;
 			this.sinks.push(sink);
 			sink.addSource(this);
 		}
 	}
 	addSource(source) {
-		logger.debug(
-			`Adding source ${source} to ${JSON.stringify(util.inspect(this))}`
-		);
-		this._isUpdated = false;
 		if (!this.sources.includes(source)) {
+			logger.debug(`Adding source ${source} to ${stringify(this)}`);
+			this._isUpdated = false;
 			this.sources.push(source);
 			source.addSink(this);
 		}
 	}
 	removeSink(sink) {
-		logger.debug(
-			`Removing sink ${sink} to ${JSON.stringify(util.inspect(this))}`
-		);
+		logger.debug(`Removing sink ${sink} to ${stringify(this)}`);
 		this._isUpdated = false;
 		if (this.sources.includes(sink)) {
 			this.sinks.splice(this.sinks.indexOf(sink), 1);
@@ -53,9 +47,7 @@ class OntologyNode {
 		}
 	}
 	removeSource(source) {
-		logger.debug(
-			`Removing source ${source} to ${JSON.stringify(util.inspect(this))}`
-		);
+		logger.debug(`Removing source ${source} to ${stringify(this)}`);
 		this._isUpdated = false;
 		if (!this.sources.includes(source)) {
 			this.sources.push(this.sources.indexOf(source), 1);
@@ -63,6 +55,17 @@ class OntologyNode {
 		}
 	}
 	// TODO: finish update and create functions
+	/**
+	 * Callback function to be called after node save is completed or failed
+	 * @callback OntologyNode~saveNodeCallback
+	 * @param {Error} err Error message
+	 * @param {Object} res Response that is sent by database
+	 */
+	/**
+	 * Saves node in database
+	 * @param {Object} [args] Extra arguments to be saved
+	 * @param {OntologyNode~saveNodeCallback} [args.callback] Callback function to be called after node save is completed or failed
+	 */
 	saveNode(args) {
 		let saveObject = args ? Object.assign(clone(this), args) : clone(this);
 		saveObject.nodeType = saveObject.constructor.name;
@@ -77,32 +80,51 @@ class OntologyNode {
 				body: saveObject,
 			})
 				.then((res) => {
-					logger.debug(`Node saving is successful. ${res}`);
+					logger.debug(`Node saving is successful. ${stringify(res)}`);
 					this.isSaved = true;
 					this._isUpdated = true;
 					if (args.callback) args.callback(null, res);
 				})
 				.catch((err) => {
-					logger.debug(`Node saving is failed. ${err}`);
+					logger.debug(`Node saving is failed. ${stringify(err)}`);
 					if (args.callback) args.callback(err, null);
 				});
-		}
+		} else if (!this.isUpdated) {
+			DatabaseConnectorProxy.update({
+				index: 'node',
+				type: 'nodeType',
+				body: saveObject,
+				id: this.id,
+			})
+				.then((res) => {
+					logger.debug(`Node updating is successful. ${stringify(res)}`);
+					this._isUpdated = true;
+					if (args.callback) args.callback(null, this);
+				})
+				.catch((err) => {
+					logger.debug(`Node saving is failed. ${stringify(err)}`);
+					if (args.callback) args.callback(err, this);
+				});
+		} else if (args.callback) args.callback(null, this);
 	}
 
+	/**
+	 * Deletes all sinks and sources of the node
+	 * @param {Object} [args] Not used currently
+	 */
 	reset(args) {
-		logger.debug(`Resetting ${JSON.stringify(util.inspect(this))}`);
+		logger.debug(`Resetting ${stringify(this)}`);
 		this.sinks.forEach((sink) => this.removeSink(sink));
 		this.sources.forEach((source) => this.removeSource(source));
-		logger.debug(
-			`Sinks and sources emptied for ${JSON.stringify(util.inspect(this))}`
-		);
+		logger.debug(`Sinks and sources emptied for ${stringify(this)}`);
 	}
+
+	/**
+	 * Executes node
+	 * @param {Object} args All arguements
+	 */
 	execute(args) {
-		logger.debug(
-			`Executing ${JSON.stringify(util.inspect(this))} with ${JSON.stringify(
-				args
-			)}`
-		);
+		logger.debug(`Executing ${stringify(this)} with ${stringify(args)}`);
 	}
 
 	/**
@@ -118,6 +140,18 @@ class OntologyNode {
 	passToSinks(args) {
 		if (args.callback) args.callback(args);
 		this.sinks.forEach((sink) => sink.execute(clone(args)));
+	}
+
+	/**
+	 * Returns minified version of the node with references
+	 * @return {any}
+	 */
+	minify() {
+		const minifiedVersion = clone(this);
+		minifiedVersion.nodeType = minifiedVersion.constructor.name;
+		minifiedVersion.sinks = minifiedVersion.sinks.map((node) => node.id);
+		minifiedVersion.sources = minifiedVersion.sources.map((node) => node.id);
+		return minifiedVersion;
 	}
 }
 

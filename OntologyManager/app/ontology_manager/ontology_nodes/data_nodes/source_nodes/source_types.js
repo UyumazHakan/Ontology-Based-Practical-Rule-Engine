@@ -14,9 +14,9 @@ import {Enum} from 'enumify';
  * Enumeration class for source
  * @extends Enum
  */
-class SourceTypes extends Enum {}
+class SourceType extends Enum {}
 
-SourceTypes.initEnum([
+SourceType.initEnum([
 	'all',
 	'allWithField',
 	'allWithFieldValuePair',
@@ -26,4 +26,4 @@ SourceTypes.initEnum([
 	'id',
 ]);
 
-export default SourceTypes;
+export default SourceType;
