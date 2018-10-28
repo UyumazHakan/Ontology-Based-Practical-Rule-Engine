@@ -18,8 +18,6 @@ router.param('node_id', function(req, res, next, id) {
 		.then((node) => {
 			req._node = node;
 			node = clone(node);
-			node.sinks = node.sinks.map((sink) => sink.id);
-			node.sources = node.sources.map((source) => source.id);
 			req.node = node;
 			next();
 		})

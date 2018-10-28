@@ -58,6 +58,10 @@ class MapNode extends OntologyNode {
 			throw TypeError;
 		}
 	}
+	/**
+	 * Sets mapping function
+	 * @param  {mapFn | serializedMapFn} args Function to add
+	 */
 	set fn(args) {
 		if (!args) {
 			this.mFn = (args) => args;
@@ -68,6 +72,10 @@ class MapNode extends OntologyNode {
 			this.mFn = deserialize(args).fn || deserialize(args).mFn;
 		else logger.error(`${args} is not a function`);
 	}
+	/**
+	 * Gets mapping function
+	 * @return {mapFn}
+	 */
 	get fn() {
 		return this.mFn;
 	}
