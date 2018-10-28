@@ -67,6 +67,7 @@ class OntologyNode {
 	 * @param {OntologyNode~saveNodeCallback} [args.callback] Callback function to be called after node save is completed or failed
 	 */
 	saveNode(args) {
+		if (!args) args = {};
 		let saveObject = args ? Object.assign(clone(this), args) : clone(this);
 		saveObject.nodeType = saveObject.constructor.name;
 		saveObject.sinks = this.sinks.map((node) => node.id);
@@ -149,8 +150,12 @@ class OntologyNode {
 	minify() {
 		const minifiedVersion = clone(this);
 		minifiedVersion.nodeType = minifiedVersion.constructor.name;
-		minifiedVersion.sinks = minifiedVersion.sinks.map((node) => node.id);
-		minifiedVersion.sources = minifiedVersion.sources.map((node) => node.id);
+		minifiedVersion.sinks = minifiedVersion.sinks.map(
+			(node) => (typeof node === 'string' ? node : node.id)
+		);
+		minifiedVersion.sources = minifiedVersion.sources.map(
+			(node) => (typeof node === 'string' ? node : node.id)
+		);
 		return minifiedVersion;
 	}
 }

@@ -63,9 +63,9 @@ class OntologyRule {
 	addNode(args) {
 		this._isUpdated = false;
 		let newNode =
-			args.value instanceof OntologyNode
-				? args.value
-				: new NodeEnum[args.type](args.value);
+			args.info instanceof OntologyNode
+				? args.info
+				: new NodeEnum[args.type](args.info);
 		if (args.sink) this.addSinkNode({node: newNode});
 		if (args.source) this.addSourceNode({node: newNode});
 		this.nodes.push(newNode);
@@ -130,15 +130,15 @@ class OntologyRule {
 	}
 
 	/**
-	 * Returns clone the rule with no other object but ids
+	 * Returns clone the rule with minified versions of nodes
 	 * @param {any} args Not used currently
 	 * @return {OntologyRule} Clone of the rule with node ids instead of OntologyNode
 	 */
 	minify(args) {
 		let rule = clone(this);
-		rule.nodes = rule.nodes.map((node) => node.id);
-		rule.sinkNodes = rule.sinkNodes.map((node) => node.id);
-		rule.sourceNodes = rule.sourceNodes.map((node) => node.id);
+		rule.nodes = rule.nodes.map((node) => node.minify());
+		rule.sinkNodes = rule.sinkNodes.map((node) => node.minify());
+		rule.sourceNodes = rule.sourceNodes.map((node) => node.minify());
 		return rule;
 	}
 }

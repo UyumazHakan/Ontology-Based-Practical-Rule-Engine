@@ -25,6 +25,7 @@ class SourceNode extends OntologyNode {
 	 * @param {Object} [args] Arguments to be saved
 	 */
 	saveNode(args) {
+		if (!args) args = {};
 		args.sourceType = this.sourceType.name;
 		super.saveNode(args);
 	}

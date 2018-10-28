@@ -119,7 +119,7 @@ export function loadRule(args) {
 					(nodes) => {
 						nodes.forEach((node) => {
 							rule.addNode({
-								value: node,
+								info: node,
 								sink: ruleInfo.sinkNodes.includes(node.id),
 								source: ruleInfo.sourceNodes.includes(node.id),
 							});

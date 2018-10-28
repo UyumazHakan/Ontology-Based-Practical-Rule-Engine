@@ -28,6 +28,7 @@ class SinkNode extends OntologyNode {
 	 * @param {Object} [args] Arguments to be saved
 	 */
 	saveNode(args) {
+		if (!args) args = {};
 		args.sinkType = this.sinkType.name;
 		super.saveNode(args);
 	}

@@ -1,6 +1,6 @@
 import express from 'express';
 import {loggers} from 'winston';
-import {loadNode} from '../ontology_manager/ontology/ontology_load';
+import {loadNode, loadRule} from '../ontology_manager/ontology/ontology_load';
 import clone from 'clone';
 import NodeEnum from '../ontology_manager/ontology_nodes/ontology_node_enum';
 import DatabaseConnectorProxy from '../ontology_manager/database_connector/database_connector_proxy';
@@ -40,15 +40,33 @@ router.param('rule_id', function(req, res, next, id) {
 			next(err);
 		});
 });
-
+function recursiveAddPath(rule, sourceNodes, sinkNodes) {
+	if (sourceNodes instanceof Array) {
+		sourceNodes.forEach((sourceNode) =>
+			recursiveAddPath(rule, sourceNode, sinkNodes)
+		);
+	} else if (sinkNodes instanceof Array) {
+		sinkNodes.forEach((sinkNode) =>
+			recursiveAddPath(rule, sourceNodes, sinkNode)
+		);
+	} else rule.nodes[sourceNodes].addSink(rule.nodes[sinkNodes]);
+}
 router.post('/', function(req, res) {
-	let rule = new OntologyRule(req.info);
+	let rule = new OntologyRule(req.body.info);
+	if (req.body.info.paths) {
+		for (let i = 0; i < req.body.info.paths.length - 1; i++)
+			recursiveAddPath(
+				rule,
+				req.body.info.paths[i],
+				req.body.info.paths[i + 1]
+			);
+	}
 	let callback = (err, result) => {
 		if (err) {
 			res.status(500).send(err);
 			return;
 		}
-		res.json(rule);
+		res.json(rule.minify());
 	};
 	rule.save({callback: callback});
 });
@@ -67,7 +85,7 @@ router.get('/', function(req, res) {
 		.catch((err) => res.status(500).send(err));
 });
 router.get('/:rule_id', function(req, res) {
-	res.json(req.rule);
+	res.json(req.rule.minify());
 });
 router.post(':rule_id/node/:node_id', function(req, res) {
 	req._rule.addNode(req._node);
