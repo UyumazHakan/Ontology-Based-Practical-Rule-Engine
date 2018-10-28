@@ -39,18 +39,18 @@ class OntologyNode {
 		}
 	}
 	removeSink(sink) {
-		logger.debug(`Removing sink ${sink} to ${stringify(this)}`);
-		this._isUpdated = false;
-		if (this.sources.includes(sink)) {
+		if (this.sinks.includes(sink)) {
+			logger.debug(`Removing sink ${sink} to ${stringify(this)}`);
+			this._isUpdated = false;
 			this.sinks.splice(this.sinks.indexOf(sink), 1);
 			sink.removeSource(this);
 		}
 	}
 	removeSource(source) {
-		logger.debug(`Removing source ${source} to ${stringify(this)}`);
-		this._isUpdated = false;
-		if (!this.sources.includes(source)) {
-			this.sources.push(this.sources.indexOf(source), 1);
+		if (this.sources.includes(source)) {
+			logger.debug(`Removing source ${source} to ${stringify(this)}`);
+			this._isUpdated = false;
+			this.sources.splice(this.sources.indexOf(source), 1);
 			source.removeSink(this);
 		}
 	}

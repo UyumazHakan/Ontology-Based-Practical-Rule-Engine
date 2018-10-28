@@ -79,10 +79,54 @@ router.post('/:node_id/add_sink', function(req, res) {
 		})
 		.catch((err) => res.status(500).send(err));
 });
+router.post('/:node_id/remove_sink', function(req, res) {
+	loadNode({id: req.body.sink})
+		.then((node) => {
+			req._node.removeSink(node);
+			let callback = (err, sourceResult) => {
+				if (err) {
+					res.status(500).send(err);
+					return;
+				}
+				let callback = (err, sinkResult) => {
+					if (err) {
+						res.status(500).send(err);
+						return;
+					}
+					res.json({source: sourceResult.minify(), sink: sinkResult.minify()});
+				};
+				node.saveNode({callback: callback});
+			};
+			req._node.saveNode({callback: callback});
+		})
+		.catch((err) => res.status(500).send(err));
+});
 router.post('/:node_id/add_source', function(req, res) {
 	loadNode({id: req.body.source})
 		.then((node) => {
 			req._node.addSource(node);
+			let callback = (err, sinkResult) => {
+				if (err) {
+					res.status(500).send(err);
+					return;
+				}
+				let callback = (err, sourceResult) => {
+					if (err) {
+						res.status(500).send(err);
+						return;
+					}
+					res.json({source: sourceResult.minify(), sink: sinkResult.minify()});
+				};
+				node.saveNode({callback: callback});
+			};
+			req._node.saveNode({callback: callback});
+		})
+		.catch((err) => res.status(500).send(err));
+});
+router.post('/:node_id/remove_source', function(req, res) {
+	loadNode({id: req.body.source})
+		.then((node) => {
+			req._node.removeSource(node);
 			let callback = (err, sinkResult) => {
 				if (err) {
 					res.status(500).send(err);
