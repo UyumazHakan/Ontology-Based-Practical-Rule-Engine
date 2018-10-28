@@ -41,13 +41,9 @@ class MqttSinkNode extends SinkNode {
 	 */
 	execute(args) {
 		let body = {};
-		if (
-			this.field instanceof Array &&
-			args.value instanceof Array &&
-			this.field.length === args.value.length
-		) {
+		if (this.field instanceof Array) {
 			body = this.field.reduce((acc, cur, i) => {
-				acc[cur] = args[cur];
+				if (args[cur]) acc[cur] = args[cur];
 				return acc;
 			}, {});
 		} else if (!(this.field instanceof Array))
@@ -60,7 +56,7 @@ class MqttSinkNode extends SinkNode {
 			throw TypeError;
 		}
 		logger.debug(`Body ${JSON.stringify(body)} created`);
-		this.executeWithType(body);
+		if (body !== {}) this.executeWithType(body);
 		this.passToSinks(args);
 	}
 	/**
