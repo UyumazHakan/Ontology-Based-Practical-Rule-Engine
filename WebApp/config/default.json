@@ -1,0 +1,22 @@
+{
+  "logger": {
+    "dir": "./logs/",
+    "level": "silly"
+  },
+  "app": {
+    "port": 8080
+  },
+  "ontology_manager": {
+    "host": "localhost",
+    "port": 3000
+  },
+  "query_manager": {
+    "host": "localhost",
+    "port": 3001
+  },
+  "event_manager": {
+    "host": "localhost",
+    "port": 3002
+  },
+  "max_workers": "-1"
+}
