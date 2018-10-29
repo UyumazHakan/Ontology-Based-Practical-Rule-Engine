@@ -1,0 +1,16 @@
+{
+  "name": "ioteql_parser",
+  "version": "0.0.1",
+  "description": "",
+  "main": "ioteql.js",
+  "scripts": {
+    "start": "npm run build && npm run parse",
+    "build": "pegjs ioteql.pegjs",
+    "parse": "node ioteql_cli.js test_set/example.ioteql"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "pegjs": "^0.10.0"
+  }
+}
