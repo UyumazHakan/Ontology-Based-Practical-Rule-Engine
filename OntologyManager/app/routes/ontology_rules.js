@@ -40,27 +40,27 @@ router.param('rule_id', function(req, res, next, id) {
 			next(err);
 		});
 });
-function recursiveAddPath(rule, sourceNodes, sinkNodes) {
-	if (sourceNodes instanceof Array) {
-		sourceNodes.forEach((sourceNode) =>
-			recursiveAddPath(rule, sourceNode, sinkNodes)
-		);
-	} else if (sinkNodes instanceof Array) {
-		sinkNodes.forEach((sinkNode) =>
-			recursiveAddPath(rule, sourceNodes, sinkNode)
-		);
-	} else rule.nodes[sourceNodes].addSink(rule.nodes[sinkNodes]);
+function recursiveAddPath(rule, path) {
+	if (path instanceof Object) {
+		Object.keys(path).forEach((source) => {
+			const sinks = path[source];
+			if (sinks instanceof Object) {
+				Object.keys(sinks).forEach((sink) =>
+					rule.nodes[parseInt(source)].addSink(rule.nodes[parseInt(sink)])
+				);
+				recursiveAddPath(rule, path[source]);
+			} else if (sinks instanceof Array) {
+				sinks.forEach((sink) =>
+					rule.nodes[parseInt(source)].addSink(rule.nodes[parseInt(sink)])
+				);
+			} else rule.nodes[parseInt(source)].addSink(rule.nodes[parseInt(sinks)]);
+		});
+	}
 }
 router.post('/', function(req, res) {
 	let rule = new OntologyRule(req.body.info);
-	if (req.body.info.paths) {
-		for (let i = 0; i < req.body.info.paths.length - 1; i++)
-			recursiveAddPath(
-				rule,
-				req.body.info.paths[i],
-				req.body.info.paths[i + 1]
-			);
-	}
+	if (req.body.info.paths) recursiveAddPath(rule, req.body.info.paths);
+
 	let callback = (err, result) => {
 		if (err) {
 			res.status(500).send(err);
