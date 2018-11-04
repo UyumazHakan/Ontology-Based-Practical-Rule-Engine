@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm run build && npm run parse",
     "build": "pegjs ioteql.pegjs",
-    "parse": "node ioteql_cli.js test_set/example.ioteql"
+    "parse": "node ioteql_cli.js test_set/example.ioteql",
+    "deploy": "npm run build && cp ioteql.js ../QueryManager/app/"
   },
   "author": "",
   "license": "ISC",

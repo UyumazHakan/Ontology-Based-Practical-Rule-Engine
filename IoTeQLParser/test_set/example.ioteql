@@ -1,3 +1,51 @@
-$create [node](limit:5,valid,name:"test",test)
-{a:"ka"}
+$create[node]('MqttSource', name="main_source")
+{
+host:"localhost",
+topic: "test",
+'sourceType':"all"
+}
+$create[node]('Grouping', name="group_weekly")
+{
+					"groupBy":["name"],
+					"limit": 7
+}
+$create[node]('MqttSink', name="main_sink")
+{
+					"host":"localhost",
+					"topic": "test1",
+					"sinkType": "appendWithTimestamp",
+					"field": ["weekly_temperature","daily_temperature","name"]
+}
+$create[node]('Reduce', name="sum_weekly")
+{
+					"mFn": "{fn: (acc, cur) => (acc + cur)}",
+					"field": ["weekly_temperature"]
+}
+$create[node](Map, name="divide_sum_weekly")
+{
+    "sourceMap": "weekly_temperature",
+    "sinkMap": "weekly_temperature",
+    "keepSource": false,
+    "mFn": "{fn: (arg) => (arg / 7)}"
+}
+$create[node](Map, name="value_to_daily")
+{
+    "sourceMap": "value",
+    "sinkMap": "daily_temperature",
+    "keepSource": false
+}
+$create[node](Map, name="value_to_weekly")
+{
+    "sourceMap": "value",
+    "sinkMap": "weekly_temperature",
+    "keepSource": false
+}
 
+$create[flow](name="PassDailyAndWeekly")
+{
+    sinks: [$ref(name="main_sink")],
+    sources: [$ref(name="main_source")],
+    middles: [$ref(name="group_weekly"),$ref(name="sum_weekly"),$ref(name="divide_sum_weekly"),$ref(name="value_to_daily"),$ref(name="value_to_weekly")],
+    paths: [($ref(name="main_source"),[$ref(name="value_to_daily"),$ref(name="value_to_weekly")]),]
+
+}
