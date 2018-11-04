@@ -924,15 +924,15 @@ function peg$parse(input, options) {
 	function peg$parsequeryOption() {
 		var s0, s1;
 
-		s0 = peg$parseoption();
+		s0 = peg$currPos;
+		s1 = peg$parsenodeType();
+		if (s1 !== peg$FAILED) {
+			peg$savedPos = s0;
+			s1 = peg$c30(s1);
+		}
+		s0 = s1;
 		if (s0 === peg$FAILED) {
-			s0 = peg$currPos;
-			s1 = peg$parsenodeType();
-			if (s1 !== peg$FAILED) {
-				peg$savedPos = s0;
-				s1 = peg$c30(s1);
-			}
-			s0 = s1;
+			s0 = peg$parseoption();
 		}
 
 		return s0;

@@ -21,8 +21,8 @@ start
 querySequence "seq"
     = query:query _ seq:querySequence? {return seq ? [query].concat(seq): [query]}
 
-    query
-        = header:queryHeader body:queryBody?_ { return Object.assign(header,body)}
+query
+    = header:queryHeader body:queryBody?_ { return Object.assign(header,body)}
 
 
 queryHeader
@@ -50,29 +50,29 @@ _queryOptions
 / queryOption
 
 queryOption
-    = option
-    / nodeType:nodeType {return makeObject("type", nodeType)}
-
+    = nodeType:nodeType {return makeObject("type", nodeType)}
+    / option
+    
 options
-    = first:option _  "," _ rest:options { return Object.assign(first,rest)}
-/ option
+	= first:option _  "," _ rest:options { return Object.assign(first,rest)}
+    / option
 
 option
-    = name:name _  "="  _ value:primitive {return makeObject(name, value)}
+ 	= name:name _  "="  _ value:primitive {return makeObject(name, value)}
 /  name:name{ return makeObject(name, true); }
 
-nodeType
-    = "\"" value: nodeType "\"" {return value}
-/ "\'" value: nodeType "\'" {return value}
-/ "MqttSink"
-/ "MqttSource"
-/ "Filter"
-/ "Map"
-/ "Reduce"
-/ "Grouping" { return text()}
+nodeType 
+	= "\"" value: nodeType "\"" {return value}
+    / "\'" value: nodeType "\'" {return value}
+    / "MqttSink"
+    / "MqttSource"
+    / "Filter"
+    / "Map"
+    / "Reduce"
+    / "Grouping" { return text()}
 queryBody
     = "{" _ pairs:keyValueOrRefPairs? _ "}" {return {body:pairs};}
-
+    
 keyValueOrRefPairs
     = _ pair:keyValueOrRefPair _  "," _ pairs:keyValueOrRefPairs _ {return Object.assign(pair,pairs);}
 / pair:keyValueOrRefPair _  ","? _ { return pair}
@@ -92,30 +92,30 @@ name
     / letters:[a-zA-z]+ { return makeString(letters); }
 
 
-valueOrRef
-    = value
+valueOrRef 
+	= value
     / valueOrRefTuple
     / ref
-
+    
 
 valueOrRefs
     = first:valueOrRef _ "," _ rest:valueOrRefs {return [first].concat(rest)}
 / last:valueOrRef _ ","? _{return [last]}
 
 valueOrRefTuple
-    = "(" _ first:valueOrRef _ "," _ second:valueOrRef ")" { return {type:"tuple", value:{first:first,second:second}}}
+	= "(" _ first:valueOrRef _ "," _ second:valueOrRef ")" { return {type:"tuple", value:{first:first,second:second}}}
 
 value
     = value:object {return {type:"object", value:value}}
-/ value:array {return {type:"array", value:value}}
-/ value:primitive
+    / value:array {return {type:"array", value:value}}
+    / value:primitive
 
 values
     = first:value _ "," _ rest:values {return [first].concat(rest)}
 / last:value {return [last]}
 
 ref
-    = "$ref(" _ options:options? _ ")" {return {type:"ref", value:options}}
+	= "$ref(" _ options:options? _ ")" {return {type:"ref", value:options}}
 
 object
     = "{" _ pairs:keyValuePairs? _ "}" {return pairs}
@@ -125,8 +125,8 @@ array
 
 primitive
     = value:number {return {type:"number", value:value}}
-/ value:string {return {type:"string", value:value}}
-/ value:boolean {return {type:"boolean", value:value}}
+    / value:string {return {type:"string", value:value}}
+    / value:boolean {return {type:"boolean", value:value}}
 
 string "string"
     = "\"" letters:doubleStringCharacter* "\""  { return makeString(letters); }
@@ -158,7 +158,7 @@ boolean "boolean"
     = "true" {return true;}
 / "false" {return false;}
 
-
+    
 
 
 _ "whitespace"
