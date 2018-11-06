@@ -1,4 +1,3 @@
-import config from 'config';
 import {loggers} from 'winston';
 import express from 'express';
 import bodyParser from 'body-parser';

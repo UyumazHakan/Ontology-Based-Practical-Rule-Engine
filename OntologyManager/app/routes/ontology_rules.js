@@ -40,26 +40,8 @@ router.param('rule_id', function(req, res, next, id) {
 			next(err);
 		});
 });
-function recursiveAddPath(rule, path) {
-	if (path instanceof Object) {
-		Object.keys(path).forEach((source) => {
-			const sinks = path[source];
-			if (sinks instanceof Object) {
-				Object.keys(sinks).forEach((sink) =>
-					rule.nodes[parseInt(source)].addSink(rule.nodes[parseInt(sink)])
-				);
-				recursiveAddPath(rule, path[source]);
-			} else if (sinks instanceof Array) {
-				sinks.forEach((sink) =>
-					rule.nodes[parseInt(source)].addSink(rule.nodes[parseInt(sink)])
-				);
-			} else rule.nodes[parseInt(source)].addSink(rule.nodes[parseInt(sinks)]);
-		});
-	}
-}
 router.post('/', function(req, res) {
 	let rule = new OntologyRule(req.body.info);
-	if (req.body.info.paths) recursiveAddPath(rule, req.body.info.paths);
 
 	let callback = (err, result) => {
 		if (err) {

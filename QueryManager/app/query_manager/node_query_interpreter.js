@@ -12,6 +12,7 @@ class NodeQueryInterpreter extends QueryInterpreter {
 	create(nodeQuery) {
 		if (!nodeQuery.header.options.type)
 			throw new TypeError('No node type is defined');
+		this.command = 'create';
 		this.value.type = nodeQuery.header.options.type + 'Node';
 		delete nodeQuery.header.options.type;
 		this.value.info = {};

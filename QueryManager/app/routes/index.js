@@ -26,7 +26,14 @@ router.use(function(req, res, next) {
 	next();
 });
 router.post('/', function(req, res) {
-	res.json(QueryManager.execute(req.body));
+	Promise.all(QueryManager.execute(req.body))
+		.then((responses) => {
+			res.send(responses.map((response) => response.data));
+		})
+		.catch((err) => {
+			console.dir(err);
+			res.status(500).send(err);
+		});
 });
 
 export default router;

@@ -21,23 +21,23 @@ import {interpret as interpretFlowQuery} from './flow_query_interpreter';
  * @typedef {Object.<string, IoTeQLQueryValueOrRef>} IoTeQLQueryBody
  */
 /**
- * @typedef {'create' | 'update'} IoTeQLQueryCommand
+ * @typedef {('create' | 'update')} IoTeQLQueryCommand
  */
 /**
- * @typedef {'node' | 'flow'} IoTeQLQueryType
+ * @typedef {('node' | 'flow')} IoTeQLQueryType
  */
 /**
  * @typedef {Object.<string, IoTeQLQueryPrimitive>} IoTeQLQueryOption
  */
 /**
  * @typedef {Object} IoTeQLQueryValueOrRef
- * @property {'number' | 'string' | 'boolean' | 'object' | 'array' | 'ref' } type
- * @property {number | string  | boolean | Object | Array | IoTeQLQueryPrimitive} value
+ * @property {('number' | 'string' | 'boolean' | 'object' | 'array' | 'ref' )} type
+ * @property {(number | string  | boolean | Object | Array | IoTeQLQueryPrimitive)} value
  */
 /**
  * @typedef {Object} IoTeQLQueryPrimitive
- * @property {'number' | 'string' | 'boolean' } type
- * @property {number | string | boolean } value
+ * @property {('number' | 'string' | 'boolean' )} type
+ * @property {(number | string | boolean )} value
  */
 /**
  * Manages and executes parsed queries
@@ -57,7 +57,13 @@ class QueryManager {
 			.filter((query) => query.header.type === 'flow')
 			.map(interpretFlowQuery);
 		const allInterpreters = nodeInterpreters.concat(flowInterpreters);
-		return allInterpreters.map((interpreter) => interpreter.value);
+
+		allInterpreters.forEach((interpreter) =>
+			interpreter.setFellowInterpreters(allInterpreters).end()
+		);
+		return allInterpreters
+			.filter((interpreter) => !interpreter.isInherited)
+			.map((interpreter) => interpreter.doHtppRequest());
 	}
 }
 const instance = new QueryManager();

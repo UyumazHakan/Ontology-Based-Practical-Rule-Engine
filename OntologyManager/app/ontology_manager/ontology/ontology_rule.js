@@ -31,6 +31,7 @@ class OntologyRule {
 		this.isSaved = args.isSaved || false;
 		this._isUpdated = args.isUpdated || false;
 		if (args.nodes) args.nodes.forEach((node) => this.addNode(node));
+		if (args.paths) args.paths.forEach((path) => this.addPath(path));
 	}
 
 	/**
@@ -43,7 +44,23 @@ class OntologyRule {
 			this._isUpdated
 		);
 	}
-
+	addPath(path) {
+		const source = this.nodes.find((node) =>
+			Object.keys(path.source).reduce(
+				(acc, key) => acc && path.source[key] === node[key],
+				true
+			)
+		);
+		const sinks = path.sinks.map((sink) =>
+			this.nodes.find((node) =>
+				Object.keys(sink).reduce(
+					(acc, key) => acc && sink[key] === node[key],
+					true
+				)
+			)
+		);
+		sinks.forEach((sink) => sink.addSource(source));
+	}
 	/**
 	 * Execute all source nodes with given arguments
 	 * @param {Object} args Arguments to pass execute function of source nodes
