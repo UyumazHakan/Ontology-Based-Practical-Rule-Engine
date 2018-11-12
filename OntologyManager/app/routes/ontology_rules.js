@@ -1,10 +1,9 @@
 import express from 'express';
 import {loggers} from 'winston';
-import {loadNode, loadRule} from '../ontology_manager/ontology/ontology_load';
+import {loadNode, loadFlow} from '../ontology_manager/ontology/ontology_load';
 import clone from 'clone';
-import NodeEnum from '../ontology_manager/ontology_nodes/ontology_node_enum';
 import DatabaseConnectorProxy from '../ontology_manager/database_connector/database_connector_proxy';
-import OntologyRule from '../ontology_manager/ontology/ontology_rule';
+import OntologyFlow from '../ontology_manager/ontology/ontology_flow';
 
 let router = express.Router();
 let logger = loggers.get('main');
@@ -30,7 +29,7 @@ router.param('node_id', function(req, res, next, id) {
 });
 
 router.param('rule_id', function(req, res, next, id) {
-	loadRule({id: id})
+	loadFlow({id: id})
 		.then((rule) => {
 			req._rule = rule;
 			req.rule = rule.minify();
@@ -41,7 +40,7 @@ router.param('rule_id', function(req, res, next, id) {
 		});
 });
 router.post('/', function(req, res) {
-	let rule = new OntologyRule(req.body.info);
+	let rule = new OntologyFlow(req.body.info);
 
 	let callback = (err, result) => {
 		if (err) {

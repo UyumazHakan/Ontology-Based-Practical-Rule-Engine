@@ -1,4 +1,4 @@
-import OntologyRule from './ontology_rule';
+import OntologyFlow from './ontology_flow';
 import uuid from 'uuid/v4';
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
 
@@ -17,62 +17,62 @@ class Ontology {
 	 * @param {string} args.owner User Id of the owner. Ontology will be public if not presented
 	 * @param {boolean} args.isSaved States whether any version of the ontology present in th database.
 	 * @param {boolean}  args.isUpdated States whether the last version of the ontology present in the database
-	 * @param {OntologyRule[]} args.rules List of rules will be owned by the ontology
+	 * @param {OntologyFlow[]} args.flows List of flows will be owned by the ontology
 	 */
 	constructor(args) {
 		this.id = args.id || uuid();
 		this.name = args.name;
 		this.owner = args.owner;
-		this.rules = [];
+		this.flows = [];
 		this.isSaved = args.isSaved || false;
 		this._isUpdated = args.isUpdated || false;
-		if (args.rules) args.rules.forEach((rule) => this.addRule(rule));
+		if (args.flows) args.flows.forEach((flow) => this.addFlow(flow));
 	}
 	/**
-	 * Returns whether ontology and owned rules are saved with the latest version in database
-	 * @return {boolean} Status of the ontology and owned rules in database
+	 * Returns whether ontology and owned flows are saved with the latest version in database
+	 * @return {boolean} Status of the ontology and owned flows in database
 	 */
 	get isUpdated() {
-		return this.rules.reduce(
+		return this.flows.reduce(
 			(acc, cur) => acc && cur.isUpdated,
 			this._isUpdated
 		);
 	}
 
 	/**
-	 * Returns all nodes that belongs to rules of ontology
-	 * @return {OntologyNode[]} All nodes that belongs to rules of ontology
+	 * Returns all nodes that belongs to flows of ontology
+	 * @return {OntologyNode[]} All nodes that belongs to flows of ontology
 	 */
 	get nodes() {
-		return this.rules.reduce((acc, cur) => acc.concat(cur.nodes), []);
+		return this.flows.reduce((acc, cur) => acc.concat(cur.nodes), []);
 	}
 	/**
-	 * Returns all sink nodes that belongs to rules of ontology
-	 * @return {OntologyNode[]} All sink nodes that belongs to rules of ontology
+	 * Returns all sink nodes that belongs to flows of ontology
+	 * @return {OntologyNode[]} All sink nodes that belongs to flows of ontology
 	 */
 	get sinkNodes() {
-		return this.rules.reduce((acc, cur) => acc.concat(cur.sinkNodes), []);
+		return this.flows.reduce((acc, cur) => acc.concat(cur.sinkNodes), []);
 	}
 	/**
-	 * Returns all source nodes that belongs to rules of ontology
-	 * @return {OntologyNode[]} All source nodes that belongs to rules of ontology
+	 * Returns all source nodes that belongs to flows of ontology
+	 * @return {OntologyNode[]} All source nodes that belongs to flows of ontology
 	 */
 	get sourceNodes() {
-		return this.rules.reduce((acc, cur) => acc.concat(cur.sourceNodes), []);
+		return this.flows.reduce((acc, cur) => acc.concat(cur.sourceNodes), []);
 	}
 
 	/**
-	 * Adds a new rule to ontology
-	 * @param {OntologyRule | Object} args Rule to be added in ontology
+	 * Adds a new flow to ontology
+	 * @param {OntologyFlow | Object} args Flow to be added in ontology
 	 */
-	addRule(args) {
+	addFlow(args) {
 		this._isUpdated = false;
-		let newRule = args instanceof OntologyRule ? args : new OntologyRule(args);
-		this.rules.push(newRule);
+		let newFlow = args instanceof OntologyFlow ? args : new OntologyFlow(args);
+		this.flows.push(newFlow);
 	}
 
 	/**
-	 * Saves ontology and all its rules
+	 * Saves ontology and all its flows
 	 * @param {Object} args All arguments
 	 * @param {function} args.callback Callback function to be called after ontology saved
 	 */
@@ -81,9 +81,9 @@ class Ontology {
 			id: this.id,
 			name: this.name,
 			owner: this.owner,
-			rules: this.rules.map((rule) => rule.id),
+			flows: this.flows.map((flow) => flow.id),
 		};
-		this.rules.forEach((rule) => rule.save());
+		this.flows.forEach((flow) => flow.save());
 		if (!this.isSaved) {
 			DatabaseConnectorProxy.create({
 				index: 'ontology',

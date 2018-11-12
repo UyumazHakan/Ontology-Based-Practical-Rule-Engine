@@ -1,12 +1,12 @@
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
 import NodeEnum from '../ontology_nodes/ontology_node_enum';
-import OntologyRule from './ontology_rule';
+import OntologyFlow from './ontology_flow';
 import Ontology from './ontology';
 
 import {loggers} from 'winston';
 let logger = loggers.get('main');
 let nodeCache = {};
-let ruleCache = {};
+let flowCache = {};
 let ontologyCache = {};
 
 /**
@@ -72,22 +72,22 @@ export function loadNode(args) {
 	});
 }
 /**
- * Loads a rule and its nodes from database or cache
+ * Loads a flow and its nodes from database or cache
  * @param {Object} args All arguments
- * @param {string} args.id Id of rule to be loaded
- * @return {Promise<any>} Resolves rule
+ * @param {string} args.id Id of flow to be loaded
+ * @return {Promise<any>} Resolves flow
  */
-export function loadRule(args) {
+export function loadFlow(args) {
 	return new Promise((resolve, reject) => {
 		if (!args.id) reject('ID not defined in arguments');
-		if (ruleCache[args.id] !== undefined) {
-			logger.error(`Rule ${args.id} is found in cache`);
-			resolve(ruleCache[args.id]);
+		if (flowCache[args.id] !== undefined) {
+			logger.error(`Flow ${args.id} is found in cache`);
+			resolve(flowCache[args.id]);
 			return;
 		}
 		DatabaseConnectorProxy.search({
-			index: 'rule',
-			type: 'ruleType',
+			index: 'flow',
+			type: 'flowType',
 			query: {
 				bool: {
 					must: [
@@ -105,39 +105,39 @@ export function loadRule(args) {
 		})
 			.then((res) => {
 				if (res.hits.hits.length === 0) {
-					reject('No rule is found');
+					reject('No flow is found');
 					return;
 				}
-				let ruleInfo = res.hits.hits[0]._source;
-				ruleInfo.isSaved = true;
-				ruleInfo._isUpdated = true;
-				let ruleNodes = ruleInfo.nodes;
-				delete ruleInfo.nodes;
-				let rule = new OntologyRule(ruleInfo);
-				ruleCache[ruleInfo.id] = rule;
-				Promise.all(ruleNodes.map((node) => loadNode({id: node}))).then(
+				let flowInfo = res.hits.hits[0]._source;
+				flowInfo.isSaved = true;
+				flowInfo._isUpdated = true;
+				let flowNodes = flowInfo.nodes;
+				delete flowInfo.nodes;
+				let flow = new OntologyFlow(flowInfo);
+				flowCache[flowInfo.id] = flow;
+				Promise.all(flowNodes.map((node) => loadNode({id: node}))).then(
 					(nodes) => {
 						nodes.forEach((node) => {
-							rule.addNode({
+							flow.addNode({
 								info: node,
-								sink: ruleInfo.sinkNodes.includes(node.id),
-								source: ruleInfo.sourceNodes.includes(node.id),
+								sink: flowInfo.sinkNodes.includes(node.id),
+								source: flowInfo.sourceNodes.includes(node.id),
 							});
 						});
-						rule._isUpdated = true;
-						resolve(rule);
+						flow._isUpdated = true;
+						resolve(flow);
 						return;
 					}
 				);
 			})
 			.catch((err) => {
-				logger.error(`Rule loading is failed. ${err}`);
+				logger.error(`Flow loading is failed. ${err}`);
 				reject(err);
 			});
 	});
 }
 /**
- * Loads a ontology and its rules from database or cache
+ * Loads a ontology and its flows from database or cache
  * @param {Object} args All arguments
  * @param {string} args.id Id of ontology to be loaded
  * @return {Promise<any>} Resolves ontology
@@ -176,14 +176,14 @@ export function loadOntology(args) {
 				let ontologyInfo = res.hits.hits[0]._source;
 				ontologyInfo.isSaved = true;
 				ontologyInfo._isUpdated = true;
-				let ontologyRules = ontologyInfo.rules;
-				delete ontologyInfo.rules;
+				let ontologyFlows = ontologyInfo.flows;
+				delete ontologyInfo.flows;
 				let ontology = new Ontology(ontologyInfo);
 				ontologyCache[ontologyInfo.id] = ontology;
-				Promise.all(ontologyRules.map((rule) => loadRule({id: rule}))).then(
-					(rules) => {
-						rules.forEach((rule) => {
-							ontology.addRule(rule);
+				Promise.all(ontologyFlows.map((flow) => loadFlow({id: flow}))).then(
+					(flows) => {
+						flows.forEach((rule) => {
+							ontology.addFlow(rule);
 						});
 						ontology._isUpdated = true;
 						resolve(ontology);

@@ -8,18 +8,18 @@ import clone from 'clone';
 let logger = loggers.get('main');
 
 /**
- * Class representing a rule in ontology
+ * Class representing a flow in ontology
  */
-class OntologyRule {
+class OntologyFlow {
 	/**
-	 * Creates an ontology rule
+	 * Creates an ontology flow
 	 * @param {Object} args An object contains all arguments
-	 * @param {string} args.id Unique id to identify each different rules. Automatically generated if not present
-	 * @param {string} args.name Display name for the rule
-	 * @param {string} args.owner User Id of the owner. Rule will be public if not presented
-	 * @param {boolean} args.isSaved States whether any version of the rule present in th database.
-	 * @param {boolean}  args.isUpdated States whether the last version of the rule present in the database
-	 * @param {OntologyNode[]} args.nodes List of nodes will be owned by the rule
+	 * @param {string} args.id Unique id to identify each different flows. Automatically generated if not present
+	 * @param {string} args.name Display name for the flow
+	 * @param {string} args.owner User Id of the owner. Flow will be public if not presented
+	 * @param {boolean} args.isSaved States whether any version of the flow present in th database.
+	 * @param {boolean}  args.isUpdated States whether the last version of the flow present in the database
+	 * @param {OntologyNode[]} args.nodes List of nodes will be owned by the flow
 	 */
 	constructor(args) {
 		this.id = args.id || uuid();
@@ -35,8 +35,8 @@ class OntologyRule {
 	}
 
 	/**
-	 * Returns whether rule and owned nodes are saved with the latest version in database
-	 * @return {boolean} Status of the rule and owned rules in database
+	 * Returns whether flow and owned nodes are saved with the latest version in database
+	 * @return {boolean} Status of the flow and owned nodes in database
 	 */
 	get isUpdated() {
 		return this.node.reduce(
@@ -70,9 +70,9 @@ class OntologyRule {
 	}
 
 	/**
-	 * Add a node to rule
+	 * Add a node to flow
 	 * @param {Object} args An object contains all arguments
-	 * @param {OntologyNode | Object} args.value The node to be added to rule
+	 * @param {OntologyNode | Object} args.value The node to be added to flow
 	 * @param {string} args.type Enumeration of the node type to be added
 	 * @param {boolean} args.sink Specifies whether the node is a sink node
 	 * @param {boolean} args.source Specifies whether the node is a source node
@@ -89,7 +89,7 @@ class OntologyRule {
 	}
 
 	/**
-	 * Adds a sink node to rule
+	 * Adds a sink node to flow
 	 * @param {Object} args An object contains all arguments
 	 * @param {OntologyNode} args.node The node to be added as sink node
 	 */
@@ -101,7 +101,7 @@ class OntologyRule {
 		}
 	}
 	/**
-	 * Adds a source node to rule
+	 * Adds a source node to flow
 	 * @param {Object} args An object contains all arguments
 	 * @param {OntologyNode} args.node The node to be added as source node
 	 */
@@ -113,9 +113,9 @@ class OntologyRule {
 		}
 	}
 	/**
-	 * Saves the rule and all its nodes
+	 * Saves the flow and all its nodes
 	 * @param {Object} args An object contains all arguments
-	 * @param {function} args.callback Callback function to be called after rule saved
+	 * @param {function} args.callback Callback function to be called after flow saved
 	 */
 	save(args) {
 		let saveObject = {
@@ -129,35 +129,35 @@ class OntologyRule {
 		this.nodes.forEach((node) => node.saveNode());
 		if (!this.isSaved) {
 			DatabaseConnectorProxy.create({
-				index: 'rule',
-				type: 'ruleType',
+				index: 'flow',
+				type: 'flowType',
 				body: saveObject,
 			})
 				.then((res) => {
-					logger.debug(`Rule saving is successful. ${res}`);
+					logger.debug(`Flow saving is successful. ${res}`);
 					this.isSaved = true;
 					this._isUpdated = true;
 					if (args.callback) args.callback(null, res);
 				})
 				.catch((err) => {
-					logger.debug(`Rule saving is failed. ${err}`);
+					logger.debug(`Flow saving is failed. ${err}`);
 					if (args.callback) args.callback(err, null);
 				});
 		}
 	}
 
 	/**
-	 * Returns clone the rule with minified versions of nodes
+	 * Returns clone the flow with minified versions of nodes
 	 * @param {any} args Not used currently
-	 * @return {OntologyRule} Clone of the rule with node ids instead of OntologyNode
+	 * @return {OntologyFlow} Clone of the flow with node ids instead of OntologyNode
 	 */
 	minify(args) {
-		let rule = clone(this);
-		rule.nodes = rule.nodes.map((node) => node.minify());
-		rule.sinkNodes = rule.sinkNodes.map((node) => node.minify());
-		rule.sourceNodes = rule.sourceNodes.map((node) => node.minify());
-		return rule;
+		let flow = clone(this);
+		flow.nodes = flow.nodes.map((node) => node.minify());
+		flow.sinkNodes = flow.sinkNodes.map((node) => node.minify());
+		flow.sourceNodes = flow.sourceNodes.map((node) => node.minify());
+		return flow;
 	}
 }
 
-export default OntologyRule;
+export default OntologyFlow;

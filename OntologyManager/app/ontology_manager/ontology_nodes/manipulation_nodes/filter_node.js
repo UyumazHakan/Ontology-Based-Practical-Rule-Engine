@@ -28,7 +28,7 @@ class FilterNode extends OntologyNode {
 	}
 	execute(args) {
 		super.execute(args);
-		let filterField = this.field;
+		let filterField = args.field || this.field;
 		let executeImp = (field) => {
 			if (!args[field]) return;
 			else if (args[field] instanceof Array) {

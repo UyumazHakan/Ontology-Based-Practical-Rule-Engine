@@ -9,7 +9,7 @@ import 'chai/register-should';
 import Ontology from '../../app/ontology_manager/ontology/ontology';
 import ReturnNode from '../../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 import MapNode from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
-import OntologyRule from '../../app/ontology_manager/ontology/ontology_rule';
+import OntologyFlow from '../../app/ontology_manager/ontology/ontology_flow';
 import ReduceNode from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
 import {loadOntology} from '../../app/ontology_manager/ontology/ontology_load';
 
@@ -25,7 +25,7 @@ describe('Ontology', function() {
 				sinkMap: 'to',
 			});
 			mapNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology_rule',
 				owner: 'test_user',
 				nodes: [
@@ -63,7 +63,7 @@ describe('Ontology', function() {
 				sinkMap: 'to',
 			});
 			mapNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology_rule',
 				owner: 'test_user',
 				nodes: [
@@ -100,7 +100,7 @@ describe('Ontology', function() {
 					owner: ontology.owner,
 				})
 				.and.has.property('rules')
-				.lengthOf(ontology.rules.length);
+				.lengthOf(ontology.flows.length);
 		});
 	});
 });

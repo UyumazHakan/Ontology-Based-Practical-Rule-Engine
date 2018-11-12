@@ -97,23 +97,21 @@ class MapNode extends OntologyNode {
 	}
 	execute(args) {
 		super.execute(args);
+		const _map = (value) =>
+			value instanceof Array ? value.map(this.fn) : this.fn(value);
 		let passValue = {};
-		passValue.append = (key, value) => {
-			if (this.sinkMap.some((sinkField) => sinkField === key)) {
-				if (value instanceof Array) value = value.map(this.fn);
-				else value = this.fn(value);
-			}
-			if (!passValue[key]) passValue[key] = value;
-			else if (passValue[key] instanceof Array) passValue[key].push(value);
-			else passValue[key] = [passValue[key], value];
+		passValue.append = function(key, value) {
+			if (this[key] && this[key] instanceof Array) this[key].push(value);
+			else if (this[key]) this[key] = [this[key], value];
+			else this[key] = value;
 		};
 		Object.keys(args).forEach((key) => {
 			if (this.map[key]) {
 				if (this.map[key] instanceof Array) {
 					this.map[key].forEach((mulKey) =>
-						passValue.append(mulKey, args[key])
+						passValue.append(mulKey, _map(args[key]))
 					);
-				} else passValue.append(this.map[key], args[key]);
+				} else passValue.append(this.map[key], _map(args[key]));
 			}
 			if (!this.map[key] || this.keepSource) passValue.append(key, args[key]);
 		});

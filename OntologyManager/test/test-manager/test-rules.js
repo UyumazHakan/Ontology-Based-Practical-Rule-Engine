@@ -8,11 +8,11 @@ chai.use(chaiAsPromised);
 import 'chai/register-should';
 import ReturnNode from '../../app/ontology_manager/ontology_nodes/test_nodes/return_node';
 import MapNode from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/map_node';
-import OntologyRule from '../../app/ontology_manager/ontology/ontology_rule';
+import OntologyFlow from '../../app/ontology_manager/ontology/ontology_flow';
 import ReduceNode from '../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
-import {loadRule} from '../../app/ontology_manager/ontology/ontology_load';
+import {loadFlow} from '../../app/ontology_manager/ontology/ontology_load';
 
-describe('OntologyRule', function() {
+describe('OntologyFlow', function() {
 	let simpleReturnNode = new ReturnNode({});
 	beforeEach(function() {
 		simpleReturnNode.reset();
@@ -24,7 +24,7 @@ describe('OntologyRule', function() {
 				sinkMap: 'to',
 			});
 			mapNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology',
 				owner: 'test_user',
 				nodes: [
@@ -59,7 +59,7 @@ describe('OntologyRule', function() {
 			});
 			mapNode.addSink(reduceNode);
 			reduceNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology',
 				owner: 'test_user',
 				nodes: [
@@ -104,7 +104,7 @@ describe('OntologyRule', function() {
 			mapNode1.addSink(reduceNode);
 			mapNode2.addSink(reduceNode);
 			reduceNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology',
 				owner: 'test_user',
 				nodes: [
@@ -154,7 +154,7 @@ describe('OntologyRule', function() {
 			mapNode.addSink(reduceNode);
 			mapNode.addSink(simpleReturnNode);
 			reduceNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology',
 				owner: 'test_user',
 				nodes: [
@@ -202,7 +202,7 @@ describe('OntologyRule', function() {
 			mapNode.addSink(reduceNode);
 			mapNode.addSink(simpleReturnNode);
 			reduceNode.addSink(simpleReturnNode);
-			let rule = new OntologyRule({
+			let rule = new OntologyFlow({
 				name: 'test_ontology',
 				owner: 'test_user',
 				nodes: [
@@ -225,7 +225,7 @@ describe('OntologyRule', function() {
 			rule.save();
 			return new Promise((resolve, reject) => {
 				setTimeout(() => {
-					loadRule({
+					loadFlow({
 						id: rule.id,
 					})
 						.then(resolve)
