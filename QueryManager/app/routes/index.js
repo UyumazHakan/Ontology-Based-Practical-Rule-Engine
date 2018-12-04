@@ -32,7 +32,7 @@ router.post('/', function(req, res) {
 		})
 		.catch((err) => {
 			console.dir(err);
-			res.status(500).send(err);
+			res.status(500).send(stringify(err));
 		});
 });
 

@@ -1,5 +1,6 @@
 import express from 'express';
 import {loggers} from 'winston';
+import {stringify} from '../utils';
 import {loadNode, loadFlow} from '../ontology_manager/ontology/ontology_load';
 import clone from 'clone';
 import DatabaseConnectorProxy from '../ontology_manager/database_connector/database_connector_proxy';
@@ -44,10 +45,10 @@ router.post('/', function(req, res) {
 
 	let callback = (err, result) => {
 		if (err) {
-			res.status(500).send(err);
+			res.status(500).send(stringify(err));
 			return;
 		}
-		res.json(rule.minify());
+		res.send(stringify(rule.minify()));
 	};
 	rule.save({callback: callback});
 });

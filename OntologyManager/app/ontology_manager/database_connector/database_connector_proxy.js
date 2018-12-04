@@ -1,5 +1,6 @@
 import {loggers} from 'winston';
 import _config from 'config';
+import {stringify} from '../../utils';
 
 import ElasticSearchDatabaseConnector from './elastic_search_database_connector';
 
@@ -35,7 +36,7 @@ class DatabaseConnectorProxy {
 	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	create(args) {
-		logger.debug(`DatabaseConnectorProxy.create(${JSON.stringify(args)})`);
+		logger.debug(`DatabaseConnectorProxy.create(${stringify(args)})`);
 		return this.connector.create(args);
 	}
 	/**

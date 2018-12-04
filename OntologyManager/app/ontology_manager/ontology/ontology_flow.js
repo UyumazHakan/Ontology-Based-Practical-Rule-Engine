@@ -1,8 +1,9 @@
 import NodeEnum from '../ontology_nodes/ontology_node_enum';
 import OntologyNode from '../ontology_nodes/ontology_node';
 import uuid from 'uuid/v4';
-
+import FlowCachingStrategyEnum from './caching_strategy/flow_caching_strategy_enum';
 import {loggers} from 'winston';
+import {stringify} from '../../utils';
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
 import clone from 'clone';
 let logger = loggers.get('main');
@@ -19,7 +20,9 @@ class OntologyFlow {
 	 * @param {string} args.owner User Id of the owner. Flow will be public if not presented
 	 * @param {boolean} args.isSaved States whether any version of the flow present in th database.
 	 * @param {boolean}  args.isUpdated States whether the last version of the flow present in the database
-	 * @param {OntologyNode[]} args.nodes List of nodes will be owned by the flow
+	 * @param {OntologyNode[]} [args.nodes] List of nodes will be owned by the flow
+	 * @param {{source, sinks}[]} [args.paths] Specifies sinks and source for each node
+	 * @paran {{name: string, info: Object}} [args.cacheStrategy] Specify cache strategy to be used
 	 */
 	constructor(args) {
 		this.id = args.id || uuid();
@@ -32,6 +35,8 @@ class OntologyFlow {
 		this._isUpdated = args.isUpdated || false;
 		if (args.nodes) args.nodes.forEach((node) => this.addNode(node));
 		if (args.paths) args.paths.forEach((path) => this.addPath(path));
+		if (args.cacheStrategy || args._cacheStrategy)
+			this.cacheStrategy = args.cacheStrategy || args._cacheStrategy;
 	}
 
 	/**
@@ -43,6 +48,20 @@ class OntologyFlow {
 			(acc, cur) => acc && cur.isUpdated,
 			this._isUpdated
 		);
+	}
+
+	/**
+	 * Sets caching strategy
+	 * @param {Object} strategy Flow caching strategy to set for the flow
+	 */
+	set cacheStrategy(strategy) {
+		logger.debug(`cacheStrategy(${JSON.stringify(strategy)})`);
+		const cacheStrategy = (this._cacheStrategy = new FlowCachingStrategyEnum[
+			strategy.type
+		](strategy.info));
+		this.sourceNodes.forEach((sourceNode) => {
+			sourceNode.cache = {fn: cacheStrategy.receive, sinks: this.sinkNodes};
+		});
 	}
 	addPath(path) {
 		const source = this.nodes.find((node) =>
@@ -134,13 +153,13 @@ class OntologyFlow {
 				body: saveObject,
 			})
 				.then((res) => {
-					logger.debug(`Flow saving is successful. ${res}`);
+					logger.debug(`Flow saving is successful. ${stringify(res)}`);
 					this.isSaved = true;
 					this._isUpdated = true;
 					if (args.callback) args.callback(null, res);
 				})
 				.catch((err) => {
-					logger.debug(`Flow saving is failed. ${err}`);
+					logger.debug(`Flow saving is failed. ${stringify(err)}`);
 					if (args.callback) args.callback(err, null);
 				});
 		}
@@ -156,6 +175,7 @@ class OntologyFlow {
 		flow.nodes = flow.nodes.map((node) => node.minify());
 		flow.sinkNodes = flow.sinkNodes.map((node) => node.minify());
 		flow.sourceNodes = flow.sourceNodes.map((node) => node.minify());
+		if (flow._cacheStrategy) flow._cacheStrategy = flow._cacheStrategy.minify();
 		return flow;
 	}
 }

@@ -19,7 +19,11 @@ class SourceNode extends OntologyNode {
 		if (args.sourceType.name) args.sourceType = args.sourceType.name;
 		this.sourceType = SourceType.enumValueOf(args.sourceType);
 	}
-
+	set cache(args) {
+		this._cache = true;
+		this.cacheFn = args.fn;
+		this.flowSinks = args.sinks;
+	}
 	/**
 	 * Saves source node
 	 * @param {Object} [args] Arguments to be saved
@@ -27,7 +31,28 @@ class SourceNode extends OntologyNode {
 	saveNode(args) {
 		if (!args) args = {};
 		args.sourceType = this.sourceType.name;
+		args._cache = undefined;
+		args.cacheFn = undefined;
+		args.flowSinks = undefined;
 		super.saveNode(args);
+	}
+
+	/**
+	 * Execute every sink node by checking caching is active
+	 * @param {Object} args Arguments to be sent to sink nodes
+	 * @param {OntologyNode~passToSinksCallback} [args.callback] The callback function to be called before passing to sinks
+	 */
+	passToSinks(args) {
+		if (args.callback) args.callback(args);
+		if (this._cache) {
+			const cacheResponse = this.cacheFn(args);
+			if (!typeof cacheResponse === 'function') {
+				this.flowSinks.forEach((sink) => sink.execute(cacheResponse));
+				return;
+			} else args._cacheFn = cacheResponse;
+		}
+		delete args.callback;
+		super.passToSinks(args);
 	}
 }
 

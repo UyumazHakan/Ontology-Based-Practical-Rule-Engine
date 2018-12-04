@@ -1,4 +1,5 @@
 import {loggers} from 'winston';
+import {stringify} from '../../utils';
 
 import DatabaseConnector from './database_connector';
 
@@ -57,9 +58,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	create(args) {
-		logger.debug(
-			`ElasticsearchDatabaseConnector.create(${JSON.stringify(args)})`
-		);
+		logger.debug(`ElasticsearchDatabaseConnector.create(${stringify(args)})`);
 		let index = args.index;
 		let type = args.type;
 		let body = args.body;
@@ -112,9 +111,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	search(args) {
-		logger.debug(
-			`ElasticsearchDatabaseConnector.search(${JSON.stringify(args)})`
-		);
+		logger.debug(`ElasticsearchDatabaseConnector.search(${stringify(args)})`);
 		let index = args.index;
 		let type = args.type;
 		let query = args.query;
@@ -146,7 +143,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 				})
 				.then(
 					function(resp) {
-						logger.debug(`Searched: ${JSON.stringify(resp)}`);
+						logger.debug(`Searched: ${stringify(resp)}`);
 						resolve(resp);
 					},
 					function(err) {
@@ -167,9 +164,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 * @return {Promise<any>} Resolves response from Elasticsearch database
 	 */
 	update(args) {
-		logger.debug(
-			`ElasticsearchDatabaseConnector.update(${JSON.stringify(args)})`
-		);
+		logger.debug(`ElasticsearchDatabaseConnector.update(${stringify(args)})`);
 		let index = args.index;
 		let type = args.type;
 		let body = args.body;
@@ -222,7 +217,7 @@ class ElasticSearchDatabaseConnector extends DatabaseConnector {
 	 */
 	getTypeUUID(args) {
 		logger.debug(
-			`ElasticsearchDatabaseConnector.getTypeUUID(${JSON.stringify(args)})`
+			`ElasticsearchDatabaseConnector.getTypeUUID(${stringify(args)})`
 		);
 		return new Promise((resolve, reject) => {
 			this.search({
