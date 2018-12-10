@@ -21,7 +21,7 @@ class SourceNode extends OntologyNode {
 	}
 	set cache(args) {
 		this._cache = true;
-		this.cacheFn = args.fn;
+		this.cacheStrategy = args.cacheStrategy;
 		this.flowSinks = args.sinks;
 	}
 	/**
@@ -45,11 +45,11 @@ class SourceNode extends OntologyNode {
 	passToSinks(args) {
 		if (args.callback) args.callback(args);
 		if (this._cache) {
-			const cacheResponse = this.cacheFn(args);
-			if (!typeof cacheResponse === 'function') {
+			const cacheResponse = this.cacheStrategy.receive(args);
+			if (typeof cacheResponse !== 'function') {
 				this.flowSinks.forEach((sink) => sink.execute(cacheResponse));
 				return;
-			} else args._cacheFn = cacheResponse;
+			} else args._cacheFn = (args) => cacheResponse(args);
 		}
 		delete args.callback;
 		super.passToSinks(args);

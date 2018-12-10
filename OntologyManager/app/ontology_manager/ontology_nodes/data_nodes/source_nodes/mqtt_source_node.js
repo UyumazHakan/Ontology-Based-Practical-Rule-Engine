@@ -50,7 +50,7 @@ class MqttSourceNode extends SourceNode {
 	 */
 	execute(args) {
 		super.execute(args);
-		if (!args.field) args.field = this.field;
+		if (!args.field && this.field) args.field = this.field;
 		this.executeWithType(args);
 	}
 	/**

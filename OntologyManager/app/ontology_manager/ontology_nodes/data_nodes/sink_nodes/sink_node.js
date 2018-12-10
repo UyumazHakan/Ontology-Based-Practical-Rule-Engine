@@ -32,6 +32,22 @@ class SinkNode extends OntologyNode {
 		args.sinkType = this.sinkType.name;
 		super.saveNode(args);
 	}
+	/**
+	 * Execute every sink node after caching
+	 * @param {Object} args Arguments to be sent to sink nodes
+	 * @param {OntologyNode~passToSinksCallback} [args.callback] The callback function to be called before passing to sinks
+	 */
+	passToSinks(args) {
+		if (args.callback) args.callback(args);
+		delete args.callback;
+
+		if (args._cacheFn) {
+			const cacheFn = args._cacheFn;
+			delete args._cacheFn;
+			cacheFn(args);
+		}
+		super.passToSinks(args);
+	}
 }
 
 export default SinkNode;

@@ -56,11 +56,14 @@ class OntologyFlow {
 	 */
 	set cacheStrategy(strategy) {
 		logger.debug(`cacheStrategy(${JSON.stringify(strategy)})`);
-		const cacheStrategy = (this._cacheStrategy = new FlowCachingStrategyEnum[
-			strategy.type
-		](strategy.info));
+		this._cacheStrategy = new FlowCachingStrategyEnum[strategy.type](
+			strategy.info
+		);
 		this.sourceNodes.forEach((sourceNode) => {
-			sourceNode.cache = {fn: cacheStrategy.receive, sinks: this.sinkNodes};
+			sourceNode.cache = {
+				cacheStrategy: this._cacheStrategy,
+				sinks: this.sinkNodes,
+			};
 		});
 	}
 	addPath(path) {

@@ -1,5 +1,6 @@
 import {loggers} from 'winston';
 let logger = loggers.get('main');
+import deepEqual from 'deep-equal';
 
 /**
  * Class to be extended for creating concrete flow caching strategies
@@ -16,7 +17,7 @@ class FlowCachingStrategy {
 			logger.error(errMessage);
 			throw new TypeError(errMessage);
 		}
-		this.cache = args.cache ? args.cache : {};
+		this.cache = args.cache ? args.cache : [];
 	}
 
 	/**
@@ -29,8 +30,10 @@ class FlowCachingStrategy {
 	 * @return {Object | CachingFunction} Returns cached object or cache function
 	 */
 	receive(args) {
-		if (this.cache[args]) return this.cache[args];
-		else return this.execute(args);
+		const matchIndex = this.cache.findIndex((e) => deepEqual(e.received, args));
+		return matchIndex !== -1
+			? this.cache[matchIndex].result
+			: this.execute(args);
 	}
 
 	/**
