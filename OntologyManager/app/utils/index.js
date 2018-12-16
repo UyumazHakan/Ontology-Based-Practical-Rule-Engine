@@ -1,4 +1,5 @@
 import {inspect} from 'util';
+import md5 from 'md5';
 /**
  * Helper function to deserialize any serialized object
  * @param {string} serializedObject
@@ -14,4 +15,16 @@ export function deserialize(serializedObject) {
  */
 export function stringify(object) {
 	return JSON.stringify(inspect(object));
+}
+/**
+ * Helper function to create hash of an object
+ * @param {Object} object Object to be hashed
+ * @return {string} Resulting hash
+ */
+export function hash(object) {
+	return md5(
+		Object.keys(object)
+			.sort()
+			.map((key) => object[key])
+	);
 }

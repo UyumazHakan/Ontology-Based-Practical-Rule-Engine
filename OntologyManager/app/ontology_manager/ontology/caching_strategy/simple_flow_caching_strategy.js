@@ -1,7 +1,6 @@
 import FlowCachingStrategy from './flow_caching_strategy';
 import {loggers} from 'winston';
-import {stringify} from '../../../utils';
-import deepEqual from 'deep-equal';
+import {stringify, hash} from '../../../utils';
 
 let logger = loggers.get('main');
 
@@ -13,7 +12,7 @@ class SimpleFlowCachingStrategy extends FlowCachingStrategy {
 	 * Constructor of simple flow caching strategy.
 	 * @param {Object} args All arguments
 	 * @param {number} args.count Defines how many times same data and result pair should be received for caching
-	 * @param {Object.<Object, {count: number, result: Object}>} [args.cacheCounter] Cache counter object if this strategy is loaded
+	 * @param {Object.<string, {count: number, result: string}>} [args.cacheCounter] Cache counter object if this strategy is loaded
 	 */
 	constructor(args) {
 		logger.debug(`SimpleFlowCachingStrategy(${stringify(args)})`);
@@ -21,39 +20,45 @@ class SimpleFlowCachingStrategy extends FlowCachingStrategy {
 		this.count = args.count;
 		/**
 		 * Keeps data and result with how many times its received. Number of times will be -1 if it receive any different data
-		 * @type {Object.<Object, {count: number, result: Object}>}
+		 * @type {Object.<string, {count: number, result: string}>}
 		 */
-		this.cacheCounter = args.cacheCounter ? args.cacheCounter : [];
+		this.cacheCounter = args.cacheCounter ? args.cacheCounter : {};
 	}
 
 	/**
 	 * Executes simple caching strategy
-	 * @param {Object} args Data received by the flow
+	 * @param {string} argsHash Hash of data received by the flow
 	 * @return {CachingFunction}
 	 */
-	execute(args) {
+	execute(argsHash) {
 		return (result) => {
-			delete args._cacheFn;
+			const resultHash = hash(result);
 			logger.silly(`New result: ${stringify(result)}`);
-			const cacheConterPoint = this.cacheCounter.find((e) =>
-				deepEqual(e.received, args)
-			);
+			logger.silly(`New result hash: ${stringify(resultHash)}`);
+			const cacheConterPoint = this.cacheCounter[argsHash];
 			if (!cacheConterPoint) {
-				this.cacheCounter.push({received: args, result: result, count: 1});
+				this.cacheCounter[argsHash] = {result: resultHash, count: 1};
 				return;
 			}
+			if (cacheConterPoint.count === -1) {
+				logger.debug('This argument has got at least two different values');
+				return;
+			}
+			logger.silly(
+				`Existing result hash: ${stringify(cacheConterPoint.result)}`
+			);
 
-			logger.silly(`Existing result: ${stringify(cacheConterPoint.result)}`);
-			if (cacheConterPoint.count === -1) return;
-
-			if (!deepEqual(cacheConterPoint.result, result)) {
+			if (cacheConterPoint.result !== resultHash) {
 				logger.debug('Non matching. Setting counter to -1');
+				delete cacheConterPoint.result;
 				cacheConterPoint.count = -1;
 				return;
 			}
 			cacheConterPoint.count++;
-			if (this.count <= cacheConterPoint.count)
-				this.cache.push({received: args, result: result});
+			if (this.count <= cacheConterPoint.count) {
+				delete this.cacheCounter[argsHash];
+				this.cache[argsHash] = result;
+			}
 		};
 	}
 	minify(args) {
