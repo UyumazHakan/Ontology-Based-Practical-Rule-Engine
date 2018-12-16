@@ -83,6 +83,12 @@ public class Ontology implements Cloneable, Serializable {
 
     }
 
+    public void addSuperclasses(String child, String... names) {
+        for (String name : names) {
+            this.addSuperclass(child, name);
+        }
+    }
+
     public void addObjectProperty(String name, String domain, String range) {
         ObjectProperty property = model.createObjectProperty(namespace + name);
         property.addDomain(classes.get(domain));

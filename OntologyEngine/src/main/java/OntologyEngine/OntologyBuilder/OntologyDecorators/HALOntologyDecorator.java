@@ -5,17 +5,116 @@ import OntologyEngine.OntologyBuilder.Ontology;
 import static OntologyEngine.OntologyBuilder.OntologyDecorators.OntologyStrings.*;
 
 public class HALOntologyDecorator extends OntologyDecorator {
-    public HALOntologyDecorator(Ontology ontology) {
-        super(ontology);
-    }
+	public HALOntologyDecorator(Ontology ontology) {
+		super(ontology);
+	}
 
-    @Override
-    protected void decorate(Ontology ontology) {
-        ontology.addSubclasses(SENSOR, TEMPERATURE_SENSOR, HUMIDITY_SENSOR, CUSTOM_SENSOR, MULTI_SENSOR);
-    }
+	@Override
+	protected void decorate(Ontology ontology) {
+		ontology.addSubclasses(SENSOR,
+				TEMPERATURE_SENSOR,
+				HUMIDITY_SENSOR,
+				VIBRATION_SENSOR,
+				MAGNETIC_FIELD_SENSOR,
+				OPTICAL_INTERRUPTION_SENSOR,
+				TILT_SENSOR,
+				FLAME_SENSOR,
+				OBSTACLE_SENSOR,
+				TRACKING_SENSOR,
+				METAL_TOUCH_SENSOR,
+				SOUND_SENSOR,
+				SEA_LEVEL_PRESSURE_SENSOR,
+				PRESSURE_SENSOR,
+				ALTITUDE_SENSOR,
+				INFRARED_SENSOR,
+				ULTRAVIOLET_SENSOR,
+				VISIBILITY_SENSOR,
+				ROLL_SENSOR,
+				PITCH_SENSOR,
+				YAW_SENSOR,
+				ACCELERATION_SENSOR,
+				GYROSCOPIC_SENSOR,
+				CUSTOM_SENSOR,
+				MULTI_SENSOR,
+				ANALOG_SENSOR,
+				DIGITAL_SENSOR);
+		ontology.addSubclasses(TEMPERATURE_SENSOR, KY01, KY13, KY15, KY28, KY52, MYAHRS_PLUS_TEMPERATURE);
+		ontology.addSubclasses(HUMIDITY_SENSOR, KY15, WEATHER2_BOARD_HUMIDITY);
+		ontology.addSubclasses(VIBRATION_SENSOR, KY02, KY31);
+		ontology.addSubclasses(MAGNETIC_FIELD_SENSOR, KY03, KY21, KY24, KY25, KY35, MYAHRS_PLUS_MAG_X,
+				MYAHRS_PLUS_MAG_Y, MYAHRS_PLUS_MAG_Z);
+		ontology.addSubclasses(OPTICAL_INTERRUPTION_SENSOR, KY10);
+		ontology.addSubclasses(TILT_SENSOR, KY17, KY20);
+		ontology.addSubclasses(FLAME_SENSOR, KY26);
+		ontology.addSubclasses(OBSTACLE_SENSOR, KY32);
+		ontology.addSubclasses(TRACKING_SENSOR, KY33);
+		ontology.addSubclasses(METAL_TOUCH_SENSOR, KY36);
+		ontology.addSubclasses(SOUND_SENSOR, KY37);
+		ontology.addSubclasses(SEA_LEVEL_PRESSURE_SENSOR, KY52);
+		ontology.addSubclasses(PRESSURE_SENSOR, KY52, WEATHER2_BOARD_PRESSURE);
+		ontology.addSubclasses(ALTITUDE_SENSOR, KY52, WEATHER2_BOARD_ALTITUDE);
+		ontology.addSubclasses(INFRARED_SENSOR, WEATHER2_BOARD_IR);
+		ontology.addSubclasses(ULTRAVIOLET_SENSOR, WEATHER2_BOARD_UV);
+		ontology.addSubclasses(VISIBILITY_SENSOR, WEATHER2_BOARD_VISIBILITY);
+		ontology.addSubclasses(ROLL_SENSOR, MYAHRS_PLUS_ROLL);
+		ontology.addSubclasses(PITCH_SENSOR, MYAHRS_PLUS_PITCH);
+		ontology.addSubclasses(YAW_SENSOR, MYAHRS_PLUS_YAW);
+		ontology.addSubclasses(ACCELERATION_SENSOR, MYAHRS_PLUS_ACCEL_X, MYAHRS_PLUS_ACCEL_Y, MYAHRS_PLUS_ACCEL_Z);
+		ontology.addSubclasses(GYROSCOPIC_SENSOR, MYAHRS_PLUS_GYRO_X, MYAHRS_PLUS_GYRO_Y, MYAHRS_PLUS_GYRO_Z);
+		ontology.addSubclasses(MULTI_SENSOR, KY15, KY52, WEATHER2_BOARD, MYAHRS_PLUS);
+		ontology.addSuperclasses(WEATHER2_BOARD, WEATHER2_BOARD_ALTITUDE, WEATHER2_BOARD_HUMIDITY, WEATHER2_BOARD_IR,
+				WEATHER2_BOARD_PRESSURE,
+				WEATHER2_BOARD_UV, WEATHER2_BOARD_VISIBILITY);
+		ontology.addSuperclasses(MYAHRS_PLUS,
+				MYAHRS_PLUS_PITCH,
+				MYAHRS_PLUS_ROLL,
+				MYAHRS_PLUS_TEMPERATURE,
+				MYAHRS_PLUS_YAW,
+				MYAHRS_PLUS_ACCEL_X,
+				MYAHRS_PLUS_ACCEL_Y,
+				MYAHRS_PLUS_ACCEL_Z
+				,
+				MYAHRS_PLUS_GYRO_X,
+				MYAHRS_PLUS_GYRO_Y,
+				MYAHRS_PLUS_GYRO_Z,
+				MYAHRS_PLUS_MAG_X,
+				MYAHRS_PLUS_MAG_Y,
+				MYAHRS_PLUS_MAG_Z);
+		ontology.addSubclasses(ANALOG_SENSOR,
+				KY01,
+				KY13,
+				KY24,
+				KY25,
+				KY28,
+				KY35,
+				KY36,
+				KY37,
+				KY52,
+				WEATHER2_BOARD_ALTITUDE,
+				WEATHER2_BOARD_HUMIDITY,
+				WEATHER2_BOARD_IR,
+				WEATHER2_BOARD_PRESSURE,
+				WEATHER2_BOARD_UV,
+				WEATHER2_BOARD_VISIBILITY,
+				MYAHRS_PLUS_PITCH,
+				MYAHRS_PLUS_ROLL,
+				MYAHRS_PLUS_TEMPERATURE,
+				MYAHRS_PLUS_YAW,
+				MYAHRS_PLUS_ACCEL_X,
+				MYAHRS_PLUS_ACCEL_Y,
+				MYAHRS_PLUS_ACCEL_Z
+				,
+				MYAHRS_PLUS_GYRO_X,
+				MYAHRS_PLUS_GYRO_Y,
+				MYAHRS_PLUS_GYRO_Z,
+				MYAHRS_PLUS_MAG_X,
+				MYAHRS_PLUS_MAG_Y,
+				MYAHRS_PLUS_MAG_Z);
+		ontology.addSubclasses(DIGITAL_SENSOR, KY02, KY03, KY21, KY24, KY25, KY26, KY28, KY31, KY32, KY33, KY36, KY37);
+	}
 
-    @Override
-    protected void addPrerequisiteDecorators(Ontology ontology) {
-        new IoTOntologyDecorator(ontology);
-    }
+	@Override
+	protected void addPrerequisiteDecorators(Ontology ontology) {
+		new IoTOntologyDecorator(ontology);
+	}
 }
