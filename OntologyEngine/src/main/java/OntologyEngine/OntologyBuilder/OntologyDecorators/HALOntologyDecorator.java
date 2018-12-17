@@ -84,7 +84,6 @@ public class HALOntologyDecorator extends OntologyDecorator {
 				KY01,
 				KY13,
 				KY24,
-				KY25,
 				KY28,
 				KY35,
 				KY36,
@@ -102,15 +101,16 @@ public class HALOntologyDecorator extends OntologyDecorator {
 				MYAHRS_PLUS_YAW,
 				MYAHRS_PLUS_ACCEL_X,
 				MYAHRS_PLUS_ACCEL_Y,
-				MYAHRS_PLUS_ACCEL_Z
-				,
+				MYAHRS_PLUS_ACCEL_Z,
 				MYAHRS_PLUS_GYRO_X,
 				MYAHRS_PLUS_GYRO_Y,
 				MYAHRS_PLUS_GYRO_Z,
 				MYAHRS_PLUS_MAG_X,
 				MYAHRS_PLUS_MAG_Y,
 				MYAHRS_PLUS_MAG_Z);
-		ontology.addSubclasses(DIGITAL_SENSOR, KY02, KY03, KY21, KY24, KY25, KY26, KY28, KY31, KY32, KY33, KY36, KY37);
+		ontology.addSubclasses(DIGITAL_SENSOR, KY02, KY03, KY21, KY24 , KY26, KY28, KY31, KY32, KY33, KY36, KY37);
+		ontology.addIntersectionClass(ANALOG_AND_DIGITAL_SENSOR, ANALOG_SENSOR, DIGITAL_SENSOR);
+		ontology.addSuperclasses(ANALOG_AND_DIGITAL_SENSOR, ANALOG_SENSOR, DIGITAL_SENSOR);
 	}
 
 	@Override

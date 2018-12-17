@@ -33,6 +33,7 @@ public final class OntologyStrings {
     public final static String MULTI_SENSOR = "MultiSensor";
     public final static String ANALOG_SENSOR = "AnalogSensor";
     public final static String DIGITAL_SENSOR = "DigitalSensor";
+    public final static String ANALOG_AND_DIGITAL_SENSOR = "AnalogAndDigitalSensor";
     public final static String ACTION = "Action";
     public final static String KY01 = "KY01";
     public final static String KY02 = "KY02";

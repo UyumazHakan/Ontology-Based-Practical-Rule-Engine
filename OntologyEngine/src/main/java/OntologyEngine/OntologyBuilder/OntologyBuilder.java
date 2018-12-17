@@ -3,45 +3,52 @@ package OntologyEngine.OntologyBuilder;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.HALOntologyDecorator;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.IoTOntologyDecorator;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.SSNOntologyDecorator;
+import org.apache.jena.util.FileManager;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class OntologyBuilder {
-    private static Ontology SSNOntology;
-    private static Ontology IoTOntology;
-    private static Ontology HALOntology;
-    public static Ontology createSSNOntology(){
-        if (SSNOntology == null){
-            SSNOntology = new Ontology();
-            new SSNOntologyDecorator(SSNOntology);
-        }
-        try {
-            return SSNOntology.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public static Ontology createIoTOntology(){
-        if (IoTOntology == null){
-            IoTOntology = createSSNOntology();
-            new IoTOntologyDecorator(IoTOntology);
-        }
-        try {
-            return IoTOntology.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public  static Ontology createHALOntology(){
-        if(HALOntology == null){
-            HALOntology = createIoTOntology();
-            new HALOntologyDecorator(HALOntology);
-        }
-        try {
-            return HALOntology.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+	public static final String fileExtension = ".owl";
+	private static final String storageDirectory = "." + File.separator + "storage" + File.separator;
+	private static HashMap<String, Ontology> ontologyCache = new HashMap<>();
+
+	public static Ontology getHALOntology(String id) {
+		if (ontologyCache.containsKey(id))
+			return ontologyCache.get(id);
+		InputStream file = FileManager.get().open(storageDirectory + id + fileExtension);
+		Ontology ontology;
+		if (file == null)
+			ontology = createHALOntology();
+		else
+			ontology = new Ontology(file);
+		ontologyCache.put(id, ontology);
+		return ontology;
+	}
+
+	public static void saveOntology(String id) {
+		File saveFolder = new File(storageDirectory);
+		if (!saveFolder.exists())
+			saveFolder.mkdirs();
+		getHALOntology(id).save(storageDirectory + id + fileExtension);
+	}
+
+	private static Ontology createSSNOntology() {
+		Ontology ontology = new Ontology();
+		new SSNOntologyDecorator(ontology);
+		return ontology;
+	}
+
+	private static Ontology createIoTOntology() {
+		Ontology ontology = createSSNOntology();
+		new IoTOntologyDecorator(ontology);
+		return ontology;
+	}
+
+	private static Ontology createHALOntology() {
+		Ontology ontology = createIoTOntology();
+		new HALOntologyDecorator(ontology);
+		return ontology;
+	}
 }
