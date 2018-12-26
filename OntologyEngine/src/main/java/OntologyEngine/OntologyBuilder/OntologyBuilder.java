@@ -2,6 +2,7 @@ package OntologyEngine.OntologyBuilder;
 
 import OntologyEngine.OntologyBuilder.OntologyDecorators.HALOntologyDecorator;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.IoTOntologyDecorator;
+import OntologyEngine.OntologyBuilder.OntologyDecorators.OntologyStrings;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.SSNOntologyDecorator;
 import org.apache.jena.util.FileManager;
 
@@ -31,7 +32,8 @@ public class OntologyBuilder {
 		File saveFolder = new File(storageDirectory);
 		if (!saveFolder.exists())
 			saveFolder.mkdirs();
-		getHALOntology(id).save(storageDirectory + id + fileExtension);
+		Ontology ontology = getHALOntology(id);
+		ontology.save(storageDirectory + id + fileExtension);
 	}
 
 	private static Ontology createSSNOntology() {
@@ -41,7 +43,7 @@ public class OntologyBuilder {
 	}
 
 	private static Ontology createIoTOntology() {
-		Ontology ontology = createSSNOntology();
+		Ontology ontology = new Ontology();
 		new IoTOntologyDecorator(ontology);
 		return ontology;
 	}

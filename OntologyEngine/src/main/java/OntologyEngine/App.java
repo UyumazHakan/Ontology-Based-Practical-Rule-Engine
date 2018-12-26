@@ -14,6 +14,7 @@ public class App {
         MqttCommunicator mqtt = MqttCommunicator.createInstance("tcp://localhost:1883");
         try {
             mqtt.subscribe(TopicStrings.ONTOLOGY_CREATE);
+            mqtt.subscribe(TopicStrings.ONTOLOGY_QUERY);
         } catch (MqttException e) {
             e.printStackTrace();
         }

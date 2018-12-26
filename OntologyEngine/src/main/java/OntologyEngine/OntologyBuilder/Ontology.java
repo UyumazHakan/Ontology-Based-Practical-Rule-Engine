@@ -26,12 +26,17 @@ public class Ontology implements Cloneable, Serializable {
 
 	public Ontology(String namespace) {
 		this.namespace = namespace;
-		this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_TRANS_INF);
+		this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
 	}
 
 	public Ontology(InputStream inputStream) {
 		this();
 		this.model.read(inputStream, null);
+		ExtendedIterator classes = this.model.listClasses();
+		while (classes.hasNext()) {
+			OntClass ontClass = (OntClass) classes.next();
+			this.classes.put(ontClass.getLocalName(), ontClass);
+		}
 	}
 
 	public String getNamespace() {
@@ -92,13 +97,6 @@ public class Ontology implements Cloneable, Serializable {
 		}
 	}
 
-	public void addObjectProperty(String name, String domain, String range) {
-		ObjectProperty property = model.createObjectProperty(namespace + name);
-		property.addDomain(classes.get(domain));
-		property.addRange(classes.get(range));
-		this.objectProperties.put(name, property);
-	}
-
 	public void addIntersectionClass(String intersection, String... names) {
 		OntClass[] classesToIntersect = new OntClass[names.length];
 		for (int i = 0; i < names.length; i++) {
@@ -108,6 +106,33 @@ public class Ontology implements Cloneable, Serializable {
 		}
 		this.classes.put(intersection, this.model.createIntersectionClass(namespace + intersection,
 				this.model.createList(classesToIntersect)));
+	}
+
+	public void addComplementClass(String complement, String name) {
+		this.classes.put(complement, this.model.createComplementClass(namespace + complement,
+				this.classes.get(name)));
+	}
+
+	public void addObjectProperty(String name, String domain, String range) {
+		ObjectProperty property = this.model.createObjectProperty(namespace + name);
+		property.addDomain(this.classes.get(domain));
+		property.addRange(this.classes.get(range));
+		this.objectProperties.put(name, property);
+	}
+
+	public void addSubObjectProperty(String name, String subProperty){
+		if (this.objectProperties.get(name) == null || this.objectProperties.get(subProperty) == null)
+		System.err.println(name + subProperty);
+		this.objectProperties.get(name).addSubProperty(this.objectProperties.get(subProperty));
+	}
+
+	public void addSubObjectProperties(String name, String... subProperties){
+		for(String property : subProperties)
+			this.addSubObjectProperty(name, property);
+	}
+
+	public void addAllValuesFromConstraint(String name, String property, String cls) {
+		this.model.createAllValuesFromRestriction(name, this.objectProperties.get(property), this.classes.get(cls));
 	}
 
 	public void addOntology(String url) {
