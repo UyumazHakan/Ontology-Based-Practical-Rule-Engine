@@ -252,4 +252,26 @@ public final class OntologyStrings {
     public final static String DATA_WITH_YAW_SENSOR_ID = "DataWithYawSensorID";
     public final static String DATA_WITH_ACCELERATION_SENSOR_ID = "DataWithAccelerationSensorID";
     public final static String DATA_WITH_GYROSCOPIC_SENSOR_ID = "DataWithGyroscopicSensorID";
+    public final static String HAS_SOME_TEMPERATURE_FIELD = "hasSomeTemperatureField";
+    public final static String HAS_SOME_HUMIDITY_FIELD = "hasSomeHumidityField";
+    public final static String HAS_SOME_VIBRATION_FIELD = "hasSomeVibrationField";
+    public final static String HAS_SOME_MAGNETIC_FIELD_FIELD = "hasSomeMagneticFieldField";
+    public final static String HAS_SOME_OPTICAL_INTERRUPTION_FIELD = "hasSomeOpticalInterruptionField";
+    public final static String HAS_SOME_TILT_FIELD = "hasSomeTiltField";
+    public final static String HAS_SOME_FLAME_FIELD = "hasSomeFlameField";
+    public final static String HAS_SOME_OBSTACLE_FIELD = "hasSomeObstacleField";
+    public final static String HAS_SOME_TRACKING_FIELD = "hasSomeTrackingField";
+    public final static String HAS_SOME_METAL_TOUCH_FIELD = "hasSomeMetalTouchField";
+    public final static String HAS_SOME_SOUND_FIELD = "hasSomeSoundField";
+    public final static String HAS_SOME_SEA_LEVEL_PRESSURE_FIELD = "hasSomeSeaLevelPressureField";
+    public final static String HAS_SOME_PRESSURE_FIELD = "hasSomePressureField";
+    public final static String HAS_SOME_ALTITUDE_FIELD = "hasSomeAltitudeField";
+    public final static String HAS_SOME_INFRARED_FIELD = "hasSomeInfraredField";
+    public final static String HAS_SOME_ULTRAVIOLET_FIELD = "hasSomeUltravioletField";
+    public final static String HAS_SOME_VISIBILITY_FIELD = "hasSomeVisibilityField";
+    public final static String HAS_SOME_ROLL_FIELD = "hasSomeRollField";
+    public final static String HAS_SOME_PITCH_FIELD = "hasSomePitchField";
+    public final static String HAS_SOME_YAW_FIELD = "hasSomeYawField";
+    public final static String HAS_SOME_ACCELERATION_FIELD = "hasSomeAccelerationField";
+    public final static String HAS_SOME_GYROSCOPIC_FIELD = "hasSomeGyroscopicField";
 }
