@@ -113,6 +113,7 @@ public final class OntologyStrings {
     public final static String MYAHRS_PLUS_MAG_Z = "MYAHRS_PLUS_MAG_Z";
     public final static String FROM_SENSOR = "fromSensor";
     public final static String HAS_FIELD = "hasField";
+    public final static String HAS_ID_FIELD = "hasIDField";
     public final static String TEMPERATURE_FIELD = "TemperatureField";
     public final static String HUMIDITY_FIELD = "HumidityField";
     public final static String VIBRATION_FIELD = "VibrationField";
@@ -274,4 +275,26 @@ public final class OntologyStrings {
     public final static String HAS_SOME_YAW_FIELD = "hasSomeYawField";
     public final static String HAS_SOME_ACCELERATION_FIELD = "hasSomeAccelerationField";
     public final static String HAS_SOME_GYROSCOPIC_FIELD = "hasSomeGyroscopicField";
+    public final static String HAS_SOME_TEMPERATURE_SENSOR_ID_FIELD = "hasSomeTemperatureSensorIDField";
+    public final static String HAS_SOME_HUMIDITY_SENSOR_ID_FIELD = "hasSomeHumiditySensorIDField";
+    public final static String HAS_SOME_VIBRATION_SENSOR_ID_FIELD = "hasSomeVibrationSensorIDField";
+    public final static String HAS_SOME_MAGNETIC_FIELD_SENSOR_ID_FIELD = "hasSomeMagneticFieldSensorIDField";
+    public final static String HAS_SOME_OPTICAL_INTERRUPTION_SENSOR_ID_FIELD = "hasSomeOpticalInterruptionSensorIDField";
+    public final static String HAS_SOME_TILT_SENSOR_ID_FIELD = "hasSomeTiltSensorIDField";
+    public final static String HAS_SOME_FLAME_SENSOR_ID_FIELD = "hasSomeFlameSensorIDField";
+    public final static String HAS_SOME_OBSTACLE_SENSOR_ID_FIELD = "hasSomeObstacleSensorIDField";
+    public final static String HAS_SOME_TRACKING_SENSOR_ID_FIELD = "hasSomeTrackingSensorIDField";
+    public final static String HAS_SOME_METAL_TOUCH_SENSOR_ID_FIELD = "hasSomeMetalTouchSensorIDField";
+    public final static String HAS_SOME_SOUND_SENSOR_ID_FIELD = "hasSomeSoundSensorIDField";
+    public final static String HAS_SOME_SEA_LEVEL_PRESSURE_SENSOR_ID_FIELD = "hasSomeSeaLevelPressureSensorIDField";
+    public final static String HAS_SOME_PRESSURE_SENSOR_ID_FIELD = "hasSomePressureSensorIDField";
+    public final static String HAS_SOME_ALTITUDE_SENSOR_ID_FIELD = "hasSomeAltitudeSensorIDField";
+    public final static String HAS_SOME_INFRARED_SENSOR_ID_FIELD = "hasSomeInfraredSensorIDField";
+    public final static String HAS_SOME_ULTRAVIOLET_SENSOR_ID_FIELD = "hasSomeUltravioletSensorIDField";
+    public final static String HAS_SOME_VISIBILITY_SENSOR_ID_FIELD = "hasSomeVisibilitySensorIDField";
+    public final static String HAS_SOME_ROLL_SENSOR_ID_FIELD = "hasSomeRollSensorIDField";
+    public final static String HAS_SOME_PITCH_SENSOR_ID_FIELD = "hasSomePitchSensorIDField";
+    public final static String HAS_SOME_YAW_SENSOR_ID_FIELD = "hasSomeYawSensorIDField";
+    public final static String HAS_SOME_ACCELERATION_SENSOR_ID_FIELD = "hasSomeAccelerationSensorIDField";
+    public final static String HAS_SOME_GYROSCOPIC_SENSOR_ID_FIELD = "hasSomeGyroscopicSensorIDField";
 }

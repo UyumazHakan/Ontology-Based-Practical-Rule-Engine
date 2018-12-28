@@ -115,6 +115,8 @@ public class HALOntologyDecorator extends OntologyDecorator {
                 METAL_TOUCH_FIELD, SOUND_FIELD, SEA_LEVEL_PRESSURE_FIELD, PRESSURE_FIELD, ALTITUDE_FIELD,
                 INFRARED_FIELD, ULTRAVIOLET_FIELD, VISIBILITY_FIELD, ROLL_FIELD, PITCH_FIELD, YAW_FIELD,
                 ACCELERATION_FIELD, GYROSCOPIC_FIELD);
+        ontology.addObjectProperty(HAS_FIELD, DATA, FIELD);
+        ontology.addObjectProperty(HAS_ID_FIELD, DATA, SENSOR);
         ontology.addObjectProperty(HAS_TEMPERATURE_FIELD, DATA, TEMPERATURE_FIELD);
         ontology.addObjectProperty(HAS_HUMIDITY_FIELD, DATA, HUMIDITY_FIELD);
         ontology.addObjectProperty(HAS_VIBRATION_FIELD, DATA, VIBRATION_FIELD);
@@ -138,6 +140,7 @@ public class HALOntologyDecorator extends OntologyDecorator {
         ontology.addObjectProperty(HAS_ACCELERATION_FIELD, DATA, ACCELERATION_FIELD);
         ontology.addObjectProperty(HAS_GYROSCOPIC_FIELD, DATA, GYROSCOPIC_FIELD);
         ontology.addSubObjectProperties(HAS_FIELD,
+                HAS_ID_FIELD,
                 HAS_TEMPERATURE_FIELD,
                 HAS_HUMIDITY_FIELD,
                 HAS_VIBRATION_FIELD,
@@ -294,6 +297,50 @@ public class HALOntologyDecorator extends OntologyDecorator {
         ontology.addRestrictionEquivalentClass(DATA_WITH_YAW_FIELD, HAS_SOME_YAW_FIELD);
         ontology.addRestrictionEquivalentClass(DATA_WITH_ACCELERATION_FIELD, HAS_SOME_ACCELERATION_FIELD);
         ontology.addRestrictionEquivalentClass(DATA_WITH_GYROSCOPIC_FIELD, HAS_SOME_GYROSCOPIC_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_TEMPERATURE_SENSOR_ID_FIELD, HAS_ID_FIELD, TEMPERATURE_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_HUMIDITY_SENSOR_ID_FIELD, HAS_ID_FIELD, HUMIDITY_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_VIBRATION_SENSOR_ID_FIELD, HAS_ID_FIELD, VIBRATION_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_MAGNETIC_FIELD_SENSOR_ID_FIELD, HAS_ID_FIELD, MAGNETIC_FIELD_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_OPTICAL_INTERRUPTION_SENSOR_ID_FIELD, HAS_ID_FIELD, OPTICAL_INTERRUPTION_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_TILT_SENSOR_ID_FIELD, HAS_ID_FIELD, TILT_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_FLAME_SENSOR_ID_FIELD, HAS_ID_FIELD, FLAME_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_OBSTACLE_SENSOR_ID_FIELD, HAS_ID_FIELD, OBSTACLE_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_TRACKING_SENSOR_ID_FIELD, HAS_ID_FIELD, TRACKING_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_METAL_TOUCH_SENSOR_ID_FIELD, HAS_ID_FIELD, METAL_TOUCH_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_SOUND_SENSOR_ID_FIELD, HAS_ID_FIELD, SOUND_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_SEA_LEVEL_PRESSURE_SENSOR_ID_FIELD, HAS_ID_FIELD, SEA_LEVEL_PRESSURE_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_PRESSURE_SENSOR_ID_FIELD, HAS_ID_FIELD, PRESSURE_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_ALTITUDE_SENSOR_ID_FIELD, HAS_ID_FIELD, ALTITUDE_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_INFRARED_SENSOR_ID_FIELD, HAS_ID_FIELD, INFRARED_SENSOR);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_ULTRAVIOLET_SENSOR_ID_FIELD, HAS_FIELD, ULTRAVIOLET_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_VISIBILITY_SENSOR_ID_FIELD, HAS_FIELD, VISIBILITY_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_ROLL_SENSOR_ID_FIELD, HAS_FIELD, ROLL_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_PITCH_SENSOR_ID_FIELD, HAS_FIELD, PITCH_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_YAW_SENSOR_ID_FIELD, HAS_FIELD, YAW_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_ACCELERATION_SENSOR_ID_FIELD, HAS_FIELD, ACCELERATION_FIELD);
+        ontology.addSomeValuesFromRestriction(HAS_SOME_GYROSCOPIC_SENSOR_ID_FIELD, HAS_FIELD, GYROSCOPIC_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_TEMPERATURE_SENSOR_ID, HAS_SOME_TEMPERATURE_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_HUMIDITY_SENSOR_ID, HAS_SOME_HUMIDITY_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_VIBRATION_SENSOR_ID, HAS_SOME_VIBRATION_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_MAGNETIC_FIELD_SENSOR_ID, HAS_SOME_MAGNETIC_FIELD_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_OPTICAL_INTERRUPTION_SENSOR_ID, HAS_SOME_OPTICAL_INTERRUPTION_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_TILT_SENSOR_ID, HAS_SOME_TILT_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_FLAME_SENSOR_ID, HAS_SOME_FLAME_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_OBSTACLE_SENSOR_ID, HAS_SOME_OBSTACLE_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_TRACKING_SENSOR_ID, HAS_SOME_TRACKING_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_METAL_TOUCH_SENSOR_ID, HAS_SOME_METAL_TOUCH_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_SOUND_SENSOR_ID, HAS_SOME_SOUND_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_SEA_LEVEL_PRESSURE_SENSOR_ID, HAS_SOME_SEA_LEVEL_PRESSURE_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_PRESSURE_SENSOR_ID, HAS_SOME_PRESSURE_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_ALTITUDE_SENSOR_ID, HAS_SOME_ALTITUDE_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_INFRARED_SENSOR_ID, HAS_SOME_INFRARED_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_ULTRAVIOLET_SENSOR_ID, HAS_SOME_ULTRAVIOLET_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_VISIBILITY_SENSOR_ID, HAS_SOME_VISIBILITY_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_ROLL_SENSOR_ID, HAS_SOME_ROLL_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_PITCH_SENSOR_ID, HAS_SOME_PITCH_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_YAW_SENSOR_ID, HAS_SOME_YAW_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_ACCELERATION_SENSOR_ID, HAS_SOME_ACCELERATION_SENSOR_ID_FIELD);
+        ontology.addRestrictionEquivalentClass(DATA_WITH_GYROSCOPIC_SENSOR_ID, HAS_SOME_GYROSCOPIC_SENSOR_ID_FIELD);
     }
 
     @Override
