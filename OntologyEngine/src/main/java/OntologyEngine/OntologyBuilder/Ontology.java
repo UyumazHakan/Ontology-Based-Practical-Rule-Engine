@@ -1,7 +1,11 @@
 package OntologyEngine.OntologyBuilder;
 
 import org.apache.jena.ontology.*;
+import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.reasoner.Reasoner;
+import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.io.*;
@@ -24,7 +28,7 @@ public class Ontology implements Cloneable, Serializable {
 
     public Ontology(String namespace) {
         this.namespace = namespace;
-        this.model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
+        this.model = ModelFactory.createOntologyModel();
     }
 
     public Ontology(InputStream inputStream) {
@@ -138,6 +142,15 @@ public class Ontology implements Cloneable, Serializable {
     public void addSomeValuesFromRestriction(String name, String property, String cls) {
         this.restrictions.put(name, this.model.createSomeValuesFromRestriction(this.namespace + name, this.objectProperties.get(property), this.classes.get(cls)));
     }
+    public void addPropertyToIndividual(Individual individual, String property, String cls) {
+        if(!this.classes.containsKey(cls))
+            this.addClass(cls);
+        individual.addProperty(this.objectProperties.get(property), this.classes.get(cls));
+    }
+    public Individual createAnonymousIndividual(String cls) {
+        return this.model.createIndividual(this.classes.get(cls));
+    }
+
 
     public void addOntology(String url) {
         this.model.read(url);
@@ -166,5 +179,12 @@ public class Ontology implements Cloneable, Serializable {
 
     public Ontology clone() throws CloneNotSupportedException {
         return (Ontology) super.clone();
+    }
+
+    public void runReasoner(String ind) {
+        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
+        InfModel inf = ModelFactory.createInfModel(reasoner, this.model);
+        System.out.println(inf.getResource(ind));
+
     }
 }
