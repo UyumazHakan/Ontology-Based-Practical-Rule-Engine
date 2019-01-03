@@ -63,11 +63,10 @@
       <artifactId>HermiT</artifactId>
       <version>1.3.6</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.semanticweb.owlapi/owlapi -->
     <dependency>
-      <groupId>org.semanticweb.owlapi</groupId>
-      <artifactId>owlapi</artifactId>
-      <version>3.2.4</version>
+      <groupId>net.sourceforge.owlapi</groupId>
+      <artifactId>owlapi-distribution</artifactId>
+      <version>5.1.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/edu.stanford.protege/org.coode.dlquery -->
     <dependency>

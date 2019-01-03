@@ -3,60 +3,82 @@ package OntologyEngine.OntologyBuilder;
 import org.apache.jena.ontology.*;
 import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
+import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Ontology implements Cloneable, Serializable {
-    private OntModel model;
     private ArrayList<Class> decorators = new ArrayList<>();
 
 
-    private String namespace;
-    private HashMap<String, OntClass> classes = new HashMap<>();
-    private HashMap<String, ObjectProperty> objectProperties = new HashMap<>();
-    private HashMap<String, Restriction> restrictions = new HashMap<>();
+    private IRI namespace;
+    private HashMap<String, OWLClass> classes = new HashMap<>();
+    private HashMap<String, OWLObjectProperty> objectProperties = new HashMap();
+    private HashMap<String, OWLObjectRestriction> restrictions = new HashMap();
+
+    private OWLOntologyManager manager;
+    private OWLOntology model;
+    private OWLDataFactory dataFactory;
+    private ShortFormProvider shortFormProvider;
 
     public Ontology() {
         this("http://example.com#");
     }
 
     public Ontology(String namespace) {
-        this.namespace = namespace;
-        this.model = ModelFactory.createOntologyModel();
-    }
-
-    public Ontology(InputStream inputStream) {
-        this();
-        this.model.read(inputStream, null);
-        ExtendedIterator classes = this.model.listClasses();
-        while (classes.hasNext()) {
-            OntClass ontClass = (OntClass) classes.next();
-            this.classes.put(ontClass.getLocalName(), ontClass);
+        this.namespace = IRI.create(namespace);
+        this.dataFactory = OWLManager.getOWLDataFactory();
+        this.manager = OWLManager.createOWLOntologyManager();
+        try {
+            this.model = this.manager.createOntology(this.namespace);
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();
         }
     }
 
-    public String getNamespace() {
+    public Ontology(InputStream inputStream) {
+        this.namespace =  IRI.create("http://example.com#");
+        this.dataFactory = OWLManager.getOWLDataFactory();
+        this.manager = OWLManager.createOWLOntologyManager();
+        try {
+            this.model = this.manager.loadOntologyFromOntologyDocument(inputStream);
+        } catch (OWLOntologyCreationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public IRI getNamespace() {
         return namespace;
     }
 
     public void setNamespace(String namespace) {
-        this.namespace = namespace;
+        this.namespace = IRI.create(namespace);
     }
 
+    private IRI getURI(String extension) { return IRI.create(namespace + "#" + extension); }
+
     public void print() {
-        model.write(System.out);
+        try {
+            manager.saveOntology(model, System.out);
+        } catch (OWLOntologyStorageException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addDecorator(Class... decorators) {
-        for (int i = 0; i < decorators.length; i++) {
-            if (this.decorators.contains(decorators[i]))
-                this.decorators.add(decorators[i]);
+        for (Class decorator : decorators) {
+            if (this.decorators.contains(decorator))
+                this.decorators.add(decorator);
         }
     }
 
@@ -65,7 +87,10 @@ public class Ontology implements Cloneable, Serializable {
     }
 
     public void addClass(String name) {
-        classes.put(name, this.model.createClass(namespace + name));
+        OWLClass cls = dataFactory.getOWLClass(getURI(name));
+        OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(cls);
+        manager.addAxiom(model, dcl);
+        classes.put(name, cls);
     }
 
     public void addClass(String... names) {
@@ -77,7 +102,8 @@ public class Ontology implements Cloneable, Serializable {
     public void addSubclass(String parent, String name) {
         if (!this.classes.containsKey(name))
             this.addClass(name);
-        this.classes.get(name).addSuperClass(this.classes.get(parent));
+        OWLSubClassOfAxiom axiom = dataFactory.getOWLSubClassOfAxiom(this.classes.get(name), this.classes.get(parent));
+        manager.addAxiom(model, axiom);
     }
 
     public void addSubclasses(String parent, String... names) {
@@ -89,7 +115,8 @@ public class Ontology implements Cloneable, Serializable {
     public void addSuperclass(String child, String name) {
         if (!this.classes.containsKey(name))
             this.addClass(name);
-        this.classes.get(name).addSubClass(this.classes.get(child));
+        OWLSubClassOfAxiom axiom = dataFactory.getOWLSubClassOfAxiom(this.classes.get(child), this.classes.get(name));
+        manager.addAxiom(model, axiom);
 
     }
 
@@ -100,32 +127,45 @@ public class Ontology implements Cloneable, Serializable {
     }
 
     public void addIntersectionClass(String intersection, String... names) {
-        OntClass[] classesToIntersect = new OntClass[names.length];
+        OWLClassExpression[] classesToIntersect = new OWLClassExpression[names.length];
         for (int i = 0; i < names.length; i++) {
             if (!this.classes.containsKey(names[i]))
                 this.addClass(names[i]);
             classesToIntersect[i] = this.classes.get(names[i]);
         }
-        this.classes.put(intersection, this.model.createIntersectionClass(namespace + intersection,
-                this.model.createList(classesToIntersect)));
+        OWLClassExpression intersectionOf = dataFactory.getOWLObjectIntersectionOf(classesToIntersect);
+        OWLClass cls = dataFactory.getOWLClass(getURI(intersection));
+        OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(cls);
+        OWLEquivalentClassesAxiom axiom = dataFactory.getOWLEquivalentClassesAxiom(cls, intersectionOf);
+        manager.addAxiom(model, dcl);
+        manager.addAxiom(model, axiom);
+        this.classes.put(intersection, cls);
     }
 
     public void addComplementClass(String complement, String name) {
-        this.classes.put(complement, this.model.createComplementClass(namespace + complement,
-                this.classes.get(name)));
+        OWLClass cls = dataFactory.getOWLClass(getURI(complement));
+        OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(cls);
+        OWLClassExpression complementOf = dataFactory.getOWLObjectComplementOf(this.classes.get(name));
+        OWLEquivalentClassesAxiom axiom = dataFactory.getOWLEquivalentClassesAxiom(cls, complementOf);
+        manager.addAxiom(model, dcl);
+        manager.addAxiom(model, axiom);
+        this.classes.put(complement, cls);
     }
 
     public void addObjectProperty(String name, String domain, String range) {
-        ObjectProperty property = this.model.createObjectProperty(namespace + name);
-        property.addDomain(this.classes.get(domain));
-        property.addRange(this.classes.get(range));
-        this.objectProperties.put(name, property);
+        OWLObjectProperty objectProperty = dataFactory.getOWLObjectProperty(getURI(name));
+        OWLObjectPropertyDomainAxiom domainAxiom = dataFactory.getOWLObjectPropertyDomainAxiom(objectProperty,this.classes.get(domain));
+        OWLObjectPropertyRangeAxiom rangeAxiom = dataFactory.getOWLObjectPropertyRangeAxiom(objectProperty,this.classes.get(range));
+        OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(objectProperty);
+        manager.addAxiom(model, domainAxiom);
+        manager.addAxiom(model, rangeAxiom);
+        manager.addAxiom(model, dcl);
+        this.objectProperties.put(name, objectProperty);
     }
 
     public void addSubObjectProperty(String name, String subProperty) {
-        if (this.objectProperties.get(name) == null || this.objectProperties.get(subProperty) == null)
-            System.err.println(name + subProperty);
-        this.objectProperties.get(name).addSubProperty(this.objectProperties.get(subProperty));
+        OWLSubObjectPropertyOfAxiom subObjectPropertyOfAxiom = dataFactory.getOWLSubObjectPropertyOfAxiom(this.objectProperties.get(subProperty), this.objectProperties.get(name));
+        manager.addAxiom(model, subObjectPropertyOfAxiom);
     }
 
     public void addSubObjectProperties(String name, String... subProperties) {
@@ -134,46 +174,46 @@ public class Ontology implements Cloneable, Serializable {
     }
 
     public void addRestrictionEquivalentClass(String name, String restriction) {
-        if (!this.classes.containsKey(name))
-            this.addClass(name);
-        this.classes.get(name).addEquivalentClass(this.restrictions.get(restriction));
+        OWLClass cls = dataFactory.getOWLClass(getURI(name));
+        OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(cls);
+        OWLEquivalentClassesAxiom equivalentClassesAxiom = dataFactory.getOWLEquivalentClassesAxiom(cls, restrictions.get(restriction));
     }
 
     public void addSomeValuesFromRestriction(String name, String property, String cls) {
-        this.restrictions.put(name, this.model.createSomeValuesFromRestriction(this.namespace + name, this.objectProperties.get(property), this.classes.get(cls)));
+        OWLObjectSomeValuesFrom someValuesFrom = dataFactory.getOWLObjectSomeValuesFrom(this.objectProperties.get(property), this.classes.get(cls));
+        this.restrictions.put(name,  someValuesFrom);
     }
-    public void addPropertyToIndividual(Individual individual, String property, String cls) {
-        if(!this.classes.containsKey(cls))
-            this.addClass(cls);
-        individual.addProperty(this.objectProperties.get(property), this.classes.get(cls));
+    public void addPropertyToIndividual(OWLIndividual individual, String property, OWLIndividual object) {
+        OWLObjectPropertyAssertionAxiom assertionAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(objectProperties.get(property),individual, object);
+        manager.addAxiom(model, assertionAxiom);
     }
-    public Individual createAnonymousIndividual(String cls) {
-        return this.model.createIndividual(this.classes.get(cls));
+    public OWLAnonymousIndividual createAnonymousIndividual(String cls) {
+        OWLAnonymousIndividual individual = dataFactory.getOWLAnonymousIndividual();
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(this.classes.get(cls), individual);
+        manager.addAxiom(model,classAssertionAxiom);
+        return individual;
     }
 
 
     public void addOntology(String url) {
-        this.model.read(url);
-        ExtendedIterator classes = this.model.listClasses();
-        while (classes.hasNext()) {
-            OntClass ontClass = (OntClass) classes.next();
-            this.classes.put(ontClass.getLocalName(), ontClass);
-        }
+        //TODO
     }
 
     public void save(String location) {
         try {
             File file = new File(location);
             file.createNewFile();
-            FileWriter fw = new FileWriter(file);
-            this.model.write(fw, "RDF/XML-ABBREV");
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            manager.saveOntology(model, fileOutputStream);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (OWLOntologyStorageException e) {
             e.printStackTrace();
         }
     }
 
 
-    public OntClass getClass(String name) {
+    public OWLClass getClass(String name) {
         return this.classes.get(name);
     }
 
@@ -181,10 +221,7 @@ public class Ontology implements Cloneable, Serializable {
         return (Ontology) super.clone();
     }
 
-    public void runReasoner(String ind) {
-        Reasoner reasoner = ReasonerRegistry.getOWLReasoner();
-        InfModel inf = ModelFactory.createInfModel(reasoner, this.model);
-        System.out.println(inf.getResource(ind));
-
+    public OWLReasoner getReasoner() {
+        return new StructuralReasonerFactory().createReasoner(model);
     }
 }
