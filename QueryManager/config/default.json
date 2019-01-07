@@ -10,5 +10,9 @@
 		"host": "localhost",
 		"port": 3000
 	},
+	"ontology_engine": {
+		"host": "localhost",
+		"port": ""
+	},
 	"max_workers": "-1"
 }

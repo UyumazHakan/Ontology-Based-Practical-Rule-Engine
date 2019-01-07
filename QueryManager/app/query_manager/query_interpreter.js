@@ -30,7 +30,10 @@ class QueryInterpreter {
 	get httpMethod() {
 		return 'POST';
 	}
-	doHtppRequest() {
+	doRequest() {
+		return [this.doHttpRequest()];
+	}
+	doHttpRequest() {
 		return new Promise((resolve, reject) => {
 			let response = null;
 			switch (this.httpMethod) {

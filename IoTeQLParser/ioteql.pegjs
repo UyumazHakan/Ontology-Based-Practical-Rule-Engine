@@ -41,6 +41,7 @@ queryType
 _queryType
     = "flow"
     / "node"
+    / "ontology"
 
 queryOptions "options"
     = "(" options:_queryOptions ")" {return {"options":options}}

@@ -1,5 +1,6 @@
 import {interpret as interpretNodeQuery} from './node_query_interpreter';
 import {interpret as interpretFlowQuery} from './flow_query_interpreter';
+import {interpret as interpretOntologyQuery} from './ontology_query_interpreter';
 
 /**
  * @typedef {Object} IoTeQLQuerySequence
@@ -56,14 +57,19 @@ class QueryManager {
 		const flowInterpreters = seq
 			.filter((query) => query.header.type === 'flow')
 			.map(interpretFlowQuery);
-		const allInterpreters = nodeInterpreters.concat(flowInterpreters);
+		const ontologyInterpreters = seq
+			.filter((query) => query.header.type == 'ontology')
+			.map(interpretOntologyQuery);
+		const allInterpreters = nodeInterpreters
+			.concat(flowInterpreters)
+			.concat(ontologyInterpreters);
 
 		allInterpreters.forEach((interpreter) =>
 			interpreter.setFellowInterpreters(allInterpreters).end()
 		);
 		return allInterpreters
 			.filter((interpreter) => !interpreter.isInherited)
-			.map((interpreter) => interpreter.doHtppRequest());
+			.flatMap((interpreter) => interpreter.doRequest());
 	}
 }
 const instance = new QueryManager();
