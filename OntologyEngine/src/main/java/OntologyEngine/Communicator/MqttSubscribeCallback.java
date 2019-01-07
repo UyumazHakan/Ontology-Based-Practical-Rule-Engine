@@ -3,16 +3,20 @@ package OntologyEngine.Communicator;
 import OntologyEngine.OntologyBuilder.Ontology;
 import OntologyEngine.OntologyBuilder.OntologyBuilder;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.OntologyStrings;
-import org.apache.jena.ontology.Individual;
-import org.apache.jena.util.iterator.ExtendedIterator;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MqttSubscribeCallback implements MqttCallback {
 	private static final JSONParser jsonParser = new JSONParser();
@@ -37,20 +41,45 @@ public class MqttSubscribeCallback implements MqttCallback {
 			JSONObject json = (JSONObject) jsonParser.parse(message.toString());
 			JSONObject data = (JSONObject) json.get("data");
 			Ontology ontology = OntologyBuilder.getHALOntology(ontologyName);
-			Individual individual = ontology.createAnonymousIndividual(OntologyStrings.DATA);
+			OWLNamedIndividual individual = ontology.createNamedIndividual("a",OntologyStrings.DATA);
 			Iterator it = data.keySet().iterator();
+
 			while(it.hasNext()){
 				String fieldName = (String) it.next();
-				fieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "Field";
-				ontology.addPropertyToIndividual(individual, OntologyStrings.HAS_FIELD, fieldName);
+				Object value = data.get(fieldName);
+				fieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase();
+				if (value instanceof Long){
+					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", ((Long) value).intValue());
+				}else if (value instanceof Float){
+					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (float) value);
+				}else if (value instanceof Double){
+					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (double) value);
+				}else if (value instanceof Boolean){
+					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (boolean) value);
+				}else if (value instanceof String){
+					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (String) value);
+				}
+				ontology.addObjectPropertyToIndividual(individual, OntologyStrings.HAS_FIELD, fieldName + "Field");
 			}
 			if(data.containsKey("id")) {
 				String id = (String) data.get("id");
-				ontology.addPropertyToIndividual(individual, OntologyStrings.HAS_ID_FIELD, id);
+				ontology.addObjectPropertyToIndividual(individual, OntologyStrings.HAS_ID_FIELD, id);
 			}
-			ontology.runReasoner(individual.getURI());
+			OWLReasoner reasoner = ontology.getReasoner();
+			Stream<OWLClass> classes = reasoner.types(individual, false);
+			System.out.println(reasoner.types(individual, false).collect(Collectors.toSet()));
+			System.out.println(reasoner.getInstances(ontology.getClass(OntologyStrings.TEMPERATURE_DATA)));
+			System.out.println(reasoner.unsatisfiableClasses().collect(Collectors.toSet()));
+			MqttCommunicator communicator = MqttCommunicator.getInstance();
+			classes.forEach((cls) ->{
+				try {
+					communicator.publish(data.toJSONString(),
+							TopicStrings.ONTOLOGY_CLASSIFIED + "/" + ontologyName + '/' + cls.getIRI().getShortForm());
+				} catch (MqttException e) {
+					e.printStackTrace();
+				}
 
-
+			});
 		} catch (ParseException pe) {
 			pe.printStackTrace();
 		}

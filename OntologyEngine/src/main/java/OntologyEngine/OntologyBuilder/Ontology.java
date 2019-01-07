@@ -1,16 +1,10 @@
 package OntologyEngine.OntologyBuilder;
 
-import org.apache.jena.ontology.*;
-import org.apache.jena.rdf.model.InfModel;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.reasoner.Reasoner;
-import org.apache.jena.reasoner.ReasonerRegistry;
-import org.apache.jena.util.iterator.ExtendedIterator;
+import org.semanticweb.HermiT.Reasoner;
+import org.semanticweb.HermiT.ReasonerFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
-import org.semanticweb.owlapi.reasoner.structural.StructuralReasoner;
-import org.semanticweb.owlapi.reasoner.structural.StructuralReasonerFactory;
 import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import java.io.*;
@@ -24,6 +18,7 @@ public class Ontology implements Cloneable, Serializable {
     private IRI namespace;
     private HashMap<String, OWLClass> classes = new HashMap<>();
     private HashMap<String, OWLObjectProperty> objectProperties = new HashMap();
+    private HashMap<String, OWLDataProperty> dataProperties = new HashMap();
     private HashMap<String, OWLObjectRestriction> restrictions = new HashMap();
 
     private OWLOntologyManager manager;
@@ -162,6 +157,21 @@ public class Ontology implements Cloneable, Serializable {
         manager.addAxiom(model, dcl);
         this.objectProperties.put(name, objectProperty);
     }
+    public void addDataProperty(String name){
+        addDataProperty(name, null);
+    }
+    public void addDataProperty(String name, String domain){
+        OWLDataProperty dataProperty = dataFactory.getOWLDataProperty(getURI(name));
+        if (domain != null) {
+            if(!classes.containsKey(domain)) addClass(domain);
+            OWLDataPropertyDomainAxiom domainAxiom = dataFactory.getOWLDataPropertyDomainAxiom(dataProperty,
+                    classes.get(domain));
+            manager.addAxiom(model, domainAxiom);
+        }
+        OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(dataProperty);
+        manager.addAxiom(model, dcl);
+        this.dataProperties.put(name, dataProperty);
+    }
 
     public void addSubObjectProperty(String name, String subProperty) {
         OWLSubObjectPropertyOfAxiom subObjectPropertyOfAxiom = dataFactory.getOWLSubObjectPropertyOfAxiom(this.objectProperties.get(subProperty), this.objectProperties.get(name));
@@ -177,15 +187,62 @@ public class Ontology implements Cloneable, Serializable {
         OWLClass cls = dataFactory.getOWLClass(getURI(name));
         OWLDeclarationAxiom dcl = dataFactory.getOWLDeclarationAxiom(cls);
         OWLEquivalentClassesAxiom equivalentClassesAxiom = dataFactory.getOWLEquivalentClassesAxiom(cls, restrictions.get(restriction));
+        manager.addAxiom(model, dcl);
+        manager.addAxiom(model, equivalentClassesAxiom);
     }
 
     public void addSomeValuesFromRestriction(String name, String property, String cls) {
         OWLObjectSomeValuesFrom someValuesFrom = dataFactory.getOWLObjectSomeValuesFrom(this.objectProperties.get(property), this.classes.get(cls));
         this.restrictions.put(name,  someValuesFrom);
     }
-    public void addPropertyToIndividual(OWLIndividual individual, String property, OWLIndividual object) {
+    public void addObjectPropertyToIndividual(OWLIndividual individual, String property, OWLIndividual object) {
         OWLObjectPropertyAssertionAxiom assertionAxiom = dataFactory.getOWLObjectPropertyAssertionAxiom(objectProperties.get(property),individual, object);
         manager.addAxiom(model, assertionAxiom);
+    }
+    public void addObjectPropertyToIndividual(OWLIndividual individual, String property, String cls) {
+        addObjectPropertyToIndividual(individual, property, createAnonymousIndividual(cls));
+    }
+    public void addDataPropertyToIndividual(OWLIndividual individual, String property, int literal){
+        if (!dataProperties.containsKey(property)) addDataProperty(property);
+        OWLDataHasValue hasValue = dataFactory.getOWLDataHasValue(dataProperties.get(property),
+                dataFactory.getOWLLiteral(literal));
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(hasValue, individual);
+        manager.addAxiom(model, classAssertionAxiom);
+    }
+    public void addDataPropertyToIndividual(OWLIndividual individual, String property, float literal){
+        if (!dataProperties.containsKey(property)) addDataProperty(property);
+        OWLDataHasValue hasValue = dataFactory.getOWLDataHasValue(dataProperties.get(property),
+                dataFactory.getOWLLiteral(literal));
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(hasValue, individual);
+        manager.addAxiom(model, classAssertionAxiom);
+    }
+    public void addDataPropertyToIndividual(OWLIndividual individual, String property, double literal){
+        if (!dataProperties.containsKey(property)) addDataProperty(property);
+        OWLDataHasValue hasValue = dataFactory.getOWLDataHasValue(dataProperties.get(property),
+                dataFactory.getOWLLiteral(literal));
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(hasValue, individual);
+        manager.addAxiom(model, classAssertionAxiom);
+    }
+    public void addDataPropertyToIndividual(OWLIndividual individual, String property, boolean literal){
+        if (!dataProperties.containsKey(property)) addDataProperty(property);
+        OWLDataHasValue hasValue = dataFactory.getOWLDataHasValue(dataProperties.get(property),
+                dataFactory.getOWLLiteral(literal));
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(hasValue, individual);
+        manager.addAxiom(model, classAssertionAxiom);
+    }
+    public void addDataPropertyToIndividual(OWLIndividual individual, String property, String literal){
+        if (!dataProperties.containsKey(property)) addDataProperty(property);
+        OWLDataHasValue hasValue = dataFactory.getOWLDataHasValue(dataProperties.get(property),
+                dataFactory.getOWLLiteral(literal));
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(hasValue, individual);
+        manager.addAxiom(model, classAssertionAxiom);
+    }
+    public OWLNamedIndividual createNamedIndividual(String name, String cls) {
+        OWLNamedIndividual individual = dataFactory.getOWLNamedIndividual(getURI(name));
+        OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(this.classes.get(cls),
+                individual);
+        manager.addAxiom(model, classAssertionAxiom);
+        return individual;
     }
     public OWLAnonymousIndividual createAnonymousIndividual(String cls) {
         OWLAnonymousIndividual individual = dataFactory.getOWLAnonymousIndividual();
@@ -222,6 +279,12 @@ public class Ontology implements Cloneable, Serializable {
     }
 
     public OWLReasoner getReasoner() {
-        return new StructuralReasonerFactory().createReasoner(model);
+        try {
+            System.out.println(model.getOntologyID().getDefaultDocumentIRI());
+            return new ReasonerFactory().createReasoner(model);
+        }catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -42,7 +42,7 @@ public class MqttCommunicator {
 	}
 
 	public void publish(String message, String topic) throws MqttException {
-		if (!this.isConnected) throw new MqttException(MqttException.REASON_CODE_CLIENT_NOT_CONNECTED);
+		while (!client.isConnected()){}
 		MqttMessage mqttMessage = new MqttMessage(message.getBytes());
 		mqttMessage.setQos(this.qos);
 		this.client.publish(topic, mqttMessage);

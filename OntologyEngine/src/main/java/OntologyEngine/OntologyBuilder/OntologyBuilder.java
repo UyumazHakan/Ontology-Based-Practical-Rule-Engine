@@ -4,10 +4,8 @@ import OntologyEngine.OntologyBuilder.OntologyDecorators.HALOntologyDecorator;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.IoTOntologyDecorator;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.OntologyStrings;
 import OntologyEngine.OntologyBuilder.OntologyDecorators.SSNOntologyDecorator;
-import org.apache.jena.util.FileManager;
 
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 
 public class OntologyBuilder {
@@ -18,7 +16,12 @@ public class OntologyBuilder {
 	public static Ontology getHALOntology(String id) {
 		if (ontologyCache.containsKey(id))
 			return ontologyCache.get(id);
-		InputStream file = FileManager.get().open(storageDirectory + id + fileExtension);
+		InputStream file = null;
+		try {
+			file = new FileInputStream(new File(storageDirectory + id + fileExtension));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		Ontology ontology;
 		if (file == null)
 			ontology = createHALOntology();
