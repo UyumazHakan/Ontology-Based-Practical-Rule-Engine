@@ -14,6 +14,10 @@ import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,15 +36,18 @@ public class MqttSubscribeCallback implements MqttCallback {
 				onOntologyCreate(message);
 		else if(topic.startsWith(TopicStrings.ONTOLOGY_QUERY_WITHOUT_WILDCARD))
 			onOntologyQuery(message, topic.substring(TopicStrings.ONTOLOGY_QUERY_WITHOUT_WILDCARD.length()));
+		else if(topic.startsWith(TopicStrings.ONTOLOGY_UPDATE_WITHOUT_WILDCARD))
+			onOntologyUpdate(message, topic.substring(TopicStrings.ONTOLOGY_UPDATE_WITHOUT_WILDCARD.length()));
 		else
 			onDifferentTopic(message);
 	}
 
 	private void onOntologyQuery(MqttMessage message, String ontologyName) {
 		try {
+			Ontology ontology = OntologyBuilder.getHALOntology(ontologyName);
+			if (ontology == null) return;
 			JSONObject json = (JSONObject) jsonParser.parse(message.toString());
 			JSONObject data = (JSONObject) json.get("data");
-			Ontology ontology = OntologyBuilder.getHALOntology(ontologyName);
 			OWLNamedIndividual individual = ontology.createNamedIndividual("a",OntologyStrings.DATA);
 			Iterator it = data.keySet().iterator();
 
@@ -67,9 +74,6 @@ public class MqttSubscribeCallback implements MqttCallback {
 			}
 			OWLReasoner reasoner = ontology.getReasoner();
 			Stream<OWLClass> classes = reasoner.types(individual, false);
-			System.out.println(reasoner.types(individual, false).collect(Collectors.toSet()));
-			System.out.println(reasoner.getInstances(ontology.getClass(OntologyStrings.TEMPERATURE_DATA)));
-			System.out.println(reasoner.unsatisfiableClasses().collect(Collectors.toSet()));
 			MqttCommunicator communicator = MqttCommunicator.getInstance();
 			classes.forEach((cls) ->{
 				try {
@@ -95,6 +99,10 @@ public class MqttSubscribeCallback implements MqttCallback {
 		} catch (ParseException pe) {
 			pe.printStackTrace();
 		}
+	}
+	private void onOntologyUpdate(MqttMessage message, String ontologyName) {
+		InputStream inputStream = new ByteArrayInputStream(message.toString().getBytes());
+		OntologyBuilder.updateOntology(ontologyName, inputStream);
 	}
 
 	private void onDifferentTopic(MqttMessage message) {

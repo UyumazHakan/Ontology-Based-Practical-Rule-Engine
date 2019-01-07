@@ -15,6 +15,7 @@ public class App {
         try {
             mqtt.subscribe(TopicStrings.ONTOLOGY_CREATE);
             mqtt.subscribe(TopicStrings.ONTOLOGY_QUERY);
+            mqtt.subscribe(TopicStrings.ONTOLOGY_UPDATE);
         } catch (MqttException e) {
             e.printStackTrace();
         }

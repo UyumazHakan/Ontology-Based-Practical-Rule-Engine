@@ -24,7 +24,7 @@ public class OntologyBuilder {
 		}
 		Ontology ontology;
 		if (file == null)
-			ontology = createHALOntology();
+			return null;
 		else
 			ontology = new Ontology(file);
 		ontologyCache.put(id, ontology);
@@ -36,7 +36,14 @@ public class OntologyBuilder {
 		if (!saveFolder.exists())
 			saveFolder.mkdirs();
 		Ontology ontology = getHALOntology(id);
+		if (ontology == null) ontology = createHALOntology();
 		ontology.save(storageDirectory + id + fileExtension);
+	}
+	public static void updateOntology(String id, InputStream inputStream) {
+		if (ontologyCache.containsKey(id)) ontologyCache.remove(id);
+		Ontology ontology = new Ontology(inputStream);
+		ontology.save(storageDirectory + id + fileExtension);
+		ontologyCache.put(id, ontology);
 	}
 
 	private static Ontology createSSNOntology() {

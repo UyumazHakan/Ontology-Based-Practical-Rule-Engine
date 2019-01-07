@@ -47,6 +47,8 @@ public class Ontology implements Cloneable, Serializable {
         this.manager = OWLManager.createOWLOntologyManager();
         try {
             this.model = this.manager.loadOntologyFromOntologyDocument(inputStream);
+            this.model.classesInSignature().forEach(cls -> this.classes.put(cls.getIRI().getShortForm(), cls));
+            this.model.objectPropertiesInSignature().forEach(property -> this.objectProperties.put(property.getIRI().getShortForm(), property));
         } catch (OWLOntologyCreationException e) {
             e.printStackTrace();
         }
