@@ -12,7 +12,7 @@
 	},
 	"ontology_engine": {
 		"host": "localhost",
-		"port": ""
+		"port": "1883"
 	},
 	"max_workers": "-1"
 }
