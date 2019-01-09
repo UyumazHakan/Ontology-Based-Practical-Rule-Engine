@@ -16,8 +16,10 @@ class SourceNode extends OntologyNode {
 	 */
 	constructor(args) {
 		super(args);
-		if (args.sourceType.name) args.sourceType = args.sourceType.name;
-		this.sourceType = SourceType.enumValueOf(args.sourceType);
+		if (args.sourceType) {
+			if (args.sourceType.name) args.sourceType = args.sourceType.name;
+			this.sourceType = SourceType.enumValueOf(args.sourceType);
+		}
 	}
 	set cache(args) {
 		this._cache = true;
@@ -30,7 +32,7 @@ class SourceNode extends OntologyNode {
 	 */
 	saveNode(args) {
 		if (!args) args = {};
-		args.sourceType = this.sourceType.name;
+		if (this.sourceType) args.sourceType = this.sourceType.name;
 		args._cache = undefined;
 		args.cacheFn = undefined;
 		args.flowSinks = undefined;

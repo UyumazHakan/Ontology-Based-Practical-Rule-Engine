@@ -18,5 +18,9 @@
 			"interval": "3600"
 		}
 	},
+	"ontology_engine": {
+		"host": "localhost",
+		"port": "1883"
+	},
 	"max_workers": "-1"
 }

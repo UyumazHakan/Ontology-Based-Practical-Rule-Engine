@@ -70,6 +70,8 @@ nodeType
     / "Filter"
     / "Map"
     / "Reduce"
+    / "OntologySource"
+    / "OntologySink"
     / "Grouping" { return text()}
 queryBody
     = "{" _ pairs:keyValueOrRefPairs? _ "}" {return {body:pairs};}

@@ -3,6 +3,7 @@ import uuid from 'uuid/v4';
 import DatabaseConnectorProxy from '../database_connector/database_connector_proxy';
 
 import {loggers} from 'winston';
+import clone from 'clone';
 let logger = loggers.get('main');
 
 /**
@@ -26,7 +27,7 @@ class Ontology {
 		this.flows = [];
 		this.isSaved = args.isSaved || false;
 		this._isUpdated = args.isUpdated || false;
-		if (args.flows) args.flows.forEach((flow) => this.addFlow(flow));
+		if (args.flows) args.flows.forEach((flow) => this.addFlow(flow.info));
 	}
 	/**
 	 * Returns whether ontology and owned flows are saved with the latest version in database
@@ -66,6 +67,7 @@ class Ontology {
 	 * @param {OntologyFlow | Object} args Flow to be added in ontology
 	 */
 	addFlow(args) {
+		args.ontologyID = this.name;
 		this._isUpdated = false;
 		let newFlow = args instanceof OntologyFlow ? args : new OntologyFlow(args);
 		this.flows.push(newFlow);
@@ -101,6 +103,16 @@ class Ontology {
 					if (args.callback) args.callback(err, null);
 				});
 		}
+	}
+	/**
+	 * Returns clone the ontology with minified versions of flows
+	 * @param {any} args Not used currently
+	 * @return {Ontology} Clone of the ontology with minified flows
+	 */
+	minify(args) {
+		let ontology = clone(this);
+		ontology.flows = ontology.flows.map((flow) => flow.minify());
+		return ontology;
 	}
 }
 

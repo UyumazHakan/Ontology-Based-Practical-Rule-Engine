@@ -194,6 +194,7 @@ public class Ontology implements Cloneable, Serializable {
     }
 
     public void addSomeValuesFromRestriction(String name, String property, String cls) {
+        if (!this.classes.containsKey(cls)) addClass(cls);
         OWLObjectSomeValuesFrom someValuesFrom = dataFactory.getOWLObjectSomeValuesFrom(this.objectProperties.get(property), this.classes.get(cls));
         this.restrictions.put(name,  someValuesFrom);
     }
@@ -247,6 +248,7 @@ public class Ontology implements Cloneable, Serializable {
         return individual;
     }
     public OWLAnonymousIndividual createAnonymousIndividual(String cls) {
+        if (!classes.containsKey(cls)) addClass(cls);
         OWLAnonymousIndividual individual = dataFactory.getOWLAnonymousIndividual();
         OWLClassAssertionAxiom classAssertionAxiom = dataFactory.getOWLClassAssertionAxiom(this.classes.get(cls), individual);
         manager.addAxiom(model,classAssertionAxiom);

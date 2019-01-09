@@ -17,6 +17,7 @@ class OntologyFlow {
 	 * @param {Object} args An object contains all arguments
 	 * @param {string} args.id Unique id to identify each different flows. Automatically generated if not present
 	 * @param {string} args.name Display name for the flow
+	 * @param {string} args.ontologyID ID of ontology
 	 * @param {string} args.owner User Id of the owner. Flow will be public if not presented
 	 * @param {boolean} args.isSaved States whether any version of the flow present in th database.
 	 * @param {boolean}  args.isUpdated States whether the last version of the flow present in the database
@@ -28,6 +29,7 @@ class OntologyFlow {
 		this.id = args.id || uuid();
 		this.name = args.name;
 		this.owner = args.owner;
+		this.ontologyID = args.ontologyID;
 		this.nodes = [];
 		this.sinkNodes = [];
 		this.sourceNodes = [];
@@ -100,6 +102,7 @@ class OntologyFlow {
 	 * @param {boolean} args.source Specifies whether the node is a source node
 	 */
 	addNode(args) {
+		args.info.ontologyID = this.ontologyID;
 		this._isUpdated = false;
 		let newNode =
 			args.info instanceof OntologyNode
@@ -163,7 +166,7 @@ class OntologyFlow {
 				})
 				.catch((err) => {
 					logger.debug(`Flow saving is failed. ${stringify(err)}`);
-					if (args.callback) args.callback(err, null);
+					if (args && args.callback) args.callback(err, null);
 				});
 		}
 	}

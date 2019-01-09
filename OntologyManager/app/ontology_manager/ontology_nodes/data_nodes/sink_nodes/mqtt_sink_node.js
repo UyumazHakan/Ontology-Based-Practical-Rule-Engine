@@ -40,6 +40,7 @@ class MqttSinkNode extends SinkNode {
 	 * @param {string | string[]} args.value Value or values to be sinked in the fields
 	 */
 	execute(args) {
+		super.execute(args);
 		let body = {};
 		if (this.field instanceof Array) {
 			body = this.field.reduce((acc, cur, i) => {

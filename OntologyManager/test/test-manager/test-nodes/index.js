@@ -13,7 +13,7 @@ import FilterNode from '../../../app/ontology_manager/ontology_nodes/manipulatio
 import {loadNode} from '../../../app/ontology_manager/ontology/ontology_load';
 import ReduceNode from '../../../app/ontology_manager/ontology_nodes/manipulation_nodes/reduce_node';
 
-describe('OntologyNodes', function() {
+describe('OntologyNodeRoutes', function() {
 	let simpleReturnNode = new ReturnNode({});
 	beforeEach(function() {
 		simpleReturnNode.reset();

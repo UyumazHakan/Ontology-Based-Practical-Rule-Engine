@@ -17,11 +17,13 @@ class SinkNode extends OntologyNode {
 	 */
 	constructor(args) {
 		super(args);
-		if (args.sinkType.name) args.sinkType = args.sinkType.name;
-		this.sinkType =
-			args.sinkType instanceof SinkType
-				? args.sinkType
-				: SinkType.enumValueOf(args.sinkType);
+		if (args.sinkType) {
+			if (args.sinkType.name) args.sinkType = args.sinkType.name;
+			this.sinkType =
+				args.sinkType instanceof SinkType
+					? args.sinkType
+					: SinkType.enumValueOf(args.sinkType);
+		}
 	}
 	/**
 	 * Saves sink node
@@ -29,7 +31,7 @@ class SinkNode extends OntologyNode {
 	 */
 	saveNode(args) {
 		if (!args) args = {};
-		args.sinkType = this.sinkType.name;
+		if (this.sinkType) args.sinkType = this.sinkType.name;
 		super.saveNode(args);
 	}
 	/**

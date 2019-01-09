@@ -1,4 +1,6 @@
 import QueryInterpreter from './query_interpreter';
+import {stringify} from '../utils';
+
 /**
  * Class for creating node json objects to be sent to ontology manager
  */
@@ -11,7 +13,9 @@ class NodeQueryInterpreter extends QueryInterpreter {
 	 */
 	create(nodeQuery) {
 		if (!nodeQuery.header.options.type)
-			throw new TypeError('No node type is defined');
+			throw new TypeError(
+				'No node type is defined in query' + stringify(nodeQuery)
+			);
 		this.command = 'create';
 		this.value.type = nodeQuery.header.options.type + 'Node';
 		delete nodeQuery.header.options.type;

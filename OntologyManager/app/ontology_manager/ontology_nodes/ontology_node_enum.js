@@ -7,9 +7,10 @@ import ReduceNode from './manipulation_nodes/reduce_node';
 import ReturnNode from './test_nodes/return_node';
 import MqttSourceNode from './data_nodes/source_nodes/mqtt_source_node';
 import GroupingNode from './bridge_nodes/grouping_node';
-
+import OntologySinkNode from './data_nodes/sink_nodes/ontology_sink_node';
+import OntologySourceNode from './data_nodes/source_nodes/ontology_source_node';
 /**
- * Enum for OntologyNodes
+ * Enum for OntologyNodeRoutes
  * @readonly
  * @enum {OntologyNode}
  */
@@ -18,6 +19,8 @@ export default {
 	ElasticsearchSourceNode: ElasticsearchSourceNode,
 	MqttSinkNode: MqttSinkNode,
 	MqttSourceNode: MqttSourceNode,
+	OntologySinkNode: OntologySinkNode,
+	OntologySourceNode: OntologySourceNode,
 	GroupingNode: GroupingNode,
 	FilterNode: FilterNode,
 	MapNode: MapNode,
