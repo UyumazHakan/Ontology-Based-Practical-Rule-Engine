@@ -10,7 +10,7 @@
 		"jsdoc": "rm -rf jsdoc && jsdoc app -d jsdoc -r",
 		"lint": "eslint app/",
 		"test": "NODE_ENV=test;mocha --require @babel/register",
-		"prettier": "prettier --write '{app/**/,test/**/,config/**/,}{,*}.{,!(gitignore),}'"
+		"prettier": "prettier --write '{app/**/!(.DS_Store),test/**/,config/**/!(.DS_Store),}{,*}.{,!(gitignore|DS_Store),}'"
 	},
 	"repository": {
 		"type": "git",
