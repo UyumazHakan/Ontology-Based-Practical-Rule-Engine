@@ -13,12 +13,21 @@ export class GraphService {
   public readonly onGraphDataChange = new EventEmitter();
   public readonly onNodeClick = new EventEmitter();
   constructor() {}
-  addNode(label: string): number {
+  addNode(label: string, node): number {
+    node = node || {};
     let id = this.availableNodeID++;
+    node.id = id;
+    node.label = label;
     this.nodeDataSet.add({ id: id, label: label });
-    this.nodes[id] = { label: label };
+    this.nodes[id] = node;
     this.emitNewGraphData();
     return id;
+  }
+  editNode(id: number, node) {
+    node.id = id;
+    node.label = node.name;
+    this.nodeDataSet.update({ id: id, label: node.label });
+    this.nodes[id] = node;
   }
   addEdge(from: number, to: number) {
     this.edgeDataSet.add({ from: from, to: to });
@@ -26,6 +35,7 @@ export class GraphService {
   }
 
   changeClickedNode(data) {
+    console.dir(data);
     this.onNodeClick.emit(this.nodes[data.nodes[0]]);
   }
 

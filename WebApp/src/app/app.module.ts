@@ -1,10 +1,15 @@
 import { BrowserModule } from "@angular/platform-browser";
+import { FormsModule } from "@angular/forms";
 import { NgModule } from "@angular/core";
 
 import {
   MatButtonModule,
   MatCheckboxModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatInputModule,
+  MatSelectModule,
+  MatChipsModule,
+  MatIconModule
 } from "@angular/material";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -32,9 +37,14 @@ import { RuleSidebarToolboxComponent } from "./rule-sidebar-toolbox/rule-sidebar
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
     MatButtonModule,
     MatCheckboxModule,
     MatToolbarModule,
+    MatSelectModule,
+    MatInputModule,
+    MatChipsModule,
+    MatIconModule,
     BrowserAnimationsModule
   ],
   providers: [],

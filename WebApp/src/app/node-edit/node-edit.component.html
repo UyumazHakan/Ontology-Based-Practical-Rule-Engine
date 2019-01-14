@@ -1,1 +1,72 @@
 <h1>{{ selectedNode && selectedNode.label }}</h1>
+<form>
+  <mat-form-field>
+    <mat-select
+      placeholder="Node Type"
+      [(ngModel)]="selectedTypeName"
+      [ngModelOptions]="{ standalone: true }"
+      (selectionChange)="onTypeChange()"
+    >
+      <mat-option *ngFor="let nodeType of nodeTypeNames" [value]="nodeType">
+        {{ nodeType }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <hr />
+  <ng-template [ngIf]="selectedType">
+    <ng-template ngFor let-item [ngForOf]="selectedType.fields">
+      <mat-form-field *ngIf="item.enum; else notEnum">
+        <mat-select
+          [placeholder]="item.name"
+          [(ngModel)]="selectedNode[item.name]"
+          [ngModelOptions]="{ standalone: true }"
+        >
+          <mat-option *ngFor="let enum of item.enum" [value]="enum">
+            {{ enum }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <ng-template #notEnum>
+        <mat-form-field *ngIf="item.type === 'string'">
+          <input
+            matInput
+            [placeholder]="item.name"
+            [(ngModel)]="selectedNode[item.name]"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        <mat-form-field *ngIf="item.type === 'number'">
+          <input
+            matInput
+            type="number"
+            [placeholder]="item.name"
+            [(ngModel)]="selectedNode[item.name]"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </mat-form-field>
+        <mat-form-field *ngIf="item.type === 'string[]'">
+          <mat-chip-list #chipList>
+            <mat-chip
+              *ngFor="let value of selectedNode[item.name]"
+              removable
+              (removed)="removeToken(item.name, value)"
+            >
+              {{ value }}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input
+              [placeholder]="item.name"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="
+                addToken(item.name, $event.value); $event.input.value = ''
+              "
+            />
+          </mat-chip-list>
+        </mat-form-field>
+      </ng-template>
+    </ng-template>
+    <button mat-button (click)="onDone()">Done</button>
+  </ng-template>
+</form>

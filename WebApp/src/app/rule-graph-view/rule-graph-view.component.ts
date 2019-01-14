@@ -18,10 +18,7 @@ export class RuleGraphViewComponent implements OnInit {
       graphData => (this.graphData = graphData)
     );
     var container = document.getElementById("network");
-    this.graphService.addEdge(
-      this.graphService.addNode("H"),
-      this.graphService.addNode("A")
-    );
+    this.graphService.addNode("A");
     var options = {
       autoResize: true,
       height: "100%",
@@ -35,6 +32,9 @@ export class RuleGraphViewComponent implements OnInit {
         deleteNode: true,
         deleteEdge: true
       },
+      edges: {
+        arrows: "to"
+      },
       interaction: {
         selectConnectedEdges: false
       }
@@ -43,6 +43,6 @@ export class RuleGraphViewComponent implements OnInit {
     this.graph.on("click", data => this.onClick(data));
   }
   onClick(data) {
-    if (data.nodes.length > 0) this.graphService.changeClickedNode(data);
+    this.graphService.changeClickedNode(data);
   }
 }

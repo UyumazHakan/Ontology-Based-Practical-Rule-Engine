@@ -1,1 +1,9 @@
 <button mat-button>Add Node</button>
+<button
+  mat-button
+  [disabled]="!selectedNode"
+  [color]="isAddEdgeActive ? 'accent' : ''"
+  (click)="onAddEdge()"
+>
+  Add Edge {{ isAddEdgeActive }}
+</button>
