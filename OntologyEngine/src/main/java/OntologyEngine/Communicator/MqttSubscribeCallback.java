@@ -16,10 +16,7 @@ import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.util.Iterator;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MqttSubscribeCallback implements MqttCallback {
@@ -32,11 +29,11 @@ public class MqttSubscribeCallback implements MqttCallback {
 
 	@Override
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
-		if(topic.equals(TopicStrings.ONTOLOGY_CREATE))
-				onOntologyCreate(message);
-		else if(topic.startsWith(TopicStrings.ONTOLOGY_QUERY_WITHOUT_WILDCARD))
+		if (topic.equals(TopicStrings.ONTOLOGY_CREATE))
+			onOntologyCreate(message);
+		else if (topic.startsWith(TopicStrings.ONTOLOGY_QUERY_WITHOUT_WILDCARD))
 			onOntologyQuery(message, topic.substring(TopicStrings.ONTOLOGY_QUERY_WITHOUT_WILDCARD.length()));
-		else if(topic.startsWith(TopicStrings.ONTOLOGY_UPDATE_WITHOUT_WILDCARD))
+		else if (topic.startsWith(TopicStrings.ONTOLOGY_UPDATE_WITHOUT_WILDCARD))
 			onOntologyUpdate(message, topic.substring(TopicStrings.ONTOLOGY_UPDATE_WITHOUT_WILDCARD.length()));
 		else
 			onDifferentTopic(message);
@@ -48,35 +45,39 @@ public class MqttSubscribeCallback implements MqttCallback {
 			if (ontology == null) return;
 			JSONObject json = (JSONObject) jsonParser.parse(message.toString());
 			JSONObject data = (JSONObject) json.get("data");
-			OWLNamedIndividual individual = ontology.createNamedIndividual("a",OntologyStrings.DATA);
+			OWLNamedIndividual individual = ontology.createNamedIndividual("" + System.currentTimeMillis(),
+					OntologyStrings.DATA);
 			Iterator it = data.keySet().iterator();
 
-			while(it.hasNext()){
+			while (it.hasNext()) {
 				String fieldName = (String) it.next();
 				Object value = data.get(fieldName);
 				fieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase();
-				if (value instanceof Long){
-					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", ((Long) value).intValue());
-				}else if (value instanceof Float){
-					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (float) value);
-				}else if (value instanceof Double){
-					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (double) value);
-				}else if (value instanceof Boolean){
-					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (boolean) value);
-				}else if (value instanceof String){
-					ontology.addDataPropertyToIndividual(individual, "has" +fieldName+"Value", (String) value);
+				if (value instanceof Long) {
+					ontology.addDataPropertyToIndividual(individual,
+							"has" + fieldName + "Value",
+							((Long) value).intValue());
+				} else if (value instanceof Float) {
+					ontology.addDataPropertyToIndividual(individual, "has" + fieldName + "Value", (float) value);
+				} else if (value instanceof Double) {
+					ontology.addDataPropertyToIndividual(individual, "has" + fieldName + "Value", (double) value);
+				} else if (value instanceof Boolean) {
+					ontology.addDataPropertyToIndividual(individual, "has" + fieldName + "Value", (boolean) value);
+				} else if (value instanceof String) {
+					ontology.addDataPropertyToIndividual(individual, "has" + fieldName + "Value", (String) value);
 				}
 				ontology.addObjectPropertyToIndividual(individual, OntologyStrings.HAS_FIELD, fieldName + "Field");
 			}
-			if(data.containsKey("id")) {
+			if (data.containsKey("id")) {
 				String id = (String) data.get("id");
 				ontology.addObjectPropertyToIndividual(individual, OntologyStrings.HAS_ID_FIELD, id);
 			}
 			OWLReasoner reasoner = ontology.getReasoner();
 			Stream<OWLClass> classes = reasoner.types(individual, false);
 			MqttCommunicator communicator = MqttCommunicator.getInstance();
-			classes.forEach((cls) ->{
+			classes.forEach((cls) -> {
 				try {
+					System.out.println(cls);
 					communicator.publish(data.toJSONString(),
 							TopicStrings.ONTOLOGY_CLASSIFIED + "/" + ontologyName + '/' + cls.getIRI().getShortForm());
 				} catch (MqttException e) {
@@ -100,6 +101,7 @@ public class MqttSubscribeCallback implements MqttCallback {
 			pe.printStackTrace();
 		}
 	}
+
 	private void onOntologyUpdate(MqttMessage message, String ontologyName) {
 		InputStream inputStream = new ByteArrayInputStream(message.toString().getBytes());
 		OntologyBuilder.updateOntology(ontologyName, inputStream);
