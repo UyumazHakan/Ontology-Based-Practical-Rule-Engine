@@ -13,6 +13,12 @@ export class GraphService {
   public readonly onGraphDataChange = new EventEmitter();
   public readonly onNodeClick = new EventEmitter();
   constructor() {}
+  get graphData() {
+    return {
+      nodes: this.nodeDataSet,
+      edges: this.edgeDataSet
+    };
+  }
   addNode(label: string, node): number {
     node = node || {};
     let id = this.availableNodeID++;
@@ -40,9 +46,6 @@ export class GraphService {
   }
 
   private emitNewGraphData() {
-    this.onGraphDataChange.emit({
-      nodes: this.nodeDataSet,
-      edges: this.edgeDataSet
-    });
+    this.onGraphDataChange.emit(this.graphData);
   }
 }

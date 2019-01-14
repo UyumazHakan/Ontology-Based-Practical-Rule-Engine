@@ -53,7 +53,39 @@ export class NodeEditorService {
         { name: "name", type: "string" },
         { name: "host", type: "string", optional: true },
         { name: "port", type: "number", optional: true },
-        { name: "ontology_clas", type: "string" }
+        { name: "ontology_class", type: "string" }
+      ]
+    },
+    {
+      name: "Filter",
+      fields: [
+        { name: "name", type: "string" },
+        { name: "field", type: "string[]" },
+        { name: "fn", type: "string" }
+      ]
+    },
+    {
+      name: "Reduce",
+      fields: [
+        { name: "name", type: "string" },
+        { name: "field", type: "string[]" },
+        { name: "fn", type: "string" }
+      ]
+    },
+    {
+      name: "Map",
+      fields: [
+        { name: "name", type: "string" },
+        { name: "field", type: "string[]" },
+        { name: "fn", type: "string" }
+      ]
+    },
+    {
+      name: "Grouping",
+      fields: [
+        { name: "name", type: "string" },
+        { name: "groupby", type: "string[]" },
+        { name: "limit", type: "number" }
       ]
     }
   ];

@@ -17,8 +17,8 @@ export class RuleGraphViewComponent implements OnInit {
     this.graphService.onGraphDataChange.subscribe(
       graphData => (this.graphData = graphData)
     );
+    this.graphData = this.graphService.graphData;
     var container = document.getElementById("network");
-    this.graphService.addNode("A");
     var options = {
       autoResize: true,
       height: "100%",

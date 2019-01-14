@@ -51,6 +51,7 @@ export class NodeEditComponent implements OnInit {
   }
   addToken(field: string, value): void {
     if (!this.selectedNode[field]) this.selectedNode[field] = [];
+    if (!value || value === "") return;
     this.selectedNode[field].push(value);
   }
 
