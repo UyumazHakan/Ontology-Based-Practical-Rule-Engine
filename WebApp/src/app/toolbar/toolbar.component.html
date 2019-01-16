@@ -1,1 +1,10 @@
-<mat-toolbar> <span>Rule Engine</span> </mat-toolbar>
+<mat-toolbar>
+    <mat-toolbar-row>
+        <span>Rule Engine</span>
+        <span class="spacer"></span>
+        <button mat-button [routerLink]="['register']" *ngIf="!currentUser">Register</button>
+        <button mat-button [routerLink]="['all_devices']" *ngIf="currentUser">My Devices</button>
+        <button mat-button [routerLink]="['register_device']" *ngIf="currentUser">Register Device</button>
+        <button mat-button [routerLink]="['rule']" *ngIf="currentUser">Rule Edit</button>
+    </mat-toolbar-row>
+</mat-toolbar>

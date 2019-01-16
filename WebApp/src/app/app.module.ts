@@ -22,6 +22,17 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RuleSidebarComponent } from "./rule-sidebar/rule-sidebar.component";
 import { NodeEditComponent } from "./node-edit/node-edit.component";
 import { RuleSidebarToolboxComponent } from "./rule-sidebar-toolbox/rule-sidebar-toolbox.component";
+import { UserRegisterComponent } from "./user-register/user-register.component";
+import { HardwareViewComponent } from "./hardware-view/hardware-view.component";
+import { UserService } from "./user.service";
+import { AlertService } from "./alert.service";
+import { HttpClientModule } from "@angular/common/http";
+import { LoginComponent } from "./login/login.component";
+import { AllDevicesComponent } from "./all-devices/all-devices.component";
+import { EditDeviceComponent } from "./edit-device/edit-device.component";
+import { DeviceDetailsComponent } from "./device-details/device-details.component";
+import { JwtInterceptorProvider } from "./jwt-interceptor";
+import { DeviceRegisterComponent } from "./device-register/device-register.component";
 
 @NgModule({
   declarations: [
@@ -32,12 +43,20 @@ import { RuleSidebarToolboxComponent } from "./rule-sidebar-toolbox/rule-sidebar
     RuleGraphViewComponent,
     RuleSidebarComponent,
     NodeEditComponent,
-    RuleSidebarToolboxComponent
+    RuleSidebarToolboxComponent,
+    UserRegisterComponent,
+    HardwareViewComponent,
+    LoginComponent,
+    AllDevicesComponent,
+    EditDeviceComponent,
+    DeviceDetailsComponent,
+    DeviceRegisterComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     MatButtonModule,
     MatCheckboxModule,
     MatToolbarModule,
@@ -47,7 +66,7 @@ import { RuleSidebarToolboxComponent } from "./rule-sidebar-toolbox/rule-sidebar
     MatIconModule,
     BrowserAnimationsModule
   ],
-  providers: [],
+  providers: [UserService, AlertService, JwtInterceptorProvider],
   bootstrap: [AppComponent]
 })
 export class AppModule {}
