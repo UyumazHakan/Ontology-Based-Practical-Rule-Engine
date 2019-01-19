@@ -28,6 +28,13 @@ export class OntologyDetailsComponent implements OnInit {
   }
 
   onCreateNewFlow(): void {
-    this.updateOntology();
+    this.route.params.subscribe(params => {
+      this.queryManager
+        .addEmptyFlowToOntology(params.id, this.newFlowName)
+        .then(result => {
+          this.newFlowName = "";
+          this.updateOntology();
+        });
+    });
   }
 }

@@ -78,6 +78,9 @@ export class QueryManagerService {
   ): string {
     return this.generateQuery(QueryCommand.update, type, options, body);
   }
+  private generateCreateFlowQuery(flowName: string): string {
+    return this.generateCreateQuery(QueryType.flow, { name: flowName }, {});
+  }
   private generateCreateOntologyQuery(ontologyName: string): string {
     return this.generateCreateQuery(
       QueryType.ontology,
@@ -88,8 +91,15 @@ export class QueryManagerService {
   private generateReadOntologyQuery(ontologyId: string): string {
     return this.generateReadQuery(QueryType.ontology, { id: ontologyId }, {});
   }
-  private generateUpdateOntologyQuery(ontologyId: string): string {
-    return this.generateUpdateQuery(QueryType.ontology, { id: ontologyId }, {});
+  private generateUpdateOntologyQuery(
+    ontologyId: string,
+    body: any = {}
+  ): string {
+    return this.generateUpdateQuery(
+      QueryType.ontology,
+      { id: ontologyId },
+      body
+    );
   }
   createOntology(ontologyName: string) {
     return new Promise((resolve, reject) =>
@@ -119,6 +129,21 @@ export class QueryManagerService {
         .post(
           environment.queryManager.url,
           this.generateUpdateOntologyQuery(ontologyId),
+          { headers: { "Content-Type": "text/plain" } }
+        )
+        .subscribe(resolve)
+    );
+  }
+  addEmptyFlowToOntology(ontologyId: string, flowName: string) {
+    const flowRef = new QueryRef();
+    flowRef.name = flowName;
+    return new Promise((resolve, reject) =>
+      this.http
+        .post(
+          environment.queryManager.url,
+          this.generateCreateFlowQuery(flowName) +
+            "\n" +
+            this.generateUpdateOntologyQuery(ontologyId, { flows: [flowRef] }),
           { headers: { "Content-Type": "text/plain" } }
         )
         .subscribe(resolve)

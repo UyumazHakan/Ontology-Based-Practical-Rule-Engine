@@ -29,12 +29,17 @@ class FlowQueryInterpreter extends QueryInterpreter {
 	end() {
 		super.end();
 		console.dir(stringify(this.value));
-		if (!this.value.info.paths instanceof Array)
-			this.value.info.paths = [this.value.info.paths];
-		this.value.info.paths = this.value.info.paths.map((path) => ({
-			source: path.first,
-			sinks: path.second instanceof Array ? path.second : [path.second],
-		}));
+		if (this.value.info.paths) {
+			if (!this.value.info.paths instanceof Array)
+				this.value.info.paths = [this.value.info.paths];
+			this.value.info.paths = this.value.info.paths.map((path) => ({
+				source: path.first,
+				sinks: path.second instanceof Array ? path.second : [path.second],
+			}));
+		}
+		this.value.info.middles = this.value.info.middles || [];
+		this.value.info.sources = this.value.info.sources || [];
+		this.value.info.sinks = this.value.info.sinks || [];
 		this.value.info.nodes = this.value.info.middles.concat(
 			this.value.info.sinks.map((sink) => {
 				sink.sink = true;

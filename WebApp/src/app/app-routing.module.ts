@@ -44,7 +44,7 @@ const routes: Routes = [
   },
   {
     path: "ontology/flow/:id",
-    component: NodeEditComponent,
+    component: RuleViewComponent,
     canActivate: [AuthGuard]
   }
 ];
