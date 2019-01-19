@@ -4,6 +4,7 @@ import DatabaseConnectorProxy from '../database_connector/database_connector_pro
 
 import {loggers} from 'winston';
 import clone from 'clone';
+import {stringify} from '../../utils';
 let logger = loggers.get('main');
 
 /**
@@ -21,14 +22,19 @@ class Ontology {
 	 * @param {OntologyFlow[]} args.flows List of flows will be owned by the ontology
 	 */
 	constructor(args) {
-		this.id = args.id || uuid();
-		this.name = args.name;
-		this.owner = args.owner;
-		this.flows = [];
-		this.isSaved = args.isSaved || false;
-		this._isUpdated = args.isUpdated || false;
+		this.updateFields(args);
+	}
+
+	updateFields(args) {
+		this.id = args.id || this.id || uuid();
+		this.name = args.name || this.name;
+		this.owner = args.owner || this.owner;
+		this.flows = this.flows || [];
+		this.isSaved = args.isSaved || this.isSaved || false;
+		this._isUpdated = false;
 		if (args.flows) args.flows.forEach((flow) => this.addFlow(flow.info));
 	}
+
 	/**
 	 * Returns whether ontology and owned flows are saved with the latest version in database
 	 * @return {boolean} Status of the ontology and owned flows in database
@@ -102,7 +108,23 @@ class Ontology {
 					logger.debug(`Ontology saving is failed. ${err}`);
 					if (args.callback) args.callback(err, null);
 				});
-		}
+		} else if (!this._isUpdated) {
+			DatabaseConnectorProxy.update({
+				index: 'ontology',
+				type: 'ontologyType',
+				body: saveObject,
+				id: this.id,
+			})
+				.then((res) => {
+					logger.debug(`Ontology updating is successful. ${stringify(res)}`);
+					this._isUpdated = true;
+					if (args.callback) args.callback(null, this);
+				})
+				.catch((err) => {
+					logger.debug(`Ontology saving is failed. ${stringify(err)}`);
+					if (args.callback) args.callback(err, this);
+				});
+		} else if (args.callback) args.callback(null, this);
 	}
 	/**
 	 * Returns clone the ontology with minified versions of flows

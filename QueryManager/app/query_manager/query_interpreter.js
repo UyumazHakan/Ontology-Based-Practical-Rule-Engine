@@ -31,7 +31,6 @@ class QueryInterpreter {
 	}
 	doHttpRequest() {
 		return new Promise((resolve, reject) => {
-			let response = null;
 			switch (this.httpMethod) {
 				case 'POST':
 					axios
@@ -42,6 +41,12 @@ class QueryInterpreter {
 				case 'GET':
 					axios
 						.get(this.httpUrl)
+						.then(resolve)
+						.catch(reject);
+					break;
+				case 'PATCH':
+					axios
+						.patch(this.httpUrl, this.json)
 						.then(resolve)
 						.catch(reject);
 					break;
@@ -62,6 +67,8 @@ class QueryInterpreter {
 				return this.create(query);
 			case 'read':
 				return this.read(query);
+			case 'update':
+				return this.update(query);
 			default:
 				throw TypeError('Unsupported command type');
 		}

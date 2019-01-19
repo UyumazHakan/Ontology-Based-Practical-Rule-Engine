@@ -40,6 +40,17 @@ ontologyRoutes.post('/', function(req, res) {
 ontologyRoutes.get('/:ontology_id', function(req, res) {
 	res.json(req.ontology);
 });
+ontologyRoutes.patch('/:ontology_id', function(req, res) {
+	req._ontology.updateFields(req.body.info);
+	let callback = (err, result) => {
+		if (err) {
+			res.status(500).send(stringify(err));
+			return;
+		}
+		res.json(req._ontology.minify());
+	};
+	req._ontology.save({callback: callback});
+});
 managerRouter.use('/node', OntologyNodeRoutes);
 managerRouter.use('/rule', OntologyRuleRoutes);
 managerRouter.use('/ontology', ontologyRoutes);

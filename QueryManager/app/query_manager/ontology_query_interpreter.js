@@ -41,6 +41,14 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
 		return this;
 	}
+	update(ontologyQuery) {
+		this.httpMethod = 'PATCH';
+		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
+		this.value.info = {};
+		Object.assign(this.value.info, ontologyQuery.header.options);
+		Object.assign(this.value.info, ontologyQuery.body);
+		return this;
+	}
 	doRequest() {
 		return super.doRequest().concat(this.doMqttRequest());
 	}

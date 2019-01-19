@@ -71,6 +71,13 @@ export class QueryManagerService {
   ): string {
     return this.generateQuery(QueryCommand.read, type, options, body);
   }
+  private generateUpdateQuery(
+    type: string,
+    options: object,
+    body: object
+  ): string {
+    return this.generateQuery(QueryCommand.update, type, options, body);
+  }
   private generateCreateOntologyQuery(ontologyName: string): string {
     return this.generateCreateQuery(
       QueryType.ontology,
@@ -80,6 +87,9 @@ export class QueryManagerService {
   }
   private generateReadOntologyQuery(ontologyId: string): string {
     return this.generateReadQuery(QueryType.ontology, { id: ontologyId }, {});
+  }
+  private generateUpdateOntologyQuery(ontologyId: string): string {
+    return this.generateUpdateQuery(QueryType.ontology, { id: ontologyId }, {});
   }
   createOntology(ontologyName: string) {
     return new Promise((resolve, reject) =>
@@ -98,6 +108,17 @@ export class QueryManagerService {
         .post(
           environment.queryManager.url,
           this.generateReadOntologyQuery(ontologyId),
+          { headers: { "Content-Type": "text/plain" } }
+        )
+        .subscribe(resolve)
+    );
+  }
+  updateOntology(ontologyId: string) {
+    return new Promise((resolve, reject) =>
+      this.http
+        .post(
+          environment.queryManager.url,
+          this.generateUpdateOntologyQuery(ontologyId),
           { headers: { "Content-Type": "text/plain" } }
         )
         .subscribe(resolve)
