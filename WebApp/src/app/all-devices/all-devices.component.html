@@ -1,35 +1,57 @@
-﻿
-<div class="col-md-12">
+﻿<div class="col-md-12">
   <div class="panel panel-default">
     <div class="panel-body" *ngIf="is_enough_device">
-      <table class="table" style="margin-top: 20px" >
+      <table class="table" style="margin-top: 20px">
         <thead>
-        <tr>
-          <th scope="col" style="width: 1%">#</th>
-          <th scope="col">Device Name</th>
-          <th scope="col">Created By</th>
-          <th scope="col">Board Type</th>
-          <th scope="col">Action</th>
-        </tr>
+          <tr>
+            <th scope="col" style="width: 1%">#</th>
+            <th scope="col">Device Name</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Board Type</th>
+            <th scope="col">Action</th>
+          </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let item of devices; let i = index">
-          <td style="width: 1%">{{i + 1}}</td>
-          <td>{{item.name}}</td>
-          <td>{{item.created_by}}</td>
-          <td>{{item.board_type}}</td>
-          <td style="padding-right: 0px" >
-            <button class="btn btn-xs btn-default" type="button" routerLink="/devices/details/{{item.id}}">
-              <i class="fa fa-info-circle"></i> Details
-            </button>
-            <button *ngIf="currentUser.username === item.created_by" class="btn btn-xs btn-primary" type="button" routerLink="/devices/edit/{{item.id}}" [disabled]="currentUser.username !== item.created_by">
-              <i class="fa fa-edit"></i> Edit
-            </button>
-            <button *ngIf="currentUser.username === item.created_by" class="btn btn-xs btn-danger" type="button" (click)="deleteDevice(item.id)" [disabled]="currentUser.username !== item.created_by">
-              <i class="fa fa-ban" aria-hidden="true"></i> Delete
-            </button>
-          </td>
-        </tr>
+          <tr *ngFor="let item of devices; let i = index">
+            <td style="width: 1%">{{ i + 1 }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.created_by }}</td>
+            <td>{{ item.board_type }}</td>
+            <td style="padding-right: 0px">
+              <button
+                class="btn btn-xs btn-default"
+                type="button"
+                routerLink="/ontology/details/{{ item.ontology }}"
+              >
+                <i class="fa fa-info-circle"></i> Ontology
+              </button>
+              <button
+                class="btn btn-xs btn-default"
+                type="button"
+                routerLink="/devices/details/{{ item.id }}"
+              >
+                <i class="fa fa-info-circle"></i> Details
+              </button>
+              <button
+                *ngIf="currentUser.username === item.created_by"
+                class="btn btn-xs btn-primary"
+                type="button"
+                routerLink="/devices/edit/{{ item.id }}"
+                [disabled]="currentUser.username !== item.created_by"
+              >
+                <i class="fa fa-edit"></i> Edit
+              </button>
+              <button
+                *ngIf="currentUser.username === item.created_by"
+                class="btn btn-xs btn-danger"
+                type="button"
+                (click)="deleteDevice(item.id)"
+                [disabled]="currentUser.username !== item.created_by"
+              >
+                <i class="fa fa-ban" aria-hidden="true"></i> Delete
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

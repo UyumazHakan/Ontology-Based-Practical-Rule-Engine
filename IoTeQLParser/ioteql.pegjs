@@ -33,8 +33,13 @@ queryCommand
     = "$" _queryCommand:_queryCommand { return _queryCommand; }
 
 _queryCommand
-    = "create" { return {"command":text()};}
-
+    = _queryCommandString { return {"command":text()};}
+    
+_queryCommandString
+    = "create"
+    / "read"
+    / "update"
+    / "delete"
 queryType
     = "[" _queryType:_queryType "]" { return {"type":_queryType}; }
 
@@ -44,7 +49,7 @@ _queryType
     / "ontology"
 
 queryOptions "options"
-    = "(" options:_queryOptions ")" {return {"options":options}}
+    = "(" _ options:_queryOptions _ ")" {return {"options":options}}
 
 _queryOptions
     = option:queryOption _  "," _ options:_queryOptions {return Object.assign(option,options);}
@@ -55,15 +60,15 @@ queryOption
     / option
     
 options
-	= first:option _  "," _ rest:options { return Object.assign(first,rest)}
+    = first:option _  "," _ rest:options { return Object.assign(first,rest)}
     / option
 
 option
- 	= name:name _  "="  _ value:primitive {return makeObject(name, value)}
+    = name:name _  "="  _ value:primitive {return makeObject(name, value)}
 /  name:name{ return makeObject(name, true); }
 
 nodeType 
-	= "\"" value: nodeType "\"" {return value}
+    = "\"" value: nodeType "\"" {return value}
     / "\'" value: nodeType "\'" {return value}
     / "MqttSink"
     / "MqttSource"
@@ -96,7 +101,7 @@ name
 
 
 valueOrRef 
-	= value
+    = value
     / valueOrRefTuple
     / ref
     
@@ -106,7 +111,7 @@ valueOrRefs
 / last:valueOrRef _ ","? _{return [last]}
 
 valueOrRefTuple
-	= "(" _ first:valueOrRef _ "," _ second:valueOrRef ")" { return {type:"tuple", value:{first:first,second:second}}}
+    = "(" _ first:valueOrRef _ "," _ second:valueOrRef ")" { return {type:"tuple", value:{first:first,second:second}}}
 
 value
     = value:object {return {type:"object", value:value}}
@@ -118,7 +123,7 @@ values
 / last:value {return [last]}
 
 ref
-	= "$ref(" _ options:options? _ ")" {return {type:"ref", value:options}}
+    = "$ref(" _ options:options? _ ")" {return {type:"ref", value:options}}
 
 object
     = "{" _ pairs:keyValuePairs? _ "}" {return pairs}

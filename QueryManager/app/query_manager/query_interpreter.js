@@ -10,6 +10,13 @@ class QueryInterpreter {
 	 * Creates a query interpreter
 	 */
 	constructor() {
+		this.httpUrl =
+			'http://' +
+			config.get('ontology_manager.host') +
+			':' +
+			config.get('ontology_manager.port') +
+			'/';
+		this.httpMethod = 'POST';
 		this.value = {};
 		this.isInherited = false;
 		this.isEnded = false;
@@ -18,18 +25,7 @@ class QueryInterpreter {
 	get json() {
 		return this.isEnded ? this.value : {};
 	}
-	get httpUrl() {
-		return (
-			'http://' +
-			config.get('ontology_manager.host') +
-			':' +
-			config.get('ontology_manager.port') +
-			'/'
-		);
-	}
-	get httpMethod() {
-		return 'POST';
-	}
+
 	doRequest() {
 		return [this.doHttpRequest()];
 	}
@@ -40,6 +36,12 @@ class QueryInterpreter {
 				case 'POST':
 					axios
 						.post(this.httpUrl, this.json)
+						.then(resolve)
+						.catch(reject);
+					break;
+				case 'GET':
+					axios
+						.get(this.httpUrl)
 						.then(resolve)
 						.catch(reject);
 					break;
@@ -58,6 +60,8 @@ class QueryInterpreter {
 		switch (query.header.command) {
 			case 'create':
 				return this.create(query);
+			case 'read':
+				return this.read(query);
 			default:
 				throw TypeError('Unsupported command type');
 		}
@@ -72,9 +76,10 @@ class QueryInterpreter {
 	}
 	end() {
 		this.isEnded = true;
-		Object.keys(this.value.info).forEach((key) => {
-			this.value.info[key] = this.mapInfo(this.value.info[key]);
-		});
+		if (this.value.info)
+			Object.keys(this.value.info).forEach((key) => {
+				this.value.info[key] = this.mapInfo(this.value.info[key]);
+			});
 		return this;
 	}
 	mapInfo(info) {

@@ -1,0 +1,6 @@
+<mat-nav-list *ngIf="ontology">
+  <a mat-list-item href="..." *ngFor="let flow of ontology.flows">
+    {{ flow }}
+  </a>
+</mat-nav-list>
+<input mat-input [(ngModel)]="newFlowName" placeholder="New flow..."/><button mat-button (click)="onCreateNewFlow()">Create</button>

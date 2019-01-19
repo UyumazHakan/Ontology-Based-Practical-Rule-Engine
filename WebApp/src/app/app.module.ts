@@ -9,7 +9,8 @@ import {
   MatInputModule,
   MatSelectModule,
   MatChipsModule,
-  MatIconModule
+  MatIconModule,
+  MatListModule
 } from "@angular/material";
 
 import { AppRoutingModule } from "./app-routing.module";
@@ -33,6 +34,7 @@ import { EditDeviceComponent } from "./edit-device/edit-device.component";
 import { DeviceDetailsComponent } from "./device-details/device-details.component";
 import { JwtInterceptorProvider } from "./jwt-interceptor";
 import { DeviceRegisterComponent } from "./device-register/device-register.component";
+import { OntologyDetailsComponent } from "./ontology-details/ontology-details.component";
 
 @NgModule({
   declarations: [
@@ -50,7 +52,8 @@ import { DeviceRegisterComponent } from "./device-register/device-register.compo
     AllDevicesComponent,
     EditDeviceComponent,
     DeviceDetailsComponent,
-    DeviceRegisterComponent
+    DeviceRegisterComponent,
+    OntologyDetailsComponent
   ],
   imports: [
     BrowserModule,
@@ -62,6 +65,7 @@ import { DeviceRegisterComponent } from "./device-register/device-register.compo
     MatToolbarModule,
     MatSelectModule,
     MatInputModule,
+    MatListModule,
     MatChipsModule,
     MatIconModule,
     BrowserAnimationsModule

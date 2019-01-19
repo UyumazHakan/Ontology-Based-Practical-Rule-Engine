@@ -2,12 +2,17 @@ import { Injectable } from "@angular/core";
 import { Device } from "./device";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../environments/environment";
+import { QueryManagerService } from "./query-manager.service";
+import { Observable } from "rxjs";
 
 @Injectable({
   providedIn: "root"
 })
 export class DeviceService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private queryManager: QueryManagerService
+  ) {}
 
   getAll() {
     return this.http.get<Device[]>(environment.hal.url + "/devices");
@@ -17,8 +22,15 @@ export class DeviceService {
     return this.http.get(environment.hal.url + "/devices/" + id);
   }
 
-  create(device: Device) {
-    return this.http.post(environment.hal.url + "/devices/create", device);
+  create(device: Device): Promise<Observable<any>> {
+    return new Promise(resolve =>
+      this.queryManager.createOntology(device.name).then(result => {
+        device.ontology = result[0].id;
+        resolve(
+          this.http.post(environment.hal.url + "/devices/create", device)
+        );
+      })
+    );
   }
 
   update(device: Device) {

@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { UserService } from "../user.service";
 import { AlertService } from "../alert.service";
 import { DeviceService } from "../device.service";
+import { QueryManagerService } from "../query-manager.service";
 
 @Component({
   selector: "app-device-register",
@@ -26,7 +27,8 @@ export class DeviceRegisterComponent implements OnInit {
     private router: Router,
     private userService: UserService,
     private alertService: AlertService,
-    private deviceService: DeviceService
+    private deviceService: DeviceService,
+    private queryManager: QueryManagerService
   ) {
     this.currentUser = userService.currentUser;
     this.model.created_by = this.currentUser.username;
@@ -37,19 +39,21 @@ export class DeviceRegisterComponent implements OnInit {
     this.model.id = this.newGuid();
     this.loading = true;
 
-    this.deviceService.create(this.model).subscribe(
-      data => {
-        this.loading = false;
-        this.router.navigate(["/all_devices"]);
-        alert("Device is registered successfully");
-        this.alertService.success("Device is registered successfully");
-      },
-      error2 => {
-        this.loading = false;
-        console.log(error2);
-        alert("Error occurred: " + error2.message);
-        this.alertService.error(error2.message);
-      }
+    this.deviceService.create(this.model).then(o =>
+      o.subscribe(
+        data => {
+          this.loading = false;
+          this.router.navigate(["/all_devices"]);
+          alert("Device is registered successfully");
+          this.alertService.success("Device is registered successfully");
+        },
+        error2 => {
+          this.loading = false;
+          console.log(error2);
+          alert("Error occurred: " + error2.message);
+          this.alertService.error(error2.message);
+        }
+      )
     );
   }
 

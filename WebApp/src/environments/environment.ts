@@ -6,6 +6,9 @@ export const environment = {
   production: false,
   hal: {
     url: "http://localhost:4000/api"
+  },
+  queryManager: {
+    url: "http://localhost:3001/"
   }
 };
 

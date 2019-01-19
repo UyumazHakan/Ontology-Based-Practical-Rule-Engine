@@ -15,14 +15,14 @@ let MqttClient = config.get('ontology_engine')
  * Class for creating ontology json objects to be sent to ontology manager
  */
 class OntologyQueryInterpreter extends QueryInterpreter {
-	get httpUrl() {
-		return (
+	constructor() {
+		super();
+		this.httpUrl =
 			'http://' +
 			config.get('ontology_manager.host') +
 			':' +
 			config.get('ontology_manager.port') +
-			'/manager/ontology/'
-		);
+			'/manager/ontology';
 	}
 	/**
 	 * Interprets create queries
@@ -36,17 +36,23 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 		Object.assign(this.value.info, ontologyQuery.body);
 		return this;
 	}
+	read(ontologyQuery) {
+		this.httpMethod = 'GET';
+		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
+		return this;
+	}
 	doRequest() {
 		return super.doRequest().concat(this.doMqttRequest());
 	}
 
 	doMqttRequest() {
 		return new Promise((resolve, reject) => {
-			if (MqttClient)
-				MqttClient.publish(
-					'ontology/create',
-					JSON.stringify({id: this.value.info.name})
-				);
+			if (this.query.header.command === 'create')
+				if (MqttClient)
+					MqttClient.publish(
+						'ontology/create',
+						JSON.stringify({id: this.value.info.name})
+					);
 			resolve({data: ''});
 		});
 	}

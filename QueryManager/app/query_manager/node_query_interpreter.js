@@ -1,10 +1,20 @@
 import QueryInterpreter from './query_interpreter';
 import {stringify} from '../utils';
+import config from 'config';
 
 /**
  * Class for creating node json objects to be sent to ontology manager
  */
 class NodeQueryInterpreter extends QueryInterpreter {
+	constructor() {
+		super();
+		this.httpUrl =
+			'http://' +
+			config.get('ontology_manager.host') +
+			':' +
+			config.get('ontology_manager.port') +
+			'/manager/node/';
+	}
 	/**
 	 * Interprets create queries
 	 * @private

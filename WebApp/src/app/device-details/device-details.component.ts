@@ -108,7 +108,8 @@ export class DeviceDetailsComponent implements OnInit {
       name: "",
       api_version: null,
       log_directory: "/var/log/iot/",
-      log_level: null
+      log_level: null,
+      ontology: ""
     };
     return device;
   }

@@ -9,6 +9,8 @@ import { EditDeviceComponent } from "./edit-device/edit-device.component";
 import { DeviceDetailsComponent } from "./device-details/device-details.component";
 import { EditAuthGuard } from "./edit-auth.guard";
 import { DeviceRegisterComponent } from "./device-register/device-register.component";
+import { OntologyDetailsComponent } from "./ontology-details/ontology-details.component";
+import { NodeEditComponent } from "./node-edit/node-edit.component";
 
 const routes: Routes = [
   { path: "", component: LoginComponent },
@@ -33,6 +35,16 @@ const routes: Routes = [
   {
     path: "devices/details/:id",
     component: DeviceDetailsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "ontology/details/:id",
+    component: OntologyDetailsComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: "ontology/flow/:id",
+    component: NodeEditComponent,
     canActivate: [AuthGuard]
   }
 ];

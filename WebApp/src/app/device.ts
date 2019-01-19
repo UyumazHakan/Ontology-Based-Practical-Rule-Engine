@@ -9,4 +9,5 @@ export interface Device {
   devices: any;
   api_version: number;
   log_level: number;
+  ontology: string;
 }

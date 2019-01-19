@@ -22,18 +22,21 @@ router.use(function(req, res, next) {
 	});
 });
 router.use(function(req, res, next) {
-	req.body = parseIoTeQL(req.rawBody);
+	console.dir(req.rawBody);
+	try {
+		req.body = parseIoTeQL(req.rawBody);
+	} catch (e) {}
 	next();
 });
 router.post('/', function(req, res) {
-	Promise.all(QueryManager.execute(req.body))
-		.then((responses) => {
-			res.send(responses.map((response) => response.data));
-		})
-		.catch((err) => {
-			console.dir(err);
-			res.status(500).send(stringify(err));
-		});
+	let a = QueryManager.execute(req.body);
+	let p = Promise.all(a);
+	p.then((responses) => {
+		res.send(responses.map((response) => response.data));
+	}).catch((err) => {
+		console.dir(err);
+		res.status(500).send(stringify(err));
+	});
 });
 
 export default router;

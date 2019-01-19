@@ -5,14 +5,14 @@ import {stringify} from '../utils';
  * Class for creating flow json objects to be sent to ontology manager
  */
 class FlowQueryInterpreter extends QueryInterpreter {
-	get httpUrl() {
-		return (
+	constructor() {
+		super();
+		this.httpUrl =
 			'http://' +
 			config.get('ontology_manager.host') +
 			':' +
 			config.get('ontology_manager.port') +
-			'/manager/rule/'
-		);
+			'/manager/rule/';
 	}
 	/**
 	 * Interprets create queries

@@ -260,7 +260,8 @@ export class EditDeviceComponent implements OnInit {
       name: "",
       api_version: null,
       log_directory: "/var/log/iot/",
-      log_level: 0
+      log_level: 0,
+      ontology: ""
     };
     return device;
   }

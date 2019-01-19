@@ -96,7 +96,7 @@ class Ontology {
 					logger.debug(`Ontology saving is successful. ${res}`);
 					this.isSaved = true;
 					this._isUpdated = true;
-					if (args.callback) args.callback(err, null);
+					if (args.callback) args.callback(null, res);
 				})
 				.catch((err) => {
 					logger.debug(`Ontology saving is failed. ${err}`);
