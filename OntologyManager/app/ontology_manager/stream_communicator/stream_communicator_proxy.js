@@ -59,7 +59,15 @@ export function publish(args) {
 export function subscribe(args, callback) {
 	const communicator = getCommunicator(args);
 	communicator.subscribe({
+		id: args.id,
 		topic: args.topic,
 		callback: args.callback || callback,
+	});
+}
+export function unsubscribe(args, callback) {
+	const communicator = getCommunicator(args);
+	communicator.unsubscribe({
+		topic: args.topic,
+		id: args.id,
 	});
 }

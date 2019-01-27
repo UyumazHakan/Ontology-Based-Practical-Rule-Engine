@@ -68,10 +68,8 @@ class OntologyNode {
 	 */
 	saveNode(args) {
 		if (!args) args = {};
-		let saveObject = args ? Object.assign(clone(this), args) : clone(this);
+		let saveObject = args ? Object.assign(this.minify(), args) : this.minify();
 		saveObject.nodeType = saveObject.constructor.name;
-		saveObject.sinks = this.sinks.map((node) => node.id);
-		saveObject.sources = this.sources.map((node) => node.id);
 		delete saveObject.isSaved;
 		delete saveObject._isUpdated;
 		if (!this.isSaved) {
@@ -158,6 +156,7 @@ class OntologyNode {
 		);
 		return minifiedVersion;
 	}
+	dispose() {}
 }
 
 export default OntologyNode;

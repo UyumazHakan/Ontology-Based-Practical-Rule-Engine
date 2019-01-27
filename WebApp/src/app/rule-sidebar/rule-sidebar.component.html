@@ -1,2 +1,3 @@
 <app-rule-sidebar-toolbox></app-rule-sidebar-toolbox>
-<app-node-edit></app-node-edit>
+<app-flow-edit *ngIf="!graphService.selectedNode"></app-flow-edit>
+<app-node-edit *ngIf="graphService.selectedNode"></app-node-edit>

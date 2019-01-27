@@ -70,7 +70,7 @@ class QueryManager {
 		return allInterpreters
 			.filter((interpreter) => !interpreter.isInherited)
 			.map((interpreter) => interpreter.doRequest())
-			.reduce((acc, cur) => acc.concat(cur));
+			.reduce((acc, cur) => acc.concat(cur), []);
 	}
 }
 const instance = new QueryManager();

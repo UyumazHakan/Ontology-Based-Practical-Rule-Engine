@@ -1,5 +1,8 @@
 import SourceNode from './source_node';
-import {subscribe} from '../../../stream_communicator/stream_communicator_proxy';
+import {
+	subscribe,
+	unsubscribe,
+} from '../../../stream_communicator/stream_communicator_proxy';
 import {loggers} from 'winston';
 import config from 'config';
 let logger = loggers.get('main');
@@ -28,6 +31,7 @@ class OntologySourceNode extends SourceNode {
 			protocol: 'mqtt',
 			host: this.host,
 			port: this.port,
+			id: this.id,
 			topic: `ontology/classified/${this.ontologyID}/${this.ontologyClass}`,
 			callback: (args) => this.execute(args),
 		});
@@ -39,6 +43,16 @@ class OntologySourceNode extends SourceNode {
 	execute(args) {
 		super.execute(args);
 		this.passToSinks(args);
+	}
+	dispose() {
+		super.dispose();
+		unsubscribe({
+			protocol: 'mqtt',
+			host: this.host,
+			port: this.port,
+			id: this.id,
+			topic: `ontology/classified/${this.ontologyID}/${this.ontologyClass}`,
+		});
 	}
 }
 export default OntologySourceNode;

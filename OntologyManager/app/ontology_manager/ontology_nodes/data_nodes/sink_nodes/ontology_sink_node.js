@@ -49,6 +49,7 @@ class OntologySinkNode extends SinkNode {
 			throw TypeError;
 		}
 		logger.debug(`Body ${JSON.stringify(body)} created`);
+		console.dir(this);
 		if (body !== {}) {
 			publish({
 				protocol: 'mqtt',

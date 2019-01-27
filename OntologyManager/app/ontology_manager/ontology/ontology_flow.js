@@ -26,19 +26,31 @@ class OntologyFlow {
 	 * @paran {{name: string, info: Object}} [args.cacheStrategy] Specify cache strategy to be used
 	 */
 	constructor(args) {
-		this.id = args.id || uuid();
-		this.name = args.name;
-		this.owner = args.owner;
-		this.ontologyID = args.ontologyID;
-		this.nodes = [];
-		this.sinkNodes = [];
-		this.sourceNodes = [];
-		this.isSaved = args.isSaved || false;
-		this._isUpdated = args.isUpdated || false;
-		if (args.nodes) args.nodes.forEach((node) => this.addNode(node));
+		this.updateFields(args);
+	}
+
+	updateFields(args) {
+		this.id = args.id || this.id || uuid();
+		this.name = args.name || this.name;
+		this.owner = args.owner || this.owner;
+		this.ontologyID = args.ontologyID || this.ontologyID;
+		this.nodes = this.nodes || [];
+		this.sinkNodes = this.sinkNodes || [];
+		this.sourceNodes = this.sourceNodes || [];
+		this.isSaved = args.isSaved || this.isSaved || false;
+		this._isUpdated = false;
+		if (args.nodes) {
+			this.nodes.forEach((node) => node.dispose());
+			this.nodes.splice(0, this.nodes.length);
+			this.sinkNodes.splice(0, this.sinkNodes.length);
+			this.sourceNodes.splice(0, this.sourceNodes.length);
+			args.nodes.forEach((node) => this.addNode(node));
+		}
 		if (args.paths) args.paths.forEach((path) => this.addPath(path));
-		if (args.cacheStrategy || args._cacheStrategy)
-			this.cacheStrategy = args.cacheStrategy || args._cacheStrategy;
+		if (args.cacheStrategy || args._cacheStrategy || this.cacheStrategy) {
+			this.cacheStrategy =
+				args.cacheStrategy || args._cacheStrategy || this.cacheStrategy;
+		}
 	}
 
 	/**
@@ -143,14 +155,10 @@ class OntologyFlow {
 	 * @param {function} args.callback Callback function to be called after flow saved
 	 */
 	save(args) {
-		let saveObject = {
-			id: this.id,
-			name: this.name,
-			owner: this.owner,
-			nodes: this.nodes.map((node) => node.id),
-			sinkNodes: this.sinkNodes.map((node) => node.id),
-			sourceNodes: this.sourceNodes.map((node) => node.id),
-		};
+		let saveObject = this.minify();
+		saveObject.nodes = this.nodes.map((node) => node.id);
+		saveObject.sinkNodes = this.sinkNodes.map((node) => node.id);
+		saveObject.sourceNodes = this.sourceNodes.map((node) => node.id);
 		this.nodes.forEach((node) => node.saveNode());
 		if (!this.isSaved) {
 			DatabaseConnectorProxy.create({
@@ -167,6 +175,23 @@ class OntologyFlow {
 				.catch((err) => {
 					logger.debug(`Flow saving is failed. ${stringify(err)}`);
 					if (args && args.callback) args.callback(err, null);
+				});
+		} else if (!this._isUpdated) {
+			DatabaseConnectorProxy.update({
+				index: 'flow',
+				type: 'flowType',
+				body: saveObject,
+				id: this.id,
+			})
+				.then((res) => {
+					logger.debug(`Flow updating is successful. ${stringify(res)}`);
+					this.isSaved = true;
+					this._isUpdated = true;
+					if (args.callback) args.callback(null, res);
+				})
+				.catch((err) => {
+					logger.debug(`Flow updating is failed. ${stringify(err)}`);
+					if (args.callback) args.callback(err, null);
 				});
 		}
 	}

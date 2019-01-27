@@ -35,6 +35,7 @@ import { DeviceDetailsComponent } from "./device-details/device-details.componen
 import { JwtInterceptorProvider } from "./jwt-interceptor";
 import { DeviceRegisterComponent } from "./device-register/device-register.component";
 import { OntologyDetailsComponent } from "./ontology-details/ontology-details.component";
+import { FlowEditComponent } from "./flow-edit/flow-edit.component";
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { OntologyDetailsComponent } from "./ontology-details/ontology-details.co
     EditDeviceComponent,
     DeviceDetailsComponent,
     DeviceRegisterComponent,
-    OntologyDetailsComponent
+    OntologyDetailsComponent,
+    FlowEditComponent
   ],
   imports: [
     BrowserModule,

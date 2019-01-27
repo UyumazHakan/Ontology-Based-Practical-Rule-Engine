@@ -1,6 +1,9 @@
 import SourceNode from './source_node';
 import SourceType from './source_types';
-import {subscribe} from '../../../stream_communicator/stream_communicator_proxy';
+import {
+	subscribe,
+	unsubscribe,
+} from '../../../stream_communicator/stream_communicator_proxy';
 import {loggers} from 'winston';
 let logger = loggers.get('main');
 
@@ -41,6 +44,7 @@ class MqttSourceNode extends SourceNode {
 			host: this.host,
 			port: this.port,
 			topic: this.topic,
+			id: this.id,
 			callback: (args) => this.execute(args),
 		});
 	}
@@ -98,5 +102,15 @@ class MqttSourceNode extends SourceNode {
 	 * @param {Object} args Gathered object
 	 */
 	executeTypeId(args) {}
+	dispose() {
+		super.dispose();
+		unsubscribe({
+			protocol: 'mqtt',
+			host: this.host,
+			port: this.port,
+			id: this.id,
+			topic: this.topic,
+		});
+	}
 }
 export default MqttSourceNode;

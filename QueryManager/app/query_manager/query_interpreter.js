@@ -41,7 +41,12 @@ class QueryInterpreter {
 				case 'GET':
 					axios
 						.get(this.httpUrl)
-						.then(resolve)
+						.then((result) => {
+							const data = result.data;
+							console.dir(data);
+							this.readFlowData(data);
+							resolve(result);
+						})
 						.catch(reject);
 					break;
 				case 'PATCH':
@@ -55,6 +60,22 @@ class QueryInterpreter {
 			}
 		});
 	}
+
+	readFlowData(flow) {
+		delete flow.isSaved;
+		delete flow._isUpdated;
+		if (flow.nodes) {
+			flow.nodes = flow.nodes.map(this.readNodeData);
+		}
+		if (flow.sinkNodes) {
+			flow.sinkNodes = flow.sinkNodes.map(this.readNodeData);
+		}
+		if (flow.sourceNodes) {
+			flow.sourceNodes = flow.sourceNodes.map(this.readNodeData);
+		}
+		return flow;
+	}
+
 	/**
 	 * Creates a json object to be sent to ontology manager
 	 * @param {IoTeQLQuery} query
@@ -88,6 +109,14 @@ class QueryInterpreter {
 				this.value.info[key] = this.mapInfo(this.value.info[key]);
 			});
 		return this;
+	}
+	readNodeData(node) {
+		if (node.sourceType) node.sourceType = node.sourceType.name;
+		if (node.sinkType) node.sinkType = node.sinkType.name;
+		delete node.isSaved;
+		delete node._isUpdated;
+		node.nodeType = node.nodeType.replace('Node', '');
+		return node;
 	}
 	mapInfo(info) {
 		switch (info.type) {

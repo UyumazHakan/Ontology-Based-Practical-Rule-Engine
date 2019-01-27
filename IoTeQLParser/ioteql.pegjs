@@ -129,7 +129,7 @@ object
     = "{" _ pairs:keyValuePairs? _ "}" {return pairs}
 
 array
-    = "[" _ values:valueOrRefs? _ "]" { return values}
+    = "[" _ values:valueOrRefs? _ "]" { return values ? values : []}
 
 primitive
     = value:number {return {type:"number", value:value}}

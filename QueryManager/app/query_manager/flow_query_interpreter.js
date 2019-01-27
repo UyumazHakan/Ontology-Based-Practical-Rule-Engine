@@ -26,9 +26,23 @@ class FlowQueryInterpreter extends QueryInterpreter {
 		Object.assign(this.value.info, flowQuery.body);
 		return this;
 	}
+	read(flowQuery) {
+		this.httpMethod = 'GET';
+		this.httpUrl = this.httpUrl + '/' + flowQuery.header.options.id.value;
+		return this;
+	}
+	update(flowQuery) {
+		this.httpMethod = 'PATCH';
+		this.httpUrl = this.httpUrl + '/' + flowQuery.header.options.id.value;
+		this.value.info = {};
+		Object.assign(this.value.info, flowQuery.header.options);
+		Object.assign(this.value.info, flowQuery.body);
+		return this;
+	}
 	end() {
 		super.end();
 		console.dir(stringify(this.value));
+		this.value.info = this.value.info || {};
 		if (this.value.info.paths) {
 			if (!this.value.info.paths instanceof Array)
 				this.value.info.paths = [this.value.info.paths];

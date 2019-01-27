@@ -42,7 +42,8 @@ class MqttSinkNode extends SinkNode {
 	execute(args) {
 		super.execute(args);
 		let body = {};
-		if (this.field instanceof Array) {
+		if (!this.field) body = args;
+		else if (this.field instanceof Array) {
 			body = this.field.reduce((acc, cur, i) => {
 				if (args[cur]) acc[cur] = args[cur];
 				return acc;

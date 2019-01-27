@@ -43,6 +43,7 @@ public class MqttCommunicator {
 
 	public void publish(String message, String topic) throws MqttException {
 		while (!client.isConnected()){}
+		System.out.println("Publishing: "+ message+ " to "+ topic);
 		MqttMessage mqttMessage = new MqttMessage(message.getBytes());
 		mqttMessage.setQos(this.qos);
 		this.client.publish(topic, mqttMessage);
@@ -57,6 +58,7 @@ public class MqttCommunicator {
 		try {
 			MqttConnectOptions connectOptions = new MqttConnectOptions();
 			connectOptions.setCleanSession(true);
+			connectOptions.setMaxInflight(50);
 			this.client.connect(connectOptions);
 		} catch (MqttException me) {
 			me.printStackTrace();

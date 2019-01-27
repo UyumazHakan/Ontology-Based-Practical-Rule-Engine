@@ -20,17 +20,17 @@ export class NodeEditComponent implements OnInit {
     private nodeEditorService: NodeEditorService
   ) {
     this.nodeTypeNames = nodeEditorService.nodeTypes.map(info => info.name);
-  }
-
-  ngOnInit() {
-    this.selectedNode = {};
     this.graphService.onNodeClick.subscribe(node => {
       if (!node) return;
-      this.selectedTypeName = node.type;
+      this.selectedTypeName = node.nodeType;
       this.onTypeChange();
       this.selectedNode = node;
       this.isEditing = true;
     });
+  }
+
+  ngOnInit() {
+    this.selectedNode = {};
   }
 
   onTypeChange() {
@@ -40,9 +40,9 @@ export class NodeEditComponent implements OnInit {
     );
   }
   onDone() {
-    this.selectedNode.type = this.selectedTypeName;
+    this.selectedNode.nodeType = this.selectedTypeName;
     if (this.isEditing)
-      this.graphService.editNode(this.selectedNode.id, this.selectedNode);
+      this.graphService.editNode(this.selectedNode.graphId, this.selectedNode);
     else this.graphService.addNode(this.selectedNode.name, this.selectedNode);
     this.selectedTypeName = undefined;
     this.selectedType = undefined;

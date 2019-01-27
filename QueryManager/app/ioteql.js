@@ -309,7 +309,7 @@ function peg$parse(input, options) {
 			return pairs;
 		},
 		peg$c88 = function(values) {
-			return values;
+			return values ? values : [];
 		},
 		peg$c89 = function(value) {
 			return {type: 'number', value: value};

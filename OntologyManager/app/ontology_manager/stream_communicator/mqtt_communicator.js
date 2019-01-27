@@ -22,7 +22,9 @@ class MqttComunicator extends StreamCommunicator {
 		if (this.port) address += ':' + this.port;
 		this.client = mqtt.connect(address);
 		this.client.on('message', (topic, message) => {
-			const subscriberFns = this.subscribers[topic];
+			const subscriberFns = this.subscribers[topic]
+				.filter((e) => e && e.callback)
+				.map((subscriber) => subscriber.callback);
 			try {
 				const parsedMessage = JSON.parse(message);
 				subscriberFns.forEach((fn) => fn(parsedMessage, message));
@@ -54,11 +56,24 @@ class MqttComunicator extends StreamCommunicator {
 		this.client.subscribe(args.topic, (err) => {
 			if (err) return;
 			if (this.subscribers[args.topic]) {
-				this.subscribers[args.topic].push(args.callback);
+				this.subscribers[args.topic].push({
+					callback: args.callback,
+					id: args.id,
+				});
 			} else {
-				this.subscribers[args.topic] = [args.callback];
+				this.subscribers[args.topic] = [
+					{
+						callback: args.callback,
+						id: args.id,
+					},
+				];
 			}
 		});
+	}
+	unsubscribe(args) {
+		const subs = this.subscribers[args.topic];
+		subs.splice(0, subs.length, subs.filter((sub) => sub.id !== args.id));
+		if (subs.length <= 0) this.client.unsubscribe(args.topic);
 	}
 }
 export default MqttComunicator;

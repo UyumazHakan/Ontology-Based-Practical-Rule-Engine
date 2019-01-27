@@ -69,6 +69,18 @@ router.get('/', function(req, res) {
 router.get('/:rule_id', function(req, res) {
 	res.json(req.rule.minify());
 });
+router.patch('/:rule_id', function(req, res) {
+	req._rule.updateFields(req.body.info);
+
+	let callback = (err, result) => {
+		if (err) {
+			res.status(500).send(stringify(err));
+			return;
+		}
+		res.send(stringify(req._rule.minify()));
+	};
+	req._rule.save({callback: callback});
+});
 router.post(':rule_id/node/:node_id', function(req, res) {
 	req._rule.addNode(req._node);
 	let callback = () => {

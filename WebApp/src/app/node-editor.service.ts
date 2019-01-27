@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { EventEmitter, Injectable } from "@angular/core";
 export interface NodeInfo {
   name: string;
   fields: { name: string; type: string; optional?: boolean; enum?: string[] }[];
@@ -13,7 +13,7 @@ export class NodeEditorService {
       fields: [
         { name: "name", type: "string" },
         {
-          name: "sink_type",
+          name: "sinkType",
           type: "string",
           enum: ["append", "appendWithTimestamp"]
         },
@@ -28,7 +28,7 @@ export class NodeEditorService {
       fields: [
         { name: "name", type: "string" },
         {
-          name: "source_type",
+          name: "sourceType",
           type: "string",
           enum: ["all", "allWithField", "allWithFieldValuePair", "id"]
         },
@@ -53,7 +53,7 @@ export class NodeEditorService {
         { name: "name", type: "string" },
         { name: "host", type: "string", optional: true },
         { name: "port", type: "number", optional: true },
-        { name: "ontology_class", type: "string" }
+        { name: "ontologyClass", type: "string" }
       ]
     },
     {
@@ -68,6 +68,7 @@ export class NodeEditorService {
       name: "Reduce",
       fields: [
         { name: "name", type: "string" },
+        { name: "initial", type: "string" },
         { name: "field", type: "string[]" },
         { name: "fn", type: "string" }
       ]
@@ -76,7 +77,8 @@ export class NodeEditorService {
       name: "Map",
       fields: [
         { name: "name", type: "string" },
-        { name: "field", type: "string[]" },
+        { name: "sourceMap", type: "string[]" },
+        { name: "sinkMap", type: "string[]" },
         { name: "fn", type: "string" }
       ]
     },
@@ -89,5 +91,8 @@ export class NodeEditorService {
       ]
     }
   ];
+  sinkNodeTypes = ["MqttSink", "OntologySink"];
+  sourceNodeTypes = ["MqttSource", "OntologySource"];
+  flowEmitter = new EventEmitter();
   constructor() {}
 }

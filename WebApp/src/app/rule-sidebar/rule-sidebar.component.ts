@@ -1,4 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
+import { GraphService } from "../graph.service";
 
 @Component({
   selector: "app-rule-sidebar",
@@ -6,7 +7,7 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./rule-sidebar.component.scss"]
 })
 export class RuleSidebarComponent implements OnInit {
-  constructor() {}
+  constructor(private graphService: GraphService) {}
 
   ngOnInit() {}
 }
