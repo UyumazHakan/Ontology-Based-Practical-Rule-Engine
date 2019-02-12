@@ -89,6 +89,21 @@ export class NodeEditorService {
         { name: "groupby", type: "string[]" },
         { name: "limit", type: "number" }
       ]
+    },
+    {
+      name: "ElasticsearchSource",
+      fields: [
+        { name: "name", type: "string" },
+        {
+          name: "sinkType",
+          type: "string",
+          enum: ["create", "append", "appendWithTimestamp", "replace"]
+        },
+        { name: "host", type: "string" },
+        { name: "port", type: "number" },
+        { name: "topic", type: "string" },
+        { name: "fields", type: "string[]" }
+      ]
     }
   ];
   sinkNodeTypes = ["MqttSink", "OntologySink"];

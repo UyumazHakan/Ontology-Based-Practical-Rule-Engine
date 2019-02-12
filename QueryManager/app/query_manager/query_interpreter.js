@@ -106,7 +106,10 @@ class QueryInterpreter {
 		this.isEnded = true;
 		if (this.value.info)
 			Object.keys(this.value.info).forEach((key) => {
-				this.value.info[key] = this.mapInfo(this.value.info[key]);
+				this.value.info[key] =
+					key === 'paths'
+						? this.mapInfo(this.value.info[key], true)
+						: this.mapInfo(this.value.info[key]);
 			});
 		return this;
 	}
@@ -118,20 +121,20 @@ class QueryInterpreter {
 		node.nodeType = node.nodeType.replace('Node', '');
 		return node;
 	}
-	mapInfo(info) {
+	mapInfo(info, noInherit = false) {
 		switch (info.type) {
 			case 'string':
 			case 'number':
 			case 'boolean':
 				return this.mapPrimitiveInfo(info);
 			case 'array':
-				return this.mapArrayInfo(info);
+				return this.mapArrayInfo(info, noInherit);
 			case 'object':
-				return this.mapObjectInfo(info);
+				return this.mapObjectInfo(info, noInherit);
 			case 'ref':
-				return this.mapRefInfo(info);
+				return this.mapRefInfo(info, noInherit);
 			case 'tuple':
-				return this.mapTupleInfo(info);
+				return this.mapTupleInfo(info, noInherit);
 			default:
 				return undefined;
 		}
@@ -139,18 +142,19 @@ class QueryInterpreter {
 	mapPrimitiveInfo(info) {
 		return info.value;
 	}
-	mapArrayInfo(info) {
-		return info.value.map((element) => this.mapInfo(element));
+	mapArrayInfo(info, noInherit) {
+		return info.value.map((element) => this.mapInfo(element, noInherit));
 	}
-	mapObjectInfo(info) {
+	mapObjectInfo(info, noInherit) {
 		Object.keys(info.value).forEach((key) => {
-			info.value[key] = this.mapInfo(info.value[key]);
+			info.value[key] = this.mapInfo(info.value[key], noInherit);
 		});
 		return info.value;
 	}
 
-	mapRefInfo(info) {
+	mapRefInfo(info, noInherit) {
 		info = this.mapObjectInfo(info);
+		if (noInherit) return info;
 		let fellows = this.fellows;
 		Object.keys(info).forEach(
 			(key) =>
@@ -163,8 +167,8 @@ class QueryInterpreter {
 		return fellows[0].inherit().value;
 	}
 
-	mapTupleInfo(info) {
-		return this.mapObjectInfo(info);
+	mapTupleInfo(info, noInherit) {
+		return this.mapObjectInfo(info, noInherit);
 	}
 }
 export default QueryInterpreter;

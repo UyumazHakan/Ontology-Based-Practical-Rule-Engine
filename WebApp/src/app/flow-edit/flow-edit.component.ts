@@ -8,7 +8,7 @@ import { NodeEditorService } from "../node-editor.service";
   styleUrls: ["./flow-edit.component.scss"]
 })
 export class FlowEditComponent implements OnInit {
-  flow: Flow = {};
+  flow: Flow;
   constructor(private editorService: NodeEditorService) {
     this.editorService.flowEmitter.subscribe(flow => (this.flow = flow));
   }

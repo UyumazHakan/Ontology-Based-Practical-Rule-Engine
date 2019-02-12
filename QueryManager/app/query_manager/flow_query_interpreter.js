@@ -43,14 +43,6 @@ class FlowQueryInterpreter extends QueryInterpreter {
 		super.end();
 		console.dir(stringify(this.value));
 		this.value.info = this.value.info || {};
-		if (this.value.info.paths) {
-			if (!this.value.info.paths instanceof Array)
-				this.value.info.paths = [this.value.info.paths];
-			this.value.info.paths = this.value.info.paths.map((path) => ({
-				source: path.first,
-				sinks: path.second instanceof Array ? path.second : [path.second],
-			}));
-		}
 		this.value.info.middles = this.value.info.middles || [];
 		this.value.info.sources = this.value.info.sources || [];
 		this.value.info.sinks = this.value.info.sinks || [];
@@ -64,6 +56,14 @@ class FlowQueryInterpreter extends QueryInterpreter {
 				return source;
 			})
 		);
+		if (this.value.info.paths) {
+			if (!this.value.info.paths instanceof Array)
+				this.value.info.paths = [this.value.info.paths];
+			this.value.info.paths = this.value.info.paths.map((path) => ({
+				source: path.first,
+				sinks: path.second instanceof Array ? path.second : [path.second],
+			}));
+		}
 		delete this.value.info.middles;
 		delete this.value.info.sources;
 		delete this.value.info.sinks;

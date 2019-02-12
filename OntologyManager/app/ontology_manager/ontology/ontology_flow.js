@@ -155,6 +155,7 @@ class OntologyFlow {
 	 * @param {function} args.callback Callback function to be called after flow saved
 	 */
 	save(args) {
+		if (!args) args = {};
 		let saveObject = this.minify();
 		saveObject.nodes = this.nodes.map((node) => node.id);
 		saveObject.sinkNodes = this.sinkNodes.map((node) => node.id);
