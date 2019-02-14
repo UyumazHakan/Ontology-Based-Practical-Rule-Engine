@@ -7,6 +7,7 @@ class Balancer {
 		this.runningOntologies = [];
 		this.ontologyEngineMapping = {};
 		this.ontologyManagerMapping = {};
+		this.extraOntologyMapping = {};
 		this.engineLoads = this.availableEngines.map((engine) => {
 			return {
 				id: engine.id,
@@ -90,6 +91,21 @@ class Balancer {
 	}
 	get leastLoadedManagerConfig() {
 		return this.findManagerConfig(this.leastLoadedManager);
+	}
+	assignWithResponse(response, engineId, managerId) {
+		const data = response.data;
+		if (!this.isAssigned(data.id))
+			Balancer.assign(data.id, engineId, managerId);
+		if (data.flows) {
+			data.flows.forEach((flow) => {
+				this.extraOntologyMapping[flow.id] = data.id;
+				if (flow.nodes) {
+					flow.nodes.forEach((node) => {
+						this.extraOntologyMapping[node.id] = data.id;
+					});
+				}
+			});
+		}
 	}
 }
 const Instance = new Balancer();

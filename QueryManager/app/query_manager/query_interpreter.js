@@ -29,17 +29,27 @@ class QueryInterpreter {
 			switch (this.httpMethod) {
 				case 'POST':
 					axios
-						.post(this.httpUrl, this.json)
+						.post(this.httpUrl + (this.httpRoute || ''), this.json)
 						.then((result) => {
-							Balancer.assign(result.data.id, this.engine.id, this.manager.id);
+							Balancer.assignWithResponse(
+								result,
+								this.engine.id,
+								this.manager.id
+							);
 							resolve(result);
 						})
 						.catch(reject);
 					break;
 				case 'GET':
 					axios
-						.get(this.httpUrl)
+						.get(this.httpUrl + (this.httpRoute || ''))
 						.then((result) => {
+							if (Balancer.isAssigned(result.data.id))
+								Balancer.assignWithResponse(
+									result,
+									this.engine.id,
+									this.manager.id
+								);
 							const data = result.data;
 							console.dir(data);
 							this.readFlowData(data);
@@ -49,8 +59,16 @@ class QueryInterpreter {
 					break;
 				case 'PATCH':
 					axios
-						.patch(this.httpUrl, this.json)
-						.then(resolve)
+						.patch(this.httpUrl + (this.httpRoute || ''), this.json)
+						.then((result) => {
+							if (Balancer.isAssigned(result.data.id))
+								Balancer.assignWithResponse(
+									result,
+									this.engine.id,
+									this.manager.id
+								);
+							resolve(result);
+						})
 						.catch(reject);
 					break;
 				default:

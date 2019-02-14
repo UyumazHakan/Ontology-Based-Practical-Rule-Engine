@@ -44,21 +44,25 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 		return this;
 	}
 	read(ontologyQuery) {
-		this.manager = Balancer.findManagerConfig(
+		if (!Balancer.isAssigned(ontologyQuery.header.options.id.value))
+			Balancer.assign(ontologyQuery.header.options.id.value);
+		this.manager = Balancer.findOntologyManagerConfig(
 			ontologyQuery.header.options.id.value
 		);
-		this.engine = Balancer.findEngineConfig(
+		this.engine = Balancer.findOntologyEngineConfig(
 			ontologyQuery.header.options.id.value
 		);
 		this.httpMethod = 'GET';
-		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
+		this.httpRoute = '/' + ontologyQuery.header.options.id.value;
 		return this;
 	}
 	update(ontologyQuery) {
-		this.manager = Balancer.findManagerConfig(
+		if (!Balancer.isAssigned(ontologyQuery.header.options.id.value))
+			Balancer.assign(ontologyQuery.header.options.id.value);
+		this.manager = Balancer.findOntologyManagerConfig(
 			ontologyQuery.header.options.id.value
 		);
-		this.engine = Balancer.findEngineConfig(
+		this.engine = Balancer.findOntologyEngineConfig(
 			ontologyQuery.header.options.id.value
 		);
 		this.httpMethod = 'PATCH';

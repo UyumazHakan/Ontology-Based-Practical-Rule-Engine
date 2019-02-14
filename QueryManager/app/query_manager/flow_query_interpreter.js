@@ -1,6 +1,7 @@
 import QueryInterpreter from './query_interpreter';
 import config from 'config';
 import {stringify} from '../utils';
+import Balancer from '../balancer';
 /**
  * Class for creating flow json objects to be sent to ontology manager
  */
@@ -31,13 +32,19 @@ class FlowQueryInterpreter extends QueryInterpreter {
 		return this;
 	}
 	read(flowQuery) {
+		this.manager = Balancer.findOntologyManagerConfig(
+			Balancer.extraOntologyMapping[flowQuery.header.options.id.value]
+		);
 		this.httpMethod = 'GET';
-		this.httpUrl = this.httpUrl + '/' + flowQuery.header.options.id.value;
+		this.httpRoute = '/' + flowQuery.header.options.id.value;
 		return this;
 	}
 	update(flowQuery) {
+		this.manager = Balancer.findOntologyManagerConfig(
+			Balancer.extraOntologyMapping[flowQuery.header.options.id.value]
+		);
 		this.httpMethod = 'PATCH';
-		this.httpUrl = this.httpUrl + '/' + flowQuery.header.options.id.value;
+		this.httpRoute = '/' + flowQuery.header.options.id.value;
 		this.value.info = {};
 		Object.assign(this.value.info, flowQuery.header.options);
 		Object.assign(this.value.info, flowQuery.body);
