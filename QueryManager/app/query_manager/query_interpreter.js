@@ -1,6 +1,7 @@
 import clone from 'clone';
 import config from 'config';
 import axios from 'axios';
+import Balancer from '../balancer';
 /**
  * Generic interpreter class for all query types
  * @property {Object} value Created json object
@@ -10,12 +11,6 @@ class QueryInterpreter {
 	 * Creates a query interpreter
 	 */
 	constructor() {
-		this.httpUrl =
-			'http://' +
-			config.get('ontology_manager.host') +
-			':' +
-			config.get('ontology_manager.port') +
-			'/';
 		this.httpMethod = 'POST';
 		this.value = {};
 		this.isInherited = false;
@@ -35,7 +30,10 @@ class QueryInterpreter {
 				case 'POST':
 					axios
 						.post(this.httpUrl, this.json)
-						.then(resolve)
+						.then((result) => {
+							Balancer.assign(result.data.id, this.engine.id, this.manager.id);
+							resolve(result);
+						})
 						.catch(reject);
 					break;
 				case 'GET':

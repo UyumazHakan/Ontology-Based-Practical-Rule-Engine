@@ -7,12 +7,16 @@ import {stringify} from '../utils';
 class FlowQueryInterpreter extends QueryInterpreter {
 	constructor() {
 		super();
-		this.httpUrl =
+	}
+	get httpUrl() {
+		let result =
 			'http://' +
-			config.get('ontology_manager.host') +
+			this.manager.host +
 			':' +
-			config.get('ontology_manager.port') +
+			this.manager.port +
 			'/manager/rule/';
+		console.log(`Sending to:` + result);
+		return result;
 	}
 	/**
 	 * Interprets create queries

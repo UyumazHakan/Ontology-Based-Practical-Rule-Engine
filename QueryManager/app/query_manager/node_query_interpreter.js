@@ -8,12 +8,12 @@ import config from 'config';
 class NodeQueryInterpreter extends QueryInterpreter {
 	constructor() {
 		super();
-		this.httpUrl =
-			'http://' +
-			config.get('ontology_manager.host') +
-			':' +
-			config.get('ontology_manager.port') +
-			'/manager/node/';
+	}
+	get httpUrl() {
+		let result =
+			'http://' + this.manager.host + ':' + this.manager.port + '/manager/node';
+		console.log(`Sending to:` + result);
+		return result;
 	}
 	/**
 	 * Interprets create queries

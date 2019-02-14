@@ -1,13 +1,14 @@
 import QueryInterpreter from './query_interpreter';
 import config from 'config';
 import {stringify} from '../utils';
+import Balancer from '../balancer';
 import mqtt from 'mqtt';
 let MqttClient = config.get('ontology_engine')
 	? mqtt.connect(
-			`mqtt://${config.get('ontology_engine.host')}` +
-				(config.get('ontology_engine.port') &&
-				config.get('ontology_engine.port').length > 0
-					? `:${config.get('ontology_engine.port')}`
+			`mqtt://${config.get('engine_broker.host')}` +
+				(config.get('engine_broker.port') &&
+				config.get('engine_broker.port').length > 0
+					? `:${config.get('engine_broker.port')}`
 					: '')
 	  )
 	: undefined;
@@ -17,12 +18,16 @@ let MqttClient = config.get('ontology_engine')
 class OntologyQueryInterpreter extends QueryInterpreter {
 	constructor() {
 		super();
-		this.httpUrl =
+	}
+	get httpUrl() {
+		let result =
 			'http://' +
-			config.get('ontology_manager.host') +
+			this.manager.host +
 			':' +
-			config.get('ontology_manager.port') +
+			this.manager.port +
 			'/manager/ontology';
+		console.log(`Sending to:` + result);
+		return result;
 	}
 	/**
 	 * Interprets create queries
@@ -31,17 +36,31 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 	 * @return {QueryInterpreter}
 	 */
 	create(ontologyQuery) {
+		this.manager = Balancer.leastLoadedManagerConfig;
+		this.engine = Balancer.leastLoadedEngineConfig;
 		this.value.info = {};
 		Object.assign(this.value.info, ontologyQuery.header.options);
 		Object.assign(this.value.info, ontologyQuery.body);
 		return this;
 	}
 	read(ontologyQuery) {
+		this.manager = Balancer.findManagerConfig(
+			ontologyQuery.header.options.id.value
+		);
+		this.engine = Balancer.findEngineConfig(
+			ontologyQuery.header.options.id.value
+		);
 		this.httpMethod = 'GET';
 		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
 		return this;
 	}
 	update(ontologyQuery) {
+		this.manager = Balancer.findManagerConfig(
+			ontologyQuery.header.options.id.value
+		);
+		this.engine = Balancer.findEngineConfig(
+			ontologyQuery.header.options.id.value
+		);
 		this.httpMethod = 'PATCH';
 		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
 		this.value.info = {};
@@ -59,7 +78,7 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 				if (MqttClient)
 					MqttClient.publish(
 						'ontology/create',
-						JSON.stringify({id: this.value.info.name})
+						JSON.stringify({id: this.value.info.name, engine: this.engine.host})
 					);
 			resolve({data: ''});
 		});
