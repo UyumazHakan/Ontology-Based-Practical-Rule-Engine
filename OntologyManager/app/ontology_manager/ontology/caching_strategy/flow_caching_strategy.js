@@ -25,17 +25,6 @@ class FlowCachingStrategy {
 	 * @name CachingFunction
 	 * @param {Object} args Resulting data to be cached
 	 */
-	/**
-	 * Method to be called after data received by the flow
-	 * @param {Object} args Data received by the flow
-	 * @return {Object | CachingFunction} Returns cached object or cache function
-	 */
-	receive(args) {
-		args = clone(args);
-		delete args._cacheFn;
-		const argsHash = hash(args);
-		return this.cache[argsHash] ? this.cache[argsHash] : this.execute(argsHash);
-	}
 
 	/**
 	 * Executes the caching strategy. Should be called by extending in concrete strategy class

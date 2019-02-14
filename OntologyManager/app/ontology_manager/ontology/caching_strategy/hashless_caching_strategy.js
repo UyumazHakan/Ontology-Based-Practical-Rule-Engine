@@ -1,13 +1,14 @@
 import FlowCachingStrategy from './flow_caching_strategy';
 import {loggers} from 'winston';
-import {stringify, hash} from '../../../utils';
+import {stringify, objectToKey} from '../../../utils';
+import clone from 'clone';
 
 let logger = loggers.get('main');
 
 /**
  * Simple caching strategy for flows. Caches data after receiving specified amount of same data and result pair.
  */
-class SimpleFlowCachingStrategy extends FlowCachingStrategy {
+class HashlessCachingStrategy extends FlowCachingStrategy {
 	/**
 	 * Constructor of simple flow caching strategy.
 	 * @param {Object} args All arguments
@@ -15,7 +16,7 @@ class SimpleFlowCachingStrategy extends FlowCachingStrategy {
 	 * @param {Object.<string, {count: number, result: string}>} [args.cacheCounter] Cache counter object if this strategy is loaded
 	 */
 	constructor(args) {
-		logger.debug(`SimpleFlowCachingStrategy(${stringify(args)})`);
+		logger.debug(`HashlessCachingStrategy(${stringify(args)})`);
 		super(args);
 		this.count = args.count;
 		/**
@@ -26,18 +27,29 @@ class SimpleFlowCachingStrategy extends FlowCachingStrategy {
 	}
 
 	/**
+	 * Method to be called after data received by the flow
+	 * @param {Object} args Data received by the flow
+	 * @return {Object | CachingFunction} Returns cached object or cache function
+	 */
+	receive(args) {
+		args = clone(args);
+		delete args._cacheFn;
+		const argsKey = objectToKey(args);
+		return this.cache[argsKey] ? this.cache[argsKey] : this.execute(argsKey);
+	}
+	/**
 	 * Executes simple caching strategy
-	 * @param {string} argsHash Hash of data received by the flow
+	 * @param {string} argsKey Key of data received by the flow
 	 * @return {CachingFunction}
 	 */
-	execute(argsHash) {
+	execute(argsKey) {
 		return (result) => {
-			const resultHash = hash(result);
+			const resultKey = objectToKey(result);
 			logger.silly(`New result: ${stringify(result)}`);
-			logger.silly(`New result hash: ${stringify(resultHash)}`);
-			const cacheConterPoint = this.cacheCounter[argsHash];
+			logger.silly(`New result objectToKey: ${stringify(resultKey)}`);
+			const cacheConterPoint = this.cacheCounter[argsKey];
 			if (!cacheConterPoint) {
-				this.cacheCounter[argsHash] = {result: resultHash, count: 1};
+				this.cacheCounter[argsKey] = {result: resultKey, count: 1};
 				return;
 			}
 			if (cacheConterPoint.count === -1) {
@@ -45,10 +57,10 @@ class SimpleFlowCachingStrategy extends FlowCachingStrategy {
 				return;
 			}
 			logger.silly(
-				`Existing result hash: ${stringify(cacheConterPoint.result)}`
+				`Existing result objectToKey: ${stringify(cacheConterPoint.result)}`
 			);
 
-			if (cacheConterPoint.result !== resultHash) {
+			if (cacheConterPoint.result !== resultKey) {
 				logger.debug('Non matching. Setting counter to -1');
 				delete cacheConterPoint.result;
 				cacheConterPoint.count = -1;
@@ -56,18 +68,18 @@ class SimpleFlowCachingStrategy extends FlowCachingStrategy {
 			}
 			cacheConterPoint.count++;
 			if (this.count <= cacheConterPoint.count) {
-				delete this.cacheCounter[argsHash];
-				this.cache[argsHash] = result;
+				delete this.cacheCounter[argsKey];
+				this.cache[argsKey] = result;
 			}
 		};
 	}
 	minify(args) {
 		const result = super.minify(args);
-		result.name = 'SimpleFlowCachingStrategy';
+		result.name = 'HashlessCachingStrategy';
 		result.count = this.count;
 		result.cacheCounter = this.cacheCounter;
 		return result;
 	}
 }
 
-export default SimpleFlowCachingStrategy;
+export default HashlessCachingStrategy;

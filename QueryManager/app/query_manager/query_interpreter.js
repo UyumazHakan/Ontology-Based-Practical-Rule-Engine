@@ -1,5 +1,6 @@
 import clone from 'clone';
 import config from 'config';
+import {stringify} from '../utils';
 import axios from 'axios';
 import Balancer from '../balancer';
 /**
@@ -26,6 +27,7 @@ class QueryInterpreter {
 	}
 	doHttpRequest() {
 		return new Promise((resolve, reject) => {
+			console.dir(JSON.stringify(this.json));
 			switch (this.httpMethod) {
 				case 'POST':
 					axios
@@ -51,7 +53,6 @@ class QueryInterpreter {
 									this.manager.id
 								);
 							const data = result.data;
-							console.dir(data);
 							this.readFlowData(data);
 							resolve(result);
 						})

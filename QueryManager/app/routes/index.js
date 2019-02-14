@@ -34,7 +34,6 @@ router.post('/', function(req, res) {
 	p.then((responses) => {
 		res.send(responses.map((response) => response.data));
 	}).catch((err) => {
-		console.dir(err);
 		res.status(500).send(stringify(err));
 	});
 });

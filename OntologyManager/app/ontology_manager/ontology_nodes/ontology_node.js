@@ -147,6 +147,8 @@ class OntologyNode {
 	 */
 	minify() {
 		const minifiedVersion = clone(this);
+		delete minifiedVersion.cacheStrategy;
+		delete minifiedVersion.flowSinks;
 		minifiedVersion.nodeType = minifiedVersion.constructor.name;
 		minifiedVersion.sinks = minifiedVersion.sinks.map(
 			(node) => (typeof node === 'string' ? node : node.id)

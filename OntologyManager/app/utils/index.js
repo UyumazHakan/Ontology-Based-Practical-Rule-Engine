@@ -22,9 +22,11 @@ export function stringify(object) {
  * @return {string} Resulting hash
  */
 export function hash(object) {
-	return md5(
-		Object.keys(object)
-			.sort()
-			.map((key) => object[key])
-	);
+	return md5(objectToKey(object));
+}
+export function objectToKey(object) {
+	return Object.keys(object)
+		.sort()
+		.map((key) => key + '?' + object[key])
+		.join(':');
 }

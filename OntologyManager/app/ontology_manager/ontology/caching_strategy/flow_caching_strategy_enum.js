@@ -1,9 +1,11 @@
-import SimpleFlowCachingStrategy from './simple_flow_caching_strategy';
+import HashCachingStrategy from './hash_caching_strategy';
+import HashlessCachingStrategy from './hashless_caching_strategy';
 /**
  * Enum for FlowCachingStrategy
  * @readonly
  * @enum {FlowCachingStrategy}
  */
 export default {
-	SimpleFlowCachingStrategy: SimpleFlowCachingStrategy,
+	HashCachingStrategy: HashCachingStrategy,
+	HashlessCachingStrategy: HashlessCachingStrategy,
 };

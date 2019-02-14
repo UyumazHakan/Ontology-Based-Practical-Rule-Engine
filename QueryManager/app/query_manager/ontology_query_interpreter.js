@@ -26,7 +26,6 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 			':' +
 			this.manager.port +
 			'/manager/ontology';
-		console.log(`Sending to:` + result);
 		return result;
 	}
 	/**

@@ -94,8 +94,7 @@ class Balancer {
 	}
 	assignWithResponse(response, engineId, managerId) {
 		const data = response.data;
-		if (!this.isAssigned(data.id))
-			Balancer.assign(data.id, engineId, managerId);
+		if (!this.isAssigned(data.id)) this.assign(data.id, engineId, managerId);
 		if (data.flows) {
 			data.flows.forEach((flow) => {
 				this.extraOntologyMapping[flow.id] = data.id;
