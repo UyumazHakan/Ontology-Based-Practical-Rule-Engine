@@ -5,6 +5,7 @@ import DatabaseConnectorProxy from '../database_connector/database_connector_pro
 import {loggers} from 'winston';
 import clone from 'clone';
 import {stringify} from '../../utils';
+import optimizers from './optimizers';
 let logger = loggers.get('main');
 
 /**
@@ -33,6 +34,7 @@ class Ontology {
 		this.isSaved = args.isSaved || this.isSaved || false;
 		this._isUpdated = false;
 		if (args.flows) args.flows.forEach((flow) => this.addFlow(flow.info));
+		optimizers(this);
 	}
 
 	/**
