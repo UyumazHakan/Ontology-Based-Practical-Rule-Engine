@@ -1,4 +1,6 @@
 import OntologyNode from '../ontology_node';
+import {objectToKey} from '../../../utils';
+
 /**
  * Node for grouping data coming from sources and send to sinks when a limit is reached
  */
@@ -22,22 +24,25 @@ class GroupingNode extends OntologyNode {
 	 */
 	execute(args) {
 		const group = this.createGroup(args);
-		if (this.groups[group]) this.groups[group].count++;
-		else this.groups[group] = {count: 1, value: group};
+		const groupKey = objectToKey(group);
+		if (this.groups[groupKey]) this.groups[groupKey].count++;
+		else this.groups[groupKey] = {count: 1, value: group};
 		Object.keys(args).forEach((key) => {
 			if (group[key]) return;
-			if (!this.groups[group].value[key]) this.groups[group].value[key] = [];
+			if (!this.groups[groupKey].value[key])
+				this.groups[groupKey].value[key] = [];
 			for (
-				let i = this.groups[group].value[key].length;
-				i < this.groups[group].count;
+				let i = this.groups[groupKey].value[key].length;
+				i < this.groups[groupKey].count;
 				i++
 			)
-				this.groups[group].value[key].push(null);
-			this.groups[group].value[key][this.groups[group].count - 1] = args[key];
+				this.groups[groupKey].value[key].push(null);
+			this.groups[groupKey].value[key][this.groups[groupKey].count - 1] =
+				args[key];
 		});
-		if (this.groups[group].count >= this.limit) {
-			const groupToPass = this.groups[group].value;
-			delete this.groups[group];
+		if (this.groups[groupKey].count >= this.limit) {
+			const groupToPass = this.groups[groupKey].value;
+			delete this.groups[groupKey];
 			this.passToSinks(groupToPass);
 		}
 	}

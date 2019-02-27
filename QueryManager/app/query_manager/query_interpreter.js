@@ -62,12 +62,6 @@ class QueryInterpreter {
 					axios
 						.patch(this.httpUrl + (this.httpRoute || ''), this.json)
 						.then((result) => {
-							if (Balancer.isAssigned(result.data.id))
-								Balancer.assignWithResponse(
-									result,
-									this.engine.id,
-									this.manager.id
-								);
 							resolve(result);
 						})
 						.catch(reject);

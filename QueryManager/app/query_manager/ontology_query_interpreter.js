@@ -65,7 +65,7 @@ class OntologyQueryInterpreter extends QueryInterpreter {
 			ontologyQuery.header.options.id.value
 		);
 		this.httpMethod = 'PATCH';
-		this.httpUrl = this.httpUrl + '/' + ontologyQuery.header.options.id.value;
+		this.httpRoute = '/' + ontologyQuery.header.options.id.value;
 		this.value.info = {};
 		Object.assign(this.value.info, ontologyQuery.header.options);
 		Object.assign(this.value.info, ontologyQuery.body);

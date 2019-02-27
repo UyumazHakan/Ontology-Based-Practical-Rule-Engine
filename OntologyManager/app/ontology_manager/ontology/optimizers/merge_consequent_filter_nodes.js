@@ -8,13 +8,9 @@ export default function(flow) {
 		let source = nodePair.source;
 		let sink = nodePair.sink;
 		let index = flow.nodes.indexOf(source);
-		if (index > -1) {
-			flow.nodes.splice(index, 1);
-		}
+		if (index > -1) flow.nodes.splice(index, 1);
 		index = flow.nodes.indexOf(sink);
-		if (index > -1) {
-			flow.nodes.splice(index, 1);
-		}
+		if (index > -1) flow.nodes.splice(index, 1);
 		let mergedNode = new FilterNode({
 			name: source.name + ' + ' + sink.name,
 			field: source.field,
