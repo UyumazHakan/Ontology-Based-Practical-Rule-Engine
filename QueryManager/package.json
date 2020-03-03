@@ -32,7 +32,7 @@
 		"enumify": "^1.0.4",
 		"express": "^4.16.4",
 		"mqtt": "^2.18.8",
-		"serialize-javascript": "^1.5.0",
+		"serialize-javascript": "^3.0.0",
 		"winston": "^3.1.0"
 	},
 	"devDependencies": {
